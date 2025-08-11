@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="EnglishLearning.App.Views.FavoriteCategorySetting"
+             Title="收藏夹设置">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"></RowDefinition>
+            <RowDefinition Height="*"></RowDefinition>
+        </Grid.RowDefinitions>
+
+        <Grid x:Name="actionGrid" Grid.Row="0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="50*"></ColumnDefinition>
+                <ColumnDefinition Width="25*"></ColumnDefinition>
+                <ColumnDefinition Width="25*"></ColumnDefinition>
+            </Grid.ColumnDefinitions>           
+
+            <Button x:Name="btnDelete" Text="删除" Grid.Column="1" BackgroundColor="Transparent" TextColor="Red" Clicked="btnDelete_Clicked"></Button>
+            <Button x:Name="btnAdd" Text="添加" Grid.Column="2" BackgroundColor="Transparent" TextColor="DodgerBlue" Clicked="btnAdd_Clicked"></Button>
+        </Grid>
+
+        <CollectionView x:Name="lvCategories" Grid.Row="1"  SelectionMode="None" EmptyView="暂无数据"  Margin="0,2" >
+            <CollectionView.GroupHeaderTemplate>
+                <DataTemplate>
+                    <VerticalStackLayout Margin="5,0">
+                        <Label Text="{Binding Name}"
+                          BackgroundColor="LightBlue"
+                          FontSize="18"
+                          FontAttributes="Bold" />
+                    </VerticalStackLayout>
+
+                </DataTemplate>
+            </CollectionView.GroupHeaderTemplate>
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"></ColumnDefinition>
+                            <ColumnDefinition Width="*"></ColumnDefinition>
+                            <ColumnDefinition Width="Auto"></ColumnDefinition>
+                        </Grid.ColumnDefinitions>
+
+                        <CheckBox Grid.Column="0" IsEnabled="{Binding CanDelete}" IsChecked="{Binding IsSelected, Mode=TwoWay}"/>
+
+                        <Border Grid.Column="1" Padding="1" Margin="1" BackgroundColor="AliceBlue">                            
+
+                            <Label Text="{Binding Name}"  HorizontalTextAlignment="Start" FontSize="18" Padding="10,5" />
+
+                        </Border>
+
+                        <ImageButton Grid.Column="2"  Margin="5,0"  WidthRequest="20" HeightRequest="20" IsEnabled="{Binding CanDelete}" Clicked="EditButton_Clicked"  VerticalOptions="Center">
+                            <ImageButton.Source>
+                                <FontImageSource  FontFamily="FASolid" Glyph="{StaticResource edit}"  Color="DodgerBlue" Size="10"/>
+                            </ImageButton.Source>
+                        </ImageButton>
+                    </Grid>
+
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+
+    </Grid>
+</ContentPage>

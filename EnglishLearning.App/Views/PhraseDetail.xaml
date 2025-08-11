@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:controls="clr-namespace:EnglishLearning.App.Controls"         
+             x:Class="EnglishLearning.App.Views.PhraseDetail"
+             Title="">
+    
+    <VerticalStackLayout>       
+        
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition  Width="9*" />
+                <ColumnDefinition  Width="1*"/>
+            </Grid.ColumnDefinitions>
+
+            <HorizontalStackLayout Margin="5,0">
+                <Label x:Name="lblPhraseType" IsVisible="False" VerticalOptions="Center" TextColor="Gray"></Label> 
+                <Label x:Name="lblMeaning" Grid.Column="0" VerticalOptions="Center" HorizontalOptions="Fill"  FontSize="15"></Label>
+            </HorizontalStackLayout>           
+
+            <ImageButton Grid.Column="1" x:Name="btnVOCAB" Margin="10,0" IsVisible="False" WidthRequest="22" HeightRequest="22" HorizontalOptions="EndAndExpand"               
+                Clicked="btnVOCAB_Clicked"  VerticalOptions="Center">
+                <ImageButton.Source>
+                    <FontImageSource x:Name="Font_VOCAB"  FontFamily="FARegular" Glyph="{StaticResource star}"  Color="Gray"  Size="10"/>
+                </ImageButton.Source>
+            </ImageButton>
+
+        </Grid>
+
+        <VerticalStackLayout x:Name="SynonymLayout"  Margin="5,5">
+            <Label x:Name="lblSynonym" Text="类似的"  VerticalOptions="Center" HorizontalOptions="Start" FontAttributes="Bold"  />
+            
+            <CollectionView x:Name="lvSynonym" SelectionMode="None" Margin="0,5">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <Label Text="{Binding Text}"></Label>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+        </VerticalStackLayout>
+       
+
+        <Label x:Name="lblIntroduction" Text="相关介绍"  VerticalOptions="Center" HorizontalOptions="Start" FontAttributes="Bold" Margin="5,10"  IsVisible="False"/>
+
+        <CollectionView x:Name="lvMedias" SelectionMode="None">
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <controls:MediaCardView></controls:MediaCardView>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+
+        <Label x:Name="lblExample" Text="例句"  VerticalOptions="Center" HorizontalOptions="Start" FontAttributes="Bold" Margin="10,10"  IsVisible="False"/>
+
+        <CollectionView x:Name="lvExamples" SelectionMode="None" Margin="10,10">
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <Grid>
+
+                        <Grid.RowDefinitions>
+                            <RowDefinition></RowDefinition>
+                            <RowDefinition></RowDefinition>
+                        </Grid.RowDefinitions>
+
+                        <Label Grid.Row="0" Text="{Binding Example}" Margin="0,2"></Label>
+
+                        <Label Grid.Row="1" Text="{Binding Meaning}" Margin="14,2" TextColor="Gray"></Label>
+                    </Grid>
+
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+    </VerticalStackLayout>
+</ContentPage>

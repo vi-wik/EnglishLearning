@@ -1,0 +1,27 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<?xaml-comp compile="true" ?>
+<ResourceDictionary 
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
+    
+    <x:String x:Key="search">&#xf002;</x:String>
+    <x:String x:Key="history">&#xf1da;</x:String>
+    <x:String x:Key="star">&#xf005;</x:String>
+    <x:String x:Key="book">&#xf02d;</x:String>
+    <x:String x:Key="pronounce">&#xf028;</x:String>
+    <x:String x:Key="back">&#xf060;</x:String>
+    <x:String x:Key="user">&#xf007;</x:String>
+    <x:String x:Key="learn">&#xf51c;</x:String>
+    <x:String x:Key="trendUp">&#xe098;</x:String>
+    <x:String x:Key="comments">&#xf086;</x:String>
+    <x:String x:Key="setting">&#xf013;</x:String>
+    <x:String x:Key="import">&#xf56f;</x:String>
+    <x:String x:Key="export">&#xf56e;</x:String>
+    <x:String x:Key="edit">&#xf044;</x:String>
+    <x:String x:Key="close">&#xf00d;</x:String>
+    <x:String x:Key="refresh">&#xf021;</x:String>
+    <x:String x:Key="clear">&#xf1f8;</x:String>
+    <x:String x:Key="check">&#xf00c;</x:String>
+    <x:String x:Key="copy">&#xf0c5;</x:String>
+    <x:String x:Key="save">&#xf0c7;</x:String>
+</ResourceDictionary>

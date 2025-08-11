@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+             x:Class="EnglishLearning.App.Views.Setting"
+             Title="设置">
+    
+    <VerticalStackLayout>
+        <Border Padding="2" Margin="5,5" BackgroundColor="AliceBlue">
+
+            <Border.GestureRecognizers>
+                <TapGestureRecognizer Tapped="TapGestureRecognizer_FavoriteCategoryTapped" NumberOfTapsRequired="1" />
+            </Border.GestureRecognizers>
+
+            <Label Text="收藏夹设置"  HorizontalTextAlignment="Start" FontSize="18" Padding="10,5" />
+
+        </Border>
+        <Border Padding="2" Margin="5,5" BackgroundColor="AliceBlue">
+
+            <Border.GestureRecognizers>
+                <TapGestureRecognizer Tapped="TapGestureRecognizer_CommonSettingTapped" NumberOfTapsRequired="1" />
+            </Border.GestureRecognizers>
+
+            <Label Text="通用设置"  HorizontalTextAlignment="Start" FontSize="18" Padding="10,5" />
+
+        </Border>
+
+        <toolkit:Expander>
+            <toolkit:Expander.Header>
+                <Border Padding="2" Margin="5,5" BackgroundColor="AliceBlue">                   
+
+                    <Label Text="数据管理"  HorizontalTextAlignment="Start" FontSize="18" Padding="10,5" />
+
+                </Border>
+            </toolkit:Expander.Header>
+            
+            <VerticalStackLayout>
+                <Border Padding="2" Margin="15,5" BackgroundColor="SkyBlue">
+
+                    <Border.GestureRecognizers>
+                        <TapGestureRecognizer Tapped="TapGestureRecognizer_ClearWordLearnHistoryTapped" NumberOfTapsRequired="1" />
+                    </Border.GestureRecognizers>
+
+                    <Label Text="清除背单词历史记录"  HorizontalTextAlignment="Start" FontSize="18" Padding="10,5" />
+
+                </Border>
+
+                <Border Padding="2" Margin="15,5" BackgroundColor="SkyBlue">
+
+                    <Border.GestureRecognizers>
+                        <TapGestureRecognizer Tapped="TapGestureRecognizer_BackupDataTapped" NumberOfTapsRequired="1" />
+                    </Border.GestureRecognizers>
+
+                    <Label Text="备份数据"  HorizontalTextAlignment="Start" FontSize="18" Padding="10,5" />
+
+                </Border>
+
+                <Border Padding="2" Margin="15,5" BackgroundColor="SkyBlue">
+
+                    <Border.GestureRecognizers>
+                        <TapGestureRecognizer Tapped="TapGestureRecognizer_ImportDataTapped" NumberOfTapsRequired="1" />
+                    </Border.GestureRecognizers>
+
+                    <Label Text="导入数据"  HorizontalTextAlignment="Start" FontSize="18" Padding="10,5" />
+
+                </Border>
+            </VerticalStackLayout>
+           
+        </toolkit:Expander>
+
+        <toolkit:Expander>
+            <toolkit:Expander.Header>
+                <Border Padding="2" Margin="5,5" BackgroundColor="AliceBlue">
+
+                    <Label Text="日志管理"  HorizontalTextAlignment="Start" FontSize="18" Padding="10,5" />
+
+                </Border>
+            </toolkit:Expander.Header>
+
+            <VerticalStackLayout>
+                <Border Padding="2" Margin="15,5" BackgroundColor="SkyBlue">
+
+                    <Border.GestureRecognizers>
+                        <TapGestureRecognizer Tapped="TapGestureRecognizer_ViewLogTapped" NumberOfTapsRequired="1" />
+                    </Border.GestureRecognizers>
+
+                    <Label Text="查看日志"  HorizontalTextAlignment="Start" FontSize="18" Padding="10,5" />
+
+                </Border>
+
+                <Border Padding="2" Margin="15,5" BackgroundColor="SkyBlue">
+
+                    <Border.GestureRecognizers>
+                        <TapGestureRecognizer Tapped="TapGestureRecognizer_ClearLogTapped" NumberOfTapsRequired="1" />
+                    </Border.GestureRecognizers>
+
+                    <Label Text="清除日志"  HorizontalTextAlignment="Start" FontSize="18" Padding="10,5" />
+
+                </Border>
+          
+            </VerticalStackLayout>
+
+        </toolkit:Expander>
+
+        <toolkit:Expander>
+            <toolkit:Expander.Header>
+                <Border Padding="2" Margin="5,5" BackgroundColor="AliceBlue">
+
+                    <Label Text="关于"  HorizontalTextAlignment="Start" FontSize="18" Padding="10,5" />
+
+                </Border>
+            </toolkit:Expander.Header>
+
+            <VerticalStackLayout>
+                <Border Padding="2" Margin="15,5" BackgroundColor="SkyBlue">
+
+                    <HorizontalStackLayout>
+                        <Label Text="当前版本："  HorizontalTextAlignment="Start" FontSize="18" Padding="10,5" />
+                        <Label x:Name="lblVersion"  HorizontalTextAlignment="Start" FontSize="18" Padding="10,5" />
+                    </HorizontalStackLayout>                  
+                    
+                </Border>
+
+                <Border Padding="2" Margin="15,5" BackgroundColor="SkyBlue">
+                    
+                    <HorizontalStackLayout>
+                        <Label Text="项目地址："  HorizontalTextAlignment="Start" FontSize="18" Padding="10,5" />
+                        <Label x:Name="lblProjectUrl" TextColor="Blue" TextDecorations="Underline" HorizontalTextAlignment="Start" FontSize="18" Padding="10,5" >
+                            <Label.GestureRecognizers>
+                                <TapGestureRecognizer Tapped="TapGestureRecognizer_ProjectUrlTapped" NumberOfTapsRequired="1" />
+                            </Label.GestureRecognizers>                          
+                        </Label>
+                    </HorizontalStackLayout>                   
+
+                </Border>
+                
+            </VerticalStackLayout>
+
+        </toolkit:Expander>
+    </VerticalStackLayout>
+</ContentPage>

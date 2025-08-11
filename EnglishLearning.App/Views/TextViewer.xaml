@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="EnglishLearning.App.Views.TextViewer"
+             Title="查看文件">
+
+    <ContentPage.ToolbarItems>
+        <ToolbarItem x:Name="tbiCopy" Text="" Clicked="tbiCopy_Clicked">
+            <ToolbarItem.IconImageSource>
+                <FontImageSource FontFamily="FASolid" Glyph="{StaticResource copy}"  Color="White" Size="20"></FontImageSource>
+            </ToolbarItem.IconImageSource>
+        </ToolbarItem>
+        <ToolbarItem x:Name="tbiSaveAs" Text="" Clicked="tbiSaveAs_Clicked">
+            <ToolbarItem.IconImageSource>
+                <FontImageSource FontFamily="FASolid" Glyph="{StaticResource save}"  Color="White" Size="20"></FontImageSource>
+            </ToolbarItem.IconImageSource>
+        </ToolbarItem>
+     
+    </ContentPage.ToolbarItems>
+
+    <ScrollView>
+        <VerticalStackLayout >
+            <Label x:Name="txtContent" Margin="5,5"></Label>
+        </VerticalStackLayout>
+    </ScrollView>
+   
+</ContentPage>

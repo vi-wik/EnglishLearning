@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+             xmlns:controls="clr-namespace:EnglishLearning.App.Controls"           
+             x:Class="EnglishLearning.App.Views.WordDetail"         
+             Title="">
+
+    <Shell.TitleView>
+        <HorizontalStackLayout VerticalOptions="Fill"  >
+            <Label x:Name="lblTitle" Text="" TextColor="White"
+             HorizontalTextAlignment="Start"
+             VerticalTextAlignment="Center"
+             VerticalOptions="Center"
+             HeightRequest="30"
+             FontSize="20" >
+                <Label.Behaviors>
+                   <toolkit:TouchBehavior 
+                    LongPressDuration="750"
+                    LongPressCompleted="TouchBehavior_LongPressCompleted"/>
+                </Label.Behaviors>            
+            </Label>
+        </HorizontalStackLayout>
+    </Shell.TitleView>
+
+    <ContentPage.ToolbarItems>
+        <ToolbarItem x:Name="tbiFinishLearn" Text="" Clicked="tbiFinishLearn_Clicked" IsEnabled="False">
+            <ToolbarItem.IconImageSource>
+                <FontImageSource FontFamily="FASolid" Glyph="{StaticResource check}"  Color="Transparent" Size="20"></FontImageSource>
+            </ToolbarItem.IconImageSource>
+        </ToolbarItem>
+    </ContentPage.ToolbarItems>
+
+    <ScrollView x:Name="scrollView" Orientation="Vertical" >    
+        <ScrollView.GestureRecognizers>
+            <SwipeGestureRecognizer Direction="Left,Right" Swiped="SwipeGestureRecognizer_Swiped" Threshold="100" ></SwipeGestureRecognizer>
+        </ScrollView.GestureRecognizers>
+        
+        <VerticalStackLayout x:Name="Layout">
+            
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition  Width="9*" />
+                    <ColumnDefinition  Width="1*"/>
+                </Grid.ColumnDefinitions>
+
+                <Grid Grid.Column="0">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"></RowDefinition>
+                        <RowDefinition Height="Auto"></RowDefinition>
+                    </Grid.RowDefinitions>
+
+                    <HorizontalStackLayout x:Name="USPronunciationLayout" Grid.Row="0"  Margin="5,0" IsVisible="False">
+                        <Label x:Name="lblUS" Text="美" Margin="5,3" FontSize="16" TextColor="Gray" IsVisible="False" VerticalOptions="Center"></Label>
+                        <Label x:Name="lblUS_Pronunciation" TextColor="Blue"  Margin="3,0" FontSize="16" VerticalOptions="Center"></Label>
+                        <ImageButton x:Name="btnUSPronunciation" IsVisible="False" Margin="10,1"  WidthRequest="22" HeightRequest="22"                  
+                             Clicked="OnPronounceButtonClicked" CommandParameter="US" VerticalOptions="Center">
+                            <ImageButton.Source>
+                                <FontImageSource   FontFamily="FASolid" Glyph="{StaticResource pronounce}"  Color="Orange" Size="10"/>
+                            </ImageButton.Source>
+                        </ImageButton>
+                    </HorizontalStackLayout>
+
+                    <HorizontalStackLayout x:Name="UKPronunciationLayout" Grid.Row="1" Margin="5,0" IsVisible="False">
+                        <Label  x:Name="lblUK" Text="英" IsVisible="False" Margin="5,3" TextColor="Gray" FontSize="16" VerticalOptions="Center"></Label>
+                        <Label x:Name="lblUK_Pronunciation" TextColor="Blue"  Margin="3,0"  FontSize="16" VerticalOptions="Center"></Label>
+
+                        <ImageButton x:Name="btnUKPronunciation" IsVisible="False"  Margin="10,1"  WidthRequest="22" HeightRequest="22"                        
+                            Clicked="OnPronounceButtonClicked" CommandParameter="UK" VerticalOptions="Center">
+                            <ImageButton.Source>
+                                <FontImageSource   FontFamily="FASolid" Glyph="{StaticResource pronounce}"  Color="Orange" Size="10"/>
+                            </ImageButton.Source>
+                        </ImageButton>
+
+                        <Label x:Name="lblSyllable" IsVisible="False" Margin="10,1" VerticalOptions="Center"></Label>
+                    </HorizontalStackLayout>
+                </Grid>            
+
+                <ImageButton Grid.Column="1" x:Name="btnVOCAB" Margin="10,0" IsVisible="False" WidthRequest="22" HeightRequest="22" HorizontalOptions="EndAndExpand"               
+                Clicked="btnVOCAB_Clicked"  VerticalOptions="Start">
+                    <ImageButton.Source>
+                        <FontImageSource x:Name="Font_VOCAB"  FontFamily="FARegular" Glyph="{StaticResource star}"  Color="Gray"  Size="10"/>
+                    </ImageButton.Source>
+                </ImageButton>
+            </Grid>
+
+            <CollectionView x:Name="lvMeanings" SelectionMode="None" Margin="10,10">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <Grid Margin="0,3">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="{Binding PartOfSpeechColumnWidth}"></ColumnDefinition>
+                                <ColumnDefinition Width="*"></ColumnDefinition>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"></RowDefinition>
+                            </Grid.RowDefinitions>
+
+                            <Label Text="{Binding PartOfSpeech}" TextColor="Gray"  VerticalOptions="Start"></Label>
+                            <Label Text="{Binding Meaning}" Grid.Column="1"  VerticalOptions="Start"></Label>
+                        </Grid>
+                    </DataTemplate>                    
+                </CollectionView.ItemTemplate>
+                <CollectionView.Footer>
+                    <StackLayout>
+                        <Button x:Name="btnShowAllMeaning" IsVisible="false" Text="显示全部含义" Padding="0" Margin="0" TextColor="Blue" HeightRequest="25" WidthRequest="120" HorizontalOptions="End" BackgroundColor="Transparent" Clicked="btnShowAllMeaning_Clicked"></Button>
+                        <Button x:Name="btnHideSpecalMeaning" IsVisible="False" Text="隐藏特殊含义" Padding="0" TextColor="Blue" HeightRequest="25" WidthRequest="120" HorizontalOptions="End" BackgroundColor="Transparent" Clicked="btnHideSpecalMeaning_Clicked"></Button>
+                    </StackLayout>                
+                </CollectionView.Footer>
+            </CollectionView>
+
+            <Grid x:Name="gvWordInflection" Padding="0" RowSpacing="5" ColumnSpacing="2" IsVisible="False" Margin="10,10,10,2" BackgroundColor="Transparent">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"></ColumnDefinition>
+                    <ColumnDefinition Width="*"></ColumnDefinition>
+                    <ColumnDefinition Width="Auto"></ColumnDefinition>
+                    <ColumnDefinition Width="*"></ColumnDefinition>
+                </Grid.ColumnDefinitions>
+            </Grid>
+
+            <HorizontalStackLayout x:Name="ExamTypeLayout" Margin="5,10" HorizontalOptions="Start" IsVisible="False">
+            </HorizontalStackLayout>
+
+            <Label x:Name="lblIntroduction" Text="相关介绍"  VerticalOptions="Center" HorizontalOptions="Start" FontAttributes="Bold" Margin="10,10,10,2"  IsVisible="False"/>
+
+            <CollectionView x:Name="lvMedias" SelectionMode="None">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <controls:MediaCardView></controls:MediaCardView>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+
+            <Label x:Name="lblExample" Text="例句"  VerticalOptions="Center" HorizontalOptions="Start" FontAttributes="Bold" Margin="10,10,10,2"  IsVisible="False"/>
+
+            <CollectionView x:Name="lvExamples" SelectionMode="None" Margin="10,5">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="20"></ColumnDefinition>
+                                <ColumnDefinition Width="*"></ColumnDefinition>                                
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition></RowDefinition>
+                                <RowDefinition></RowDefinition>
+                            </Grid.RowDefinitions>
+
+                            <Label Grid.Column="0" Grid.Row="0" Text="{Binding Order}" HorizontalTextAlignment="Start" VerticalTextAlignment="Start"></Label>
+                            <Label Grid.Column="1" Grid.Row="0" Text="{Binding Example}"  ></Label>
+
+                            <Label Grid.Column="1" Grid.Row="1" Text="{Binding Meaning}" Margin="0,2" TextColor="Gray"></Label>
+                        </Grid>                        
+                     
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+
+            <Label x:Name="lblVariant" Text="异体"  VerticalOptions="Center" HorizontalOptions="Start" FontAttributes="Bold" Margin="10,10,10,2"  IsVisible="False"/>
+
+            <CollectionView x:Name="lvVariants" SelectionMode="None" Margin="10,5">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <Grid>
+                            <Grid.GestureRecognizers>
+                                <TapGestureRecognizer Tapped="TapGestureRecognizer_VariantTapped" NumberOfTapsRequired="1" />
+                            </Grid.GestureRecognizers>
+
+                            <Grid.RowDefinitions>
+                                <RowDefinition ></RowDefinition>                              
+                            </Grid.RowDefinitions>
+
+                            <Label  Text="{Binding TargetWord}" Margin="0,5"></Label>
+                           
+                        </Grid>
+
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

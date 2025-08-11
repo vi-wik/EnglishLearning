@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="EnglishLearning.App.Views.WordStatistic"
+             xmlns:zoft="http://zoft.MauiExtensions/Controls"
+             Title="">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"></RowDefinition>
+            <RowDefinition Height="*"></RowDefinition>
+        </Grid.RowDefinitions>
+        
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="1.5*"></ColumnDefinition>
+                <ColumnDefinition Width="7.5*"></ColumnDefinition>
+                <ColumnDefinition Width="1*"></ColumnDefinition>
+            </Grid.ColumnDefinitions>
+
+            <Picker Title="" x:Name="picker" Grid.Column="0"  HeightRequest="50" HorizontalTextAlignment="Center" BackgroundColor="AliceBlue" SelectedIndexChanged="picker_SelectedIndexChanged">
+                <Picker.Items>                    
+                </Picker.Items>
+            </Picker>
+
+            <zoft:AutoCompleteEntry x:Name="txtKeyword" Placeholder="请输入要查找的内容" Grid.Column="1"                     
+                    TextMemberPath="Name"
+                    DisplayMemberPath="Name"                         
+                    ClearButtonVisibility="WhileEditing"
+                    Completed="txtKeyword_Completed"
+                    TextChanged="AutoCompleteEntry_TextChanged"  
+                    SuggestionChosen="txtKeyword_SuggestionChosen"                                      
+                    HeightRequest="50"/>
+
+            <ImageButton  x:Name="btnSearch"  Grid.Column="2"  WidthRequest="20" HeightRequest="20"  Clicked="OnSearchButtonClicked">
+                <ImageButton.Source>
+                    <FontImageSource   FontFamily="FASolid" Glyph="{StaticResource search}"  Color="DodgerBlue" Size="16"/>
+                </ImageButton.Source>
+            </ImageButton>
+        </Grid>      
+
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"></ColumnDefinition>              
+                <ColumnDefinition Width="Auto"></ColumnDefinition>
+            </Grid.ColumnDefinitions>
+            
+            <CollectionView x:Name="lvWord" Grid.Column="0" SelectionMode="None" EmptyView="" Margin="3,0" >
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <Grid>
+                            <Grid.GestureRecognizers>
+                                <TapGestureRecognizer Tapped="TapGestureRecognizer_Tapped" NumberOfTapsRequired="1" />
+                            </Grid.GestureRecognizers>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"></ColumnDefinition>
+                                <ColumnDefinition Width="Auto"></ColumnDefinition>
+                            </Grid.ColumnDefinitions>
+
+                            <Label Text="{Binding Word}"  HorizontalTextAlignment="Start" FontSize="14" FontAttributes="Bold" Padding="2,5" />
+
+                            <Label Text="{Binding CommonMeaning}" Grid.Column="1" HorizontalTextAlignment="End" TextColor="Gray" FontSize="14" Margin="10,5" LineBreakMode="TailTruncation" MaxLines="1" />
+                        </Grid>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+                <CollectionView.Footer>
+                    <StackLayout>
+                        <Label x:Name="lblWordCount" TextColor="Blue" HorizontalOptions="Start" HeightRequest="20"></Label>
+                    </StackLayout>
+                </CollectionView.Footer>
+            </CollectionView>
+
+            <CollectionView x:Name="lvWordContent"  Grid.Column="1"  SelectionMode="None" EmptyView="" Margin="3,0" >
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <Grid>
+
+                            <Button x:Name="btnWordContent" Text="{Binding Content}" WidthRequest="40" HeightRequest="20" 
+                                    HorizontalOptions="Center"
+                                    TextColor="Black" Padding="0"  FontSize="14" Margin="0,3" BackgroundColor="AliceBlue" 
+                                    Clicked="btnWordContent_Clicked"></Button>
+
+                        </Grid>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+        </Grid>     
+
+    </Grid>   
+</ContentPage>

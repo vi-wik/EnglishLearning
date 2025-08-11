@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"            
+             x:Class="EnglishLearning.App.Views.PhoneticAlphabetDetail"
+             xmlns:controls="clr-namespace:EnglishLearning.App.Controls"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+             Title="">
+
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <toolkit:IsStringNotNullOrEmptyConverter x:Key="IsStringNotNullOrEmptyConverter" />
+        </ResourceDictionary>
+    </ContentPage.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"></RowDefinition>
+            <RowDefinition Height="*"></RowDefinition>
+        </Grid.RowDefinitions>
+
+        <Label x:Name="lblDescription" FontSize="12" Margin="5,2" ></Label>
+        
+        <CollectionView x:Name="lvMedias"  SelectionMode="None" IsGrouped="True" Margin="0,2" Grid.Row="1">
+            <CollectionView.GroupHeaderTemplate>
+                <DataTemplate>
+                    <VerticalStackLayout Margin="5,0">
+                        <Label Text="{Binding Name}"
+                  BackgroundColor="LightBlue"
+                  FontSize="18"
+                  FontAttributes="Bold" />
+                        <Label Text="{Binding Description}" FontSize="12" Margin="0,2" IsVisible="{Binding Description, Converter={StaticResource IsStringNotNullOrEmptyConverter}}"></Label>
+                    </VerticalStackLayout>
+
+                </DataTemplate>
+            </CollectionView.GroupHeaderTemplate>
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <controls:MediaCardView></controls:MediaCardView>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+    </Grid>
+
+    
+
+</ContentPage>

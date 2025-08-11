@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"          
+             x:Class="EnglishLearning.App.Views.PhraseList"
+             Title="">
+   
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"></RowDefinition>
+                <RowDefinition Height="*"></RowDefinition>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"></ColumnDefinition>
+                <ColumnDefinition Width="20"></ColumnDefinition>
+            </Grid.ColumnDefinitions>
+
+        <Entry x:Name="txtKeyword" Text="" Grid.Row="0" Grid.Column="0"  Grid.ColumnSpan="2"
+               Placeholder="请输入要查找的短语" PlaceholderColor="LightGray" 
+               HorizontalTextAlignment="Start" 
+               Keyboard="Default"  
+               ClearButtonVisibility="WhileEditing" 
+               TextChanged="txtKeyword_TextChanged" 
+               Completed="txtKeyword_Completed"></Entry>           
+
+        <CollectionView x:Name="lvPhrase" Grid.Row="1" Grid.Column="0"  SelectionMode="None" EmptyView="" Margin="3,0" >
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <Grid>
+                        <Grid.GestureRecognizers>
+                            <TapGestureRecognizer Tapped="TapGestureRecognizer_Tapped" NumberOfTapsRequired="1" />
+                        </Grid.GestureRecognizers>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"></ColumnDefinition>
+                            <ColumnDefinition Width="Auto"></ColumnDefinition>
+                        </Grid.ColumnDefinitions>
+
+                        <Label Text="{Binding Phrase}"  HorizontalTextAlignment="Start" FontSize="14" FontAttributes="Bold" Padding="10,5" />
+
+                        <Label Text="{Binding Meaning}" Grid.Column="1" HorizontalTextAlignment="End" TextColor="Gray" FontSize="14" Margin="10,5" LineBreakMode="TailTruncation" MaxLines="1" />
+                    </Grid>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+
+        <CollectionView x:Name="lvPhraseAlphabet" Grid.Row="1" Grid.Column="1"  SelectionMode="None" EmptyView="" Margin="3,0" >
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <Grid>                      
+
+                        <Button x:Name="btnAlphabet" Text="{Binding Alphabet}" WidthRequest="20" HeightRequest="20" TextColor="Black" Padding="0"  FontSize="14" Margin="0,1" BackgroundColor="Transparent" Clicked="btnAlphabet_Clicked"></Button>                     
+                      
+                    </Grid>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+
+    </Grid>
+
+</ContentPage>

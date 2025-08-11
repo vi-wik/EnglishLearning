@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"           
+             x:Class="EnglishLearning.App.Controls.MediaCardView"
+             x:Name="this">
+
+
+    <Grid Padding="10">
+        <Grid.GestureRecognizers>            
+            <TapGestureRecognizer Tapped="TapGestureRecognizer_MediaTapped" NumberOfTapsRequired="1" />
+        </Grid.GestureRecognizers>
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+
+        <Border Grid.RowSpan="3" Padding="0,0">
+            <Image Source="{Binding ImageUrl}"
+                Aspect="AspectFit"
+                WidthRequest="128"
+                HeightRequest="72"/>
+        </Border>
+
+        <Label Grid.Column="1"
+               Text="{Binding MediaTitle}"
+               FontAttributes="Bold" 
+               Margin="5,0,0,0">
+        </Label>
+
+        <Label Grid.Row="1"
+               Grid.Column="1"
+               Text="{Binding TeacherName}"
+               VerticalOptions="Center" 
+               Margin="5,0,0,0">
+        </Label>
+
+        <Label Grid.Row="2" Grid.Column="1" Text="{Binding MediaTypeName}"  Margin="5,0,0,0" VerticalOptions="End" ></Label>
+
+        <ProgressBar x:Name="pb"  IsVisible="False" Grid.Row="3" Grid.Column="0"  Progress="{Binding Progress}" ProgressColor="HotPink" HeightRequest="1" ></ProgressBar>
+    </Grid>
+</ContentView>

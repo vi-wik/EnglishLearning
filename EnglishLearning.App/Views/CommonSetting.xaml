@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+             x:Class="EnglishLearning.App.Views.CommonSetting"
+             Title="通用设置">
+    <VerticalStackLayout>
+        <Grid RowDefinitions="*,*,*,*,*,*,*" Margin="5,2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"></ColumnDefinition>
+                <ColumnDefinition Width="60"></ColumnDefinition>
+            </Grid.ColumnDefinitions>           
+
+            <Label VerticalOptions="Center">查询单词或短语时，输入时动态显示列表</Label>
+            <CheckBox x:Name="chkShowWordsWhileInputing" Grid.Column="1" CheckedChanged="chkShowWordsWhileInputing_CheckedChanged"></CheckBox>
+
+            <Label VerticalOptions="Center" Grid.Row="1">显示单词或短语列表时同时显示其含义</Label>
+            <CheckBox x:Name="chkShowWordMeaningWhenShowWordList" Grid.Column="1" Grid.Row="1" CheckedChanged="chkShowWordMeaningWhenShowWordList_CheckedChanged"></CheckBox>
+
+            <Label VerticalOptions="Center" Grid.Row="2">生词本显示单词或短语列表时同时显示其含义</Label>
+            <CheckBox x:Name="chkShowWordMeaningWhenShowVOCABs" Grid.Column="1" Grid.Row="2" CheckedChanged="chkShowWordMeaningWhenShowVOCABs_CheckedChanged"></CheckBox>
+
+            <Label VerticalOptions="Center" Grid.Row="3">显示单词的全部含义（包括不常用、非正式、古语、废语等）</Label>
+            <CheckBox x:Name="chkShowWordFullMeaning" Grid.Column="1" Grid.Row="3" CheckedChanged="chkShowWordFullMeaning_CheckedChanged"></CheckBox>
+
+            <Label VerticalOptions="Center" Grid.Row="4">启用日志</Label>
+            <CheckBox x:Name="chkEnableLog" Grid.Column="1" Grid.Row="4" CheckedChanged="chkEnableLog_CheckedChanged"></CheckBox>
+
+            <HorizontalStackLayout Grid.Row="5" Grid.ColumnSpan="2">
+                <Label VerticalOptions="Center" Grid.Row="5">音标显示格式：</Label>
+
+                <Label VerticalOptions="Center" Grid.Row="5">[ ɡʊd]</Label>
+                <RadioButton x:Name="rbPronunciationBracket1"  VerticalOptions="Center" CheckedChanged="rbPronunciationBracket_CheckedChanged" Value="1" GroupName="PronunciationBracket" IsChecked="True"></RadioButton>
+
+                <Label VerticalOptions="Center" Grid.Row="5">/ɡʊd/</Label>
+                <RadioButton x:Name="rbPronunciationBracket2"  VerticalOptions="Center" CheckedChanged="rbPronunciationBracket_CheckedChanged" Value="2"  GroupName="PronunciationBracket"></RadioButton>
+            </HorizontalStackLayout>
+
+            <VerticalStackLayout  Grid.Row="6" Grid.ColumnSpan="2">
+                <Label VerticalOptions="Center">发音文件（音频文件）本地根目录：【其子目录应包含两个目录："uk"（英式）、"us"（美式）】</Label>
+                
+                <HorizontalStackLayout >                 
+                    <Entry x:Name="txtPronunciationFileRootFolder"  WidthRequest="290" HeightRequest="40" VerticalOptions="Center" ClearButtonVisibility="WhileEditing" Placeholder=""></Entry>
+                    <Button x:Name="btnChoosePronunciationFileRootFolder" Clicked="btnChoosePronunciationFileRootFoldern_Clicked" Text="选择" WidthRequest="60" HeightRequest="40" VerticalOptions="Center" ></Button>
+                </HorizontalStackLayout>
+            </VerticalStackLayout>
+           
+            
+        </Grid>        
+       
+    </VerticalStackLayout>
+</ContentPage>

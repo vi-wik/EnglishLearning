@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+             xmlns:controls="clr-namespace:EnglishLearning.App.Controls"
+             x:Class="EnglishLearning.App.Views.History"
+             Title="历史记录">
+    
+    <ContentPage.ToolbarItems>
+        <ToolbarItem x:Name="tbiClear" Text="" Clicked="tbiClear_Clicked"></ToolbarItem>
+        <ToolbarItem x:Name="tbiManage" Text="" Clicked="tbiManage_Clicked"></ToolbarItem>      
+    </ContentPage.ToolbarItems>
+
+    <RefreshView x:Name="refreshView">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"></RowDefinition>
+                <RowDefinition Height="*"></RowDefinition>
+            </Grid.RowDefinitions>
+
+            <Grid x:Name="actionGrid" Grid.Row="0" IsVisible="False">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="25*"></ColumnDefinition>
+                    <ColumnDefinition Width="50*"></ColumnDefinition>
+                    <ColumnDefinition Width="25*"></ColumnDefinition>
+                </Grid.ColumnDefinitions>
+
+                <HorizontalStackLayout Grid.Column="0" >
+                    <CheckBox x:Name="chkSelectAll" CheckedChanged="chkSelectAll_CheckedChanged" HorizontalOptions="Start" ></CheckBox>
+                    <Label VerticalOptions="Center">全选</Label>
+                </HorizontalStackLayout>
+
+                <Button x:Name="btnDelete" Text="删除" Grid.Column="2" BackgroundColor="Transparent" TextColor="Red" Clicked="btnDelete_Clicked"></Button>
+            </Grid>
+
+            <CollectionView x:Name="lvMedias" Grid.Row="1" IsGrouped="True"  SelectionMode="None" EmptyView="暂无数据"  Margin="0,2" ChildAdded="lvMedias_ChildAdded">
+                <CollectionView.GroupHeaderTemplate>
+                    <DataTemplate>
+                        <VerticalStackLayout Margin="5,0">
+                            <Label Text="{Binding Name}"
+                            BackgroundColor="LightBlue"
+                            FontSize="18"
+                            FontAttributes="Bold" />
+                        </VerticalStackLayout>
+
+                    </DataTemplate>
+                </CollectionView.GroupHeaderTemplate>
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <SwipeView>
+                            <SwipeView.RightItems>
+                                <SwipeItems>
+                                    <SwipeItem Text="删除" BackgroundColor="Red"  Clicked="SwipeItemDelete_Clicked"></SwipeItem>
+                                </SwipeItems>
+                            </SwipeView.RightItems>
+                            
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"></ColumnDefinition>
+                                    <ColumnDefinition Width="*"></ColumnDefinition>
+                                </Grid.ColumnDefinitions>
+
+                                <CheckBox Grid.Column="0" Grid.RowSpan="3" IsVisible="{Binding IsEditing}" IsChecked="{Binding IsSelected, Mode=TwoWay}" />
+
+                                <controls:MediaCardView Grid.Column="1" ></controls:MediaCardView>
+                            </Grid>
+                        </SwipeView>                     
+
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+
+        </Grid>
+    </RefreshView>
+  
+</ContentPage>

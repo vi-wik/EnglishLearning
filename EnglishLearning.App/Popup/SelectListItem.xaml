@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<toolkit:Popup xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+       xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+       xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"  
+       x:Class="EnglishLearning.App.Views.SelectListItem"   >
+
+  
+
+    <VerticalStackLayout HeightRequest="400" BackgroundColor="White">
+        <Grid Margin="2,2" HeightRequest="30" WidthRequest="350" BackgroundColor="SkyBlue">
+            <Grid.RowDefinitions>
+                <RowDefinition></RowDefinition>
+            </Grid.RowDefinitions>
+
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="9*" />
+                <ColumnDefinition Width="1*" />
+            </Grid.ColumnDefinitions>
+
+            <Label x:Name="lblTitle" FontSize="16" Grid.Column="0" HorizontalTextAlignment="Start" VerticalOptions="Center" ></Label>
+
+            <ImageButton  Grid.Column="1" HorizontalOptions="End" VerticalOptions="Center" HeightRequest="20" WidthRequest="20" Clicked="OnCloseImageClicked"   Margin="2,0" >
+                <ImageButton.Source>
+                    <FontImageSource   FontFamily="FASolid" Glyph="{StaticResource close}"  Color="DodgerBlue" Size="10"/>
+                </ImageButton.Source>
+            </ImageButton>
+        </Grid>
+
+        <CollectionView x:Name="lvItems"   SelectionMode="None" EmptyView="暂无数据"  Margin="0,2" HeightRequest="300" >
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="35"></ColumnDefinition>
+                            <ColumnDefinition Width="*"></ColumnDefinition>
+                        </Grid.ColumnDefinitions>
+
+                        <RadioButton x:Name="rbSelect" Grid.Column="0" IsChecked="{Binding IsSelected}" GroupName="GP" />
+
+                        <Border Grid.Column="1" Padding="1" Margin="1" BackgroundColor="AliceBlue">
+
+                            <Label Text="{Binding Name}"  HorizontalTextAlignment="Start" FontSize="18" Padding="5,5" />
+
+                        </Border>
+                    </Grid>
+
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+
+        <Grid Margin="0,2" HeightRequest="50">
+            <Grid.RowDefinitions>
+                <RowDefinition></RowDefinition>
+            </Grid.RowDefinitions>
+
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="50*" />
+                <ColumnDefinition Width="50*" />
+            </Grid.ColumnDefinitions>
+
+            <Button x:Name="btnOK" Text="确定" Grid.Column="0" BorderWidth="1" BorderColor="DodgerBlue" TextColor="DodgerBlue" WidthRequest="100" BackgroundColor="Transparent" Clicked="btnOK_Clicked"></Button>
+            <Button x:Name="btnCancel" Text="取消" Grid.Column="1" BorderWidth="1" BorderColor="LightGray" TextColor="Gray" WidthRequest="100" BackgroundColor="Transparent" Clicked="btnCancel_Clicked"></Button>
+        </Grid>
+    </VerticalStackLayout>
+
+</toolkit:Popup>
+
+    

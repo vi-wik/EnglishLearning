@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="EnglishLearning.App.Views.PhoneticAlphabet"
+             Title="">
+
+    <ContentPage.Resources>
+        <Style x:Key="VowelButtonStyle" BasedOn="{StaticResource ConsonantButton}" TargetType="Button">           
+        </Style>
+    </ContentPage.Resources>
+
+    <ScrollView>
+        <VerticalStackLayout>
+
+            <Label Text="辅音" BackgroundColor="LightBlue" FontSize="18"  FontAttributes="Bold" />
+
+            <Grid x:Name="gvConsonant" Padding="10" RowSpacing="10" ColumnSpacing="2" 
+              ColumnDefinitions="*,*,*,*">
+            </Grid>
+
+            <Label Text="元音" BackgroundColor="LightBlue" FontSize="18"  FontAttributes="Bold" Margin="0,5"/>
+            
+            <Grid  x:Name="gvVowel" Padding="10" RowSpacing="10" ColumnSpacing="2"
+                 ColumnDefinitions="*,*,*,*">
+            </Grid>
+        </VerticalStackLayout>
+    </ScrollView>
+    
+</ContentPage>

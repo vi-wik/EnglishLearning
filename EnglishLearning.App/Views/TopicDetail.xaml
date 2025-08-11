@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+             xmlns:controls="clr-namespace:EnglishLearning.App.Controls"
+             x:Class="EnglishLearning.App.Views.TopicDetail"
+             Title="">
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <toolkit:IsStringNotNullOrEmptyConverter x:Key="IsStringNotNullOrEmptyConverter" />
+        </ResourceDictionary>
+    </ContentPage.Resources>
+
+    <ContentPage.ToolbarItems>
+        <ToolbarItem x:Name="tbiSearch" Text="" Clicked="tbiShowSearchControl_Clicked">
+            <ToolbarItem.IconImageSource>
+                <FontImageSource FontFamily="FASolid" Glyph="{StaticResource search}"  Color="White" Size="20"></FontImageSource>
+            </ToolbarItem.IconImageSource>
+        </ToolbarItem>        
+    </ContentPage.ToolbarItems>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"></RowDefinition>
+            <RowDefinition Height="*"></RowDefinition>
+        </Grid.RowDefinitions>
+
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition  Width="1.5*" />
+            <ColumnDefinition  Width="7.5*" />
+            <ColumnDefinition  Width="1*"/>
+        </Grid.ColumnDefinitions>
+
+        <Picker Title="" x:Name="picker" IsVisible="False"  HeightRequest="50" HorizontalTextAlignment="Center" BackgroundColor="AliceBlue" >
+            <Picker.Items>
+                <x:String>按栏位</x:String>
+                <x:String>按标题</x:String>
+                <x:String>二者都</x:String>              
+            </Picker.Items>
+        </Picker>
+
+        <Entry x:Name="txtKeyword" IsVisible="False" Grid.Column="1" Placeholder="请输入关键字"                          
+               ClearButtonVisibility="WhileEditing"
+               Completed="txtKeyword_Completed"             
+               HeightRequest="50"/>
+
+        <ImageButton  x:Name="btnSearch" IsVisible="False" Grid.Column="2"  WidthRequest="20" HeightRequest="20"  Clicked="OnSearchButtonClicked">
+            <ImageButton.Source>
+                <FontImageSource   FontFamily="FASolid" Glyph="{StaticResource search}"  Color="DodgerBlue" Size="16"/>
+            </ImageButton.Source>
+        </ImageButton>
+
+        <CollectionView x:Name="lvMedias" IsGrouped="True" Grid.Row="1" Grid.ColumnSpan="3"  SelectionMode="None"  Margin="0,2" >
+            <CollectionView.GroupHeaderTemplate>
+                <DataTemplate>
+                    <VerticalStackLayout Margin="5,0">
+                        <Label Text="{Binding Name}"
+                              BackgroundColor="LightBlue"
+                              FontSize="18"
+                              FontAttributes="Bold" />
+                        <Label Text="{Binding Description}" FontSize="12" Margin="0,2" IsVisible="{Binding Description, Converter={StaticResource IsStringNotNullOrEmptyConverter}}"></Label>
+                    </VerticalStackLayout>
+
+                </DataTemplate>
+            </CollectionView.GroupHeaderTemplate>
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <controls:MediaCardView></controls:MediaCardView>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+    </Grid>   
+
+</ContentPage>

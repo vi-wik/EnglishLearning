@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:controls="clr-namespace:EnglishLearning.App.Controls"
+             x:Class="EnglishLearning.App.Views.Favorite"
+             Title="我的收藏">
+
+    <RefreshView x:Name="refreshView">
+        <CollectionView x:Name="lvMedias" Grid.Row="1" IsGrouped="True"  SelectionMode="None" EmptyView="暂无数据"  Margin="0,2" >
+            <CollectionView.GroupHeaderTemplate>
+                <DataTemplate>
+                    
+                    <VerticalStackLayout BackgroundColor="LightBlue">
+                        <Label Text="{Binding CategoryName}"  Margin="5,0"                  
+                          FontSize="18"
+                          FontAttributes="Bold" />
+                    </VerticalStackLayout>
+
+                </DataTemplate>
+            </CollectionView.GroupHeaderTemplate>
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"></ColumnDefinition>
+                            <ColumnDefinition Width="*"></ColumnDefinition>
+                        </Grid.ColumnDefinitions>
+
+                        <controls:MediaCardView Grid.Column="1"></controls:MediaCardView>
+                    </Grid>
+
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+    </RefreshView>
+</ContentPage>

@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Shell
+    x:Class="EnglishLearning.App.AppShell"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:local="clr-namespace:EnglishLearning.App.Views"
+    Shell.FlyoutBehavior="Disabled"    
+    Title="">
+    
+    <TabBar>        
+        <Tab Title="词汇">
+            <Tab.Icon>
+                <FontImageSource FontFamily="FASolid" Glyph="{StaticResource book}"  />
+            </Tab.Icon>
+            <ShellContent Title="单词" ContentTemplate="{DataTemplate local:WordList}"  Route="WordList" />
+            <ShellContent Title="短语" ContentTemplate="{DataTemplate local:PhraseList}"  Route="PhraseList" />          
+            <ShellContent Title="背单词" ContentTemplate="{DataTemplate local:WordLearn}"  Route="WordLearn" />
+            <ShellContent Title="统计" ContentTemplate="{DataTemplate local:WordStatistic}"  Route="WordStatistic" />
+            <ShellContent  Title="技巧与辨析" ContentTemplate="{DataTemplate local:Subject }" Route="Vocabulary" />
+        </Tab>
+        <Tab Title="学习">
+            <Tab.Icon>
+                <FontImageSource FontFamily="FASolid" Glyph="{StaticResource learn}"  />
+            </Tab.Icon>
+            <ShellContent  Title="语调" ContentTemplate="{DataTemplate local:Subject }" Route="Intonation"  /> 
+            <ShellContent  Title="发音" ContentTemplate="{DataTemplate local:Subject }" Route="Pronunciation" />
+            <ShellContent  Title="音素" ContentTemplate="{DataTemplate local:PhoneticAlphabet }" Route="PhoneticAlphabet" />
+            <ShellContent  Title="语法" ContentTemplate="{DataTemplate local:Subject }" Route="Grammar" />
+            <ShellContent  Title="文化习俗" ContentTemplate="{DataTemplate local:Subject }" Route="Culture_Custom" />
+        </Tab>
+        <Tab Title="培养">
+            <Tab.Icon>
+                <FontImageSource FontFamily="FASolid" Glyph="{StaticResource trendUp}"  />
+            </Tab.Icon>
+            <ShellContent  Title="心态" ContentTemplate="{DataTemplate local:Subject }" Route="Mindset" />
+            <ShellContent  Title="思维" ContentTemplate="{DataTemplate local:Subject }" Route="Thinking" />
+            <ShellContent  Title="信心" ContentTemplate="{DataTemplate local:Subject }" Route="Confidence" />
+            <ShellContent  Title="习惯" ContentTemplate="{DataTemplate local:Subject }" Route="Habit" />
+        </Tab>
+        <Tab Title="运用">
+            <Tab.Icon>
+                <FontImageSource FontFamily="FASolid" Glyph="{StaticResource comments}"  />
+            </Tab.Icon>
+            <ShellContent  Title="谈话" ContentTemplate="{DataTemplate local:Subject }" Route="Conversation" />
+            <ShellContent  Title="求职" ContentTemplate="{DataTemplate local:Subject }" Route="Job-hunting" />
+            <ShellContent  Title="工作" ContentTemplate="{DataTemplate local:Subject }" Route="Work" />
+            <ShellContent  Title="生活" ContentTemplate="{DataTemplate local:Subject }" Route="Life" />                    
+        </Tab>
+        <Tab Title="我的">
+            <Tab.Icon>                
+                <FontImageSource FontFamily="FASolid" Glyph="{StaticResource user}"  />
+            </Tab.Icon>
+            <ShellContent  Title="我的" ContentTemplate="{DataTemplate local:My }" Route="My" />          
+        </Tab>
+    </TabBar>   
+    
+</Shell>
