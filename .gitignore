@@ -29,3 +29,5 @@
 /EnglishLearning.Model/bin/x86/Debug/netstandard2.1
 /EnglishLearning.Data/.vs
 /EnglishLearning.Data/bin
+/EnglishLearning.App/bin/ARM64
+/EnglishLearning.Business/bin/ARM64
