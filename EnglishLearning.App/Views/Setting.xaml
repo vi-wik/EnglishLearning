@@ -115,8 +115,8 @@
                 <Border Padding="2" Margin="15,5" BackgroundColor="SkyBlue">
 
                     <HorizontalStackLayout>
-                        <Label Text="当前版本："  HorizontalTextAlignment="Start" FontSize="18" Padding="10,5" />
-                        <Label x:Name="lblVersion"  HorizontalTextAlignment="Start" FontSize="18" Padding="10,5" />
+                        <Label Text="当前版本："  HorizontalTextAlignment="Start" FontSize="13" Padding="2,5" />
+                        <Label x:Name="lblVersion"  HorizontalTextAlignment="Start" FontSize="13" Padding="0,5" />
                     </HorizontalStackLayout>                  
                     
                 </Border>
@@ -124,8 +124,8 @@
                 <Border Padding="2" Margin="15,5" BackgroundColor="SkyBlue">
                     
                     <HorizontalStackLayout>
-                        <Label Text="项目地址："  HorizontalTextAlignment="Start" FontSize="18" Padding="10,5" />
-                        <Label x:Name="lblProjectUrl" TextColor="Blue" TextDecorations="Underline" HorizontalTextAlignment="Start" FontSize="18" Padding="10,5" >
+                        <Label Text="项目地址："  HorizontalTextAlignment="Start" FontSize="13" Padding="2,5" />
+                        <Label x:Name="lblProjectUrl" TextColor="Blue" TextDecorations="Underline" HorizontalTextAlignment="Start" VerticalTextAlignment="Center" FontSize="13" Padding="0,5" >
                             <Label.GestureRecognizers>
                                 <TapGestureRecognizer Tapped="TapGestureRecognizer_ProjectUrlTapped" NumberOfTapsRequired="1" />
                             </Label.GestureRecognizers>                          
