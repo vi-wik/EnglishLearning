@@ -7,9 +7,12 @@
     <FileVersion>1.0.0</FileVersion>
     <PackageId>viwik.$(AssemblyName)</PackageId>
     <Version>1.0.0</Version>
-    <Authors>viwik</Authors>
+    <Authors>vi-wik</Authors>
     <AssemblyName>viwik.$(MSBuildProjectName)</AssemblyName>
     <RootNamespace>viwik.$(MSBuildProjectName.Replace(" ", "_"))</RootNamespace>
+    <Description>英语学习数据文件</Description>
+    <PackageReleaseNotes>初始数据</PackageReleaseNotes>
+    <PackageProjectUrl>https://github.com/vi-wik/EnglishLearning</PackageProjectUrl>
   </PropertyGroup>
 
   <ItemGroup>
