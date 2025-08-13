@@ -333,7 +333,7 @@ public partial class MediaPlayer : ContentPage
 
             if (success)
             {
-                this.favorite = await DbObjectsFetcher.GetMediaFavoriteByMediaId(this.media.MediaId);
+                this.favorite = await DataProcessor.GetMediaFavoriteByMediaId(this.media.MediaId);
 
                 this.SetStatusForFavorite(true);
 

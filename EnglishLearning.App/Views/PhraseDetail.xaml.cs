@@ -85,7 +85,7 @@ public partial class PhraseDetail : ContentPage
 
             this.btnVOCAB.IsVisible = true;
 
-            this.vocab = await DbObjectsFetcher.GetVOCAB(EnglishObjectType.Phrase, this.phrase.Id);
+            this.vocab = await DataProcessor.GetVOCAB(EnglishObjectType.Phrase, this.phrase.Id);
         }
         else
         {
@@ -117,7 +117,7 @@ public partial class PhraseDetail : ContentPage
 
             if (success)
             {
-                this.vocab = await DbObjectsFetcher.GetVOCAB(EnglishObjectType.Phrase, this.phrase.Id);
+                this.vocab = await DataProcessor.GetVOCAB(EnglishObjectType.Phrase, this.phrase.Id);
 
                 this.SetStatusForVOCAB(true);
 

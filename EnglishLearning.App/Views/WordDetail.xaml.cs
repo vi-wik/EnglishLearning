@@ -235,7 +235,7 @@ public partial class WordDetail : ContentPage
 
             this.btnVOCAB.IsVisible = true;
 
-            this.vocab = await DbObjectsFetcher.GetVOCAB(EnglishObjectType.Word, this.englishWord.Id);
+            this.vocab = await DataProcessor.GetVOCAB(EnglishObjectType.Word, this.englishWord.Id);
         }
         else
         {
@@ -563,7 +563,7 @@ public partial class WordDetail : ContentPage
 
             if (success)
             {
-                this.vocab = await DbObjectsFetcher.GetVOCAB(EnglishObjectType.Word, this.englishWord.Id);
+                this.vocab = await DataProcessor.GetVOCAB(EnglishObjectType.Word, this.englishWord.Id);
 
                 this.SetStatusForVOCAB(true);
 
