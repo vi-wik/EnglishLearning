@@ -358,7 +358,7 @@ namespace EnglishLearning.DataAccess
 
         public static async Task<IEnumerable<EnglishVowel>> GetEnglishVowels()
         {
-            string sql = "select * from EnglishVowel order by Priority";
+            string sql = "select * from EnglishVowel  where IsHidden=0 order by Priority";
 
             using (var connection = DbUtitlity.CreateDbConnection())
             {
@@ -532,21 +532,7 @@ namespace EnglishLearning.DataAccess
             {
                 return (await connection.QueryAsync<V_EnglishVowelMedia>(sql));
             }
-        }
-
-        public static async Task<IEnumerable<EnglishVowel>> GetEnglishVowelsHaveMedias()
-        {
-            string sql = $@"select v.Id,v.Vowel,v.USVowel,v.UKVowel,v.Description,v.Priority from EnglishVowel v 
-                            join EnglishVowelMedia m on v.Id=m.VowelId 
-                            group by v.Id,v.Vowel,v.USVowel,v.UKVowel,v.Description,v.Priority
-                            having count(1)>0
-                            order by v.Priority";
-
-            using (var connection = DbUtitlity.CreateDbConnection())
-            {
-                return (await connection.QueryAsync<EnglishVowel>(sql));
-            }
-        }
+        }       
 
         public static async Task<IEnumerable<V_EnglishPhraseMedia>> GetVEnglishPhraseMedias(int phraseId)
         {

@@ -3,16 +3,17 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.1</TargetFramework>
     <Nullable>enable</Nullable>
-    <AssemblyVersion>1.0.0</AssemblyVersion>
-    <FileVersion>1.0.0</FileVersion>
+    <AssemblyVersion>1.0.1</AssemblyVersion>
+    <FileVersion>1.0.1</FileVersion>
     <PackageId>viwik.$(AssemblyName)</PackageId>
-    <Version>1.0.0</Version>
+    <Version>1.0.1</Version>
     <Authors>vi-wik</Authors>
     <AssemblyName>viwik.$(MSBuildProjectName)</AssemblyName>
     <RootNamespace>viwik.$(MSBuildProjectName.Replace(" ", "_"))</RootNamespace>
     <Description>英语学习数据文件</Description>
-    <PackageReleaseNotes>初始数据</PackageReleaseNotes>
+    <PackageReleaseNotes>元音与媒体关系部分调整</PackageReleaseNotes>
     <PackageProjectUrl>https://github.com/vi-wik/EnglishLearning</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/vi-wik/EnglishLearning</RepositoryUrl>
   </PropertyGroup>
 
   <ItemGroup>

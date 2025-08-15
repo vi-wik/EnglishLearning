@@ -120,12 +120,7 @@ namespace EnglishLearning.Business
         public static async Task<IEnumerable<EnglishVowel>> GetEnglishVowels()
         {
             return await DbObjectsFetcher.GetEnglishVowels();
-        }
-
-        public static async Task<IEnumerable<EnglishVowel>> GetEnglishVowelsHaveMedias()
-        {
-            return await DbObjectsFetcher.GetEnglishVowelsHaveMedias();
-        }
+        }               
 
         public static async Task<EnglishVowel> GetEnglishVowel(int vowelId)
         {

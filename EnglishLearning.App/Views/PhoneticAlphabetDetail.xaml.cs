@@ -60,7 +60,7 @@ public partial class PhoneticAlphabetDetail : ContentPage
         }
         else if (this.Content is EnglishVowel vowel)
         {
-            this.Title = "ิชา๔ฃบ" + vowel.USVowel;
+            this.Title = "ิชา๔ฃบ" + vowel.Vowel;
             this.lblDescription.Text = vowel.Description;
             this.lblDescription.IsVisible = !string.IsNullOrEmpty(vowel.Description);
 

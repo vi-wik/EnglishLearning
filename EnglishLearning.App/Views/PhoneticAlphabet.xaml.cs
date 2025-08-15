@@ -54,7 +54,7 @@ public partial class PhoneticAlphabet : ContentPage
             }
         }        
 
-        var vowels = (await DataProcessor.GetEnglishVowelsHaveMedias()).ToList();
+        var vowels = (await DataProcessor.GetEnglishVowels()).ToList();
 
         int vowelCount = vowels.Count();
         int vowelRowCount = vowelCount % itemsCountOfEachRow == 0 ? vowelCount / itemsCountOfEachRow : vowelCount / itemsCountOfEachRow + 1;
@@ -72,32 +72,25 @@ public partial class PhoneticAlphabet : ContentPage
 
         for (int i = 0; i < vowelRowCount; i++)
         {
-            List<string> usVowels = new List<string>();
-
             for (int j = 0; j < itemsCountOfEachRow; j++)
             {
                 var vowel = vowels[index];
 
-                string usVowel = vowel.USVowel;
+                string v = vowel.Vowel;
 
-                if(!usVowels.Contains(usVowel))
+                Button btn = new Button() { Text = v, CommandParameter = vowel };
+                btn.Clicked += this.Button_Clicked;
+
+                btn.Style = (Style)Resources["VowelButtonStyle"];
+
+                this.gvVowel.Add(btn, j, i);               
+
+                index++;
+
+                if (index >= vowelCount)
                 {
-                    Button btn = new Button() { Text = usVowel, CommandParameter = vowel };
-                    btn.Clicked += this.Button_Clicked;
-
-                    btn.Style = (Style)Resources["VowelButtonStyle"];
-
-                    this.gvVowel.Add(btn, j, i);
-
-                    usVowels.Add(usVowel);
-
-                    index++;
-
-                    if (index >= vowelCount)
-                    {
-                        break;
-                    }
-                }              
+                    break;
+                }
             }
         }
     }

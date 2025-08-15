@@ -48,9 +48,11 @@ public partial class Subject : ContentPage
 
         this.lvMedias.ItemsSource = medias;
 
-        this.lblDetailsTitle.IsVisible = this.lblIntroductionTitle.IsVisible = medias.Count() > 0;
+        this.lblIntroductionTitle.IsVisible = medias.Count() > 0;
 
         var topics = await DataProcessor.GetEnglishTopics(this.subjectId);
+
+        this.lblDetailsTitle.IsVisible = topics.Count() > 0;
 
         this.lvTopics.ItemsSource = topics;
 
