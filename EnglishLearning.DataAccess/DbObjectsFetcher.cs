@@ -830,7 +830,7 @@ namespace EnglishLearning.DataAccess
             }
         }
 
-        public static async Task<int> GetEnglishWordLearnNextId(EnglishExamType examType)
+        public static async Task<int> GetEnglishWordNotLearnNextId(EnglishExamType examType)
         {
             int weight = examType.Weight;
             int examTypeId = examType.Id;

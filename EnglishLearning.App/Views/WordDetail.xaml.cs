@@ -621,7 +621,7 @@ public partial class WordDetail : ContentPage
 
         if (success)
         {
-            int nextWordId = await DataProcessor.GetEnglishWordLearnNextId(this.learningEnglishExamType);
+            int nextWordId = await DataProcessor.GetEnglishWordNotLearnNextId(this.learningEnglishExamType);
 
             if (nextWordId > 0)
             {
@@ -629,6 +629,10 @@ public partial class WordDetail : ContentPage
                 this.SetToolbarItemStatus(true);
 
                 this.ShowWord(nextWordId);
+            }
+            else
+            {
+                await DisplayAlert("提示", "没有更多了。", "确定");
             }
         }
     }

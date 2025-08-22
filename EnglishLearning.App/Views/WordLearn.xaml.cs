@@ -8,10 +8,11 @@ namespace EnglishLearning.App.Views;
 public partial class WordLearn : ContentPage
 {
     private bool isLoaded = false;
+    private List<EnglishExamStatisticInfo> statistics;
 
-	public WordLearn()
-	{
-		InitializeComponent();     
+    public WordLearn()
+    {
+        InitializeComponent();
 
         this.LoadData();
 
@@ -23,7 +24,7 @@ public partial class WordLearn : ContentPage
         int itemsCountOfEachRow = 2;
 
         var examTypes = (await DataProcessor.GetEnglishExamTypes()).ToList();
-        var statistics = (await DataProcessor.GetEnglishExamStatistics()).ToList();
+        this.statistics = (await DataProcessor.GetEnglishExamStatistics()).ToList();
 
         int count = examTypes.Count();
         int rowCount = count % itemsCountOfEachRow == 0 ? count / itemsCountOfEachRow : count / itemsCountOfEachRow + 1;
@@ -49,7 +50,7 @@ public partial class WordLearn : ContentPage
                 border.Stroke = Colors.LightBlue;
                 border.StrokeThickness = 1;
                 border.Margin = new Thickness(10, 10);
-                border.Padding = new Thickness(5,5);
+                border.Padding = new Thickness(5, 5);
                 border.StrokeShape = new RoundRectangle
                 {
                     CornerRadius = new CornerRadius(4, 4, 4, 4)
@@ -72,19 +73,19 @@ public partial class WordLearn : ContentPage
 
                 layout.Add(nameLabel);
 
-                var statisticInfo = statistics.FirstOrDefault(item => item.Id == examType.Id);
+                var statisticInfo = this.statistics.FirstOrDefault(item => item.Id == examType.Id);
 
                 Label statisticLabel = new Label();
                 statisticLabel.BindingContext = statisticInfo;
                 statisticLabel.Margin = new Thickness(0, 5);
-                statisticLabel.HorizontalOptions= LayoutOptions.Center;
+                statisticLabel.HorizontalOptions = LayoutOptions.Center;
                 statisticLabel.Text = this.GetStatisticDisplayText(statisticInfo);
                 statisticLabel.FontSize = 14;
                 statisticLabel.TextColor = Colors.Gray;
 
                 layout.Add(statisticLabel);
 
-                border.Content = layout;               
+                border.Content = layout;
 
                 this.gvExamType.Add(border, j, i);
 
@@ -110,29 +111,29 @@ public partial class WordLearn : ContentPage
 
     private async void RefreshData()
     {
-        if(!this.isLoaded)
+        if (!this.isLoaded)
         {
             return;
         }
 
-        var statistics = (await DataProcessor.GetEnglishExamStatistics()).ToList();
+        this.statistics = (await DataProcessor.GetEnglishExamStatistics()).ToList();
 
         var controls = this.gvExamType.GetVisualTreeDescendants();
 
-        foreach(var control in controls)
+        foreach (var control in controls)
         {
-            if(control is Label)
+            if (control is Label)
             {
                 Label label = control as Label;
 
                 if (label.BindingContext is EnglishExamStatisticInfo info)
                 {
-                    var statisticInfo = statistics.FirstOrDefault(item => item.Id == info.Id);
+                    var statisticInfo = this.statistics.FirstOrDefault(item => item.Id == info.Id);
 
-                    if(statisticInfo!=null)
+                    if (statisticInfo != null)
                     {
                         label.Text = this.GetStatisticDisplayText(statisticInfo);
-                    }                   
+                    }
                 }
             }
         }
@@ -147,28 +148,28 @@ public partial class WordLearn : ContentPage
             this.ShowDetail(border.BindingContext);
         }
     }
-
-    private void Button_Clicked(object sender, EventArgs e)
-    {
-        var border = (sender as Border);
-
-        if (border != null)
-        {
-            //this.ShowDetail(btn.CommandParameter);
-        }
-    }
+   
 
     private async void ShowDetail(object content)
     {
         EnglishExamType examType = content as EnglishExamType;
 
-        int wordId = await DataProcessor.GetEnglishWordLearnNextId(examType);
+        int wordId = await DataProcessor.GetEnglishWordNotLearnNextId(examType);
 
-        if(wordId>0)
+        if (wordId > 0)
         {
             WordDetail wordDetail = (WordDetail)Activator.CreateInstance(typeof(WordDetail), wordId, examType);
 
             await Navigation.PushAsync(wordDetail);
-        }       
+        }
+        else
+        {
+            var statisticInfo = this.statistics.FirstOrDefault(item => item.Id == examType.Id);
+
+            if(statisticInfo != null && statisticInfo.Total>0 && statisticInfo.Total == statisticInfo.LearnedCount)
+            {
+                await DisplayAlert("提示", "该科目已学完。", "确定");
+            }              
+        }
     }
 }

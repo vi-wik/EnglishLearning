@@ -287,9 +287,9 @@ namespace EnglishLearning.Business
             return await DbObjectsFetcher.GetEnglishExamTypes();
         }
 
-        public static async Task<int> GetEnglishWordLearnNextId(EnglishExamType examType)
+        public static async Task<int> GetEnglishWordNotLearnNextId(EnglishExamType examType)
         {
-            return await DbObjectsFetcher.GetEnglishWordLearnNextId(examType);
+            return await DbObjectsFetcher.GetEnglishWordNotLearnNextId(examType);
         }
 
         public static async Task<bool> SaveWordLearnHistory(EnglishExamType examType, V_EnglishWord word)
