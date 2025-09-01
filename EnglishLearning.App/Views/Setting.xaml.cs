@@ -59,13 +59,13 @@ public partial class Setting : ContentPage
 
     private async void TapGestureRecognizer_BackupDataTapped(object sender, TappedEventArgs e)
     {
-        if (!(await PermissionHelper.CheckPermission(PermissionType.Write)))
+        if (!(await PermissionHelper.CheckReadWritePermission(PermissionType.Write)))
         {
             return;
         }
 
         string targetFileName = $"english_{DateTime.Now.ToString("yyyyMMdd")}.db3";
-
+ 
         string dataFilePath = DataFileManager.DataFilePath;
 
         if (File.Exists(dataFilePath))
@@ -99,7 +99,7 @@ public partial class Setting : ContentPage
 
     private async void TapGestureRecognizer_ImportDataTapped(object sender, TappedEventArgs e)
     {
-        if (!(await PermissionHelper.CheckPermission(PermissionType.Read)))
+        if (!(await PermissionHelper.CheckReadWritePermission(PermissionType.Read)))
         {
             return;
         }
@@ -134,7 +134,7 @@ public partial class Setting : ContentPage
 
     private async void TapGestureRecognizer_ViewLogTapped(object sender, TappedEventArgs e)
     {
-        if (!(await PermissionHelper.CheckPermission(PermissionType.Read)))
+        if (!(await PermissionHelper.CheckReadWritePermission(PermissionType.Read)))
         {
             return;
         }
@@ -150,7 +150,7 @@ public partial class Setting : ContentPage
 
         if (confirmed)
         {
-            if (!(await PermissionHelper.CheckPermission(PermissionType.Write)))
+            if (!(await PermissionHelper.CheckReadWritePermission(PermissionType.Write)))
             {
                 await DisplayAlert("提示", "无写入权限！", "确定");
                 return;

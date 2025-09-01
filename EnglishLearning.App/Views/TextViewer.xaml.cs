@@ -65,7 +65,7 @@ public partial class TextViewer : ContentPage
 
         if (text.Length > 0)
         {
-            if (!(await PermissionHelper.CheckPermission(PermissionType.Write)))
+            if (!(await PermissionHelper.CheckReadWritePermission(PermissionType.Write)))
             {
                 return;
             }

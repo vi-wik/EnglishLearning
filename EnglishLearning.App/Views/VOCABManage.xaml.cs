@@ -32,7 +32,7 @@ public partial class VOCABManage : ContentPage
                 return;
             }
 
-            if (!(await PermissionHelper.CheckPermission(PermissionType.Write)))
+            if (!(await PermissionHelper.CheckReadWritePermission(PermissionType.Write)))
             {
                 return;
             }

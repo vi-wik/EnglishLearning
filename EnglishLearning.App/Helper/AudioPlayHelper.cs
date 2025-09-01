@@ -19,7 +19,7 @@ namespace EnglishLearning.App.Helper
 
             if (setting != null)
             {
-                if ((await PermissionHelper.CheckPermission(PermissionType.Read)))
+                if ((await PermissionHelper.CheckReadWritePermission(PermissionType.Read)))
                 {
                     string folder = setting.PronunciationFileRootFolder;
 

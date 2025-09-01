@@ -1,4 +1,6 @@
-﻿namespace EnglishLearning.Business.Helper
+﻿using Microsoft.Maui.Controls.PlatformConfiguration;
+
+namespace EnglishLearning.Business.Helper
 {
     public enum PermissionType
     {
@@ -8,7 +10,7 @@
 
     public class PermissionHelper
     {
-        public static async Task<bool> CheckPermission(PermissionType type)
+        public static async Task<bool> CheckReadWritePermission(PermissionType type)
         {
             PermissionStatus status = type == PermissionType.Read ?
                 await Permissions.CheckStatusAsync<Permissions.StorageRead>() :
@@ -27,6 +29,6 @@
             }
 
             return true;
-        }
+        }       
     }
 }
