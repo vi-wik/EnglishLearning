@@ -9,6 +9,7 @@ using zoft.MauiExtensions.Core.Extensions;
 using EnglishLearning.Business.Model;
 using EnglishLearning.Business.Helper;
 using EnglishLearning.Business.Manager;
+using System.Text;
 
 namespace EnglishLearning.App.Views;
 
@@ -51,7 +52,7 @@ public partial class WordDetail : ContentPage
             this.scrollView.GestureRecognizers.Clear();
         }
 
-        this.ShowWord(wordId);
+        this.ShowWord(wordId, this.setting.AutoPlayAudioWhenLearnWord && learningEnglishExamType != null);
     }
 
     private void SetToolbarItemStatus(bool enable)
@@ -63,7 +64,7 @@ public partial class WordDetail : ContentPage
     }
 
 
-    private async void ShowWord(int wordId)
+    private async void ShowWord(int wordId, bool playAudio = false)
     {
         bool hasMedias = false;
 
@@ -96,14 +97,21 @@ public partial class WordDetail : ContentPage
             this.SetPronunciationDisplayText(this.lblUK_Pronunciation, this.englishWord.UK_Pronunciation);
             this.btnVOCAB.IsVisible = true;
 
+            if (playAudio)
+            {
+                this.PlayAudio(this.englishWord.Word, true);
+            }
+
             #region 考试类型
             int? examType = this.englishWord.ExamType;
 
-            this.ExamTypeLayout.IsVisible = examType.HasValue;
+            this.lblExamType.IsVisible = examType.HasValue;
 
             if (examType.HasValue)
             {
                 var examTypes = await DataProcessor.GetEnglishExamTypes();
+
+                StringBuilder sb = new StringBuilder();
 
                 foreach (EnglishExamType type in examTypes)
                 {
@@ -111,24 +119,17 @@ public partial class WordDetail : ContentPage
 
                     if ((weight & examType.Value) == weight)
                     {
-                        Border border = new Border();
-                        border.Stroke = Colors.Gray;
-                        border.StrokeThickness = 1;
-                        border.Margin = new Thickness(3, 0);
-                        border.Padding = new Thickness(3, 3);
-                        border.StrokeShape = new RoundRectangle
+                        bool isFirst = sb.Length == 0;
+
+                        if(!isFirst)
                         {
-                            CornerRadius = new CornerRadius(4, 4, 4, 4)
-                        };
+                            sb.Append(" / ");
+                        }
 
-                        Label label = new Label() { Text = type.Name };
-                        label.TextColor = Colors.Gray;
-                        label.FontSize = 10;
-
-                        border.Content = label;
-
-                        this.ExamTypeLayout.Children.Add(border);
+                        sb.Append(type.Name);
                     }
+
+                    this.lblExamType.Text = sb.ToString();
                 }
             }
             #endregion
@@ -143,19 +144,19 @@ public partial class WordDetail : ContentPage
 
                 if (this.hasSpecialMeaning)
                 {
-                    if(!this.setting.ShowWordFullMeaning)
+                    if (!this.setting.ShowWordFullMeaning)
                     {
                         this.btnShowAllMeaning.IsVisible = true;
                     }
                     else
                     {
                         this.btnHideSpecalMeaning.IsVisible = true;
-                    }    
-                }              
+                    }
+                }
             }
             else
             {
-                this.hasSpecialMeaning = false;               
+                this.hasSpecialMeaning = false;
             }
 
             this.ShowMeanings(wordId, this.setting.ShowWordFullMeaning);
@@ -176,6 +177,7 @@ public partial class WordDetail : ContentPage
             if (syllableCount > 1)
             {
                 this.lblSyllable.IsVisible = true;
+
                 UIHelper.SetEnglishWordSyllableDisplayText(this.lblSyllable, this.englishWord.Word, syllables);
             }
             else
@@ -270,7 +272,7 @@ public partial class WordDetail : ContentPage
         return this.partOfSpeeches.Contains("n") || this.partOfSpeeches.Contains("un");
     }
 
-    private async void ShowMeanings(int wordId, bool showFullMeaning=false)
+    private async void ShowMeanings(int wordId, bool showFullMeaning = false)
     {
         var meanings = await DataProcessor.GetEnglishWordMeanings(this.englishWord.Id, new EnglishWordMeaningFilter() { ShowSpecialMeaning = showFullMeaning });
 
@@ -311,6 +313,7 @@ public partial class WordDetail : ContentPage
                 if (typeId == 1)
                 {
                     partOfSpeech = "n";
+
                     meaning = getMeaning(wordInflection);
                 }
                 else if (typeId == 2 || typeId == 3 || typeId == 4 || typeId == 5)
@@ -326,6 +329,7 @@ public partial class WordDetail : ContentPage
                     else
                     {
                         existing = true;
+
                         exitingItem.Meaning += $"及{wordInflection.TypeName}";
                     }
 
@@ -361,7 +365,7 @@ public partial class WordDetail : ContentPage
             if (partOfSpeech != null)
             {
                 meaning.PartOfSpeech += ".";
-            }            
+            }
         }
 
         object partOfSpeechColumnWidth = 40;
@@ -377,7 +381,7 @@ public partial class WordDetail : ContentPage
 
         displayMeanings.ForEach(item => { item.PartOfSpeechColumnWidth = partOfSpeechColumnWidth; });
 
-        this.lvMeanings.ItemsSource = displayMeanings;      
+        this.lvMeanings.ItemsSource = displayMeanings;
     }
 
     private async void ShowInflections(int wordId)
@@ -455,6 +459,13 @@ public partial class WordDetail : ContentPage
             else if (typeId == 2 || typeId == 3 || typeId == 4 || typeId == 5)
             {
                 if (!this.HasVerb())
+                {
+                    continue;
+                }
+            }
+            else if (typeId == 6 || typeId == 7)
+            {
+                if (!this.HasAdj())
                 {
                     continue;
                 }
@@ -550,9 +561,13 @@ public partial class WordDetail : ContentPage
         {
             bool isUS = parameter == "US";
 
-            AudioPlayHelper.PlayEnglishWord(this.englishWord.Word, isUS);
-
+            this.PlayAudio(this.englishWord.Word, isUS);
         }
+    }
+
+    private void PlayAudio(string word, bool isUS)
+    {
+        AudioPlayHelper.PlayEnglishWord(word, isUS);
     }
 
     private async void btnVOCAB_Clicked(object sender, EventArgs e)
@@ -567,7 +582,7 @@ public partial class WordDetail : ContentPage
 
                 this.SetStatusForVOCAB(true);
 
-                MessageHelper.ShowToastMessage("已添加到生词本。");
+                //MessageHelper.ShowToastMessage("已添加到生词本。");
             }
             else
             {
@@ -584,7 +599,7 @@ public partial class WordDetail : ContentPage
 
                 this.SetStatusForVOCAB(false);
 
-                MessageHelper.ShowToastMessage("已从生词本移除。");
+                //MessageHelper.ShowToastMessage("已从生词本移除。");
             }
             else
             {
@@ -603,7 +618,7 @@ public partial class WordDetail : ContentPage
 
     private void Reset()
     {
-        this.ExamTypeLayout.Children.Clear();
+        this.lblExamType.Text = "";
         this.gvWordInflection.Children.Clear();
 
         this.btnShowAllMeaning.IsVisible = false;
@@ -628,7 +643,7 @@ public partial class WordDetail : ContentPage
                 this.Reset();
                 this.SetToolbarItemStatus(true);
 
-                this.ShowWord(nextWordId);
+                this.ShowWord(nextWordId, this.setting.AutoPlayAudioWhenLearnWord);
             }
             else
             {
@@ -655,6 +670,7 @@ public partial class WordDetail : ContentPage
                 nextWordId = this.historyWordIds[index + 1];
 
                 this.Reset();
+
                 this.SetToolbarItemStatus(index + 1 == this.historyWordIds.Count - 1);
 
                 this.ShowWord(nextWordId.Value);
@@ -693,6 +709,7 @@ public partial class WordDetail : ContentPage
                 }
 
                 this.Reset();
+
                 this.ShowWord(previousWordId.Value);
             }
         }

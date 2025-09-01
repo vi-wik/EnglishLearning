@@ -18,6 +18,7 @@ public partial class CommonSetting : ContentPage
         this.chkShowWordMeaningWhenShowWordList.IsChecked = this.setting.ShowWordMeaningWhenShowWordList;
         this.chkShowWordMeaningWhenShowVOCABs.IsChecked = this.setting.ShowWordMeaningWhenShowVOCABs;
         this.chkShowWordFullMeaning.IsChecked = this.setting.ShowWordFullMeaning;
+        this.chkAutoPlayAudioWhenLearnWord.IsChecked = this.setting.AutoPlayAudioWhenLearnWord;
         this.chkEnableLog.IsChecked = this.setting.EnableLog;
         this.txtPronunciationFileRootFolder.Text = this.setting.PronunciationFileRootFolder;
 
@@ -64,6 +65,13 @@ public partial class CommonSetting : ContentPage
     private void chkShowWordFullMeaning_CheckedChanged(object sender, CheckedChangedEventArgs e)
     {
         this.setting.ShowWordFullMeaning = this.chkShowWordFullMeaning.IsChecked;
+
+        this.Save();
+    }
+
+    private void chkAutoPlayAudioWhenLearnWord_CheckedChanged(object sender, CheckedChangedEventArgs e)
+    {
+        this.setting.AutoPlayAudioWhenLearnWord = this.chkAutoPlayAudioWhenLearnWord.IsChecked;
 
         this.Save();
     }

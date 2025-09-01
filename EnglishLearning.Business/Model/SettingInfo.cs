@@ -8,6 +8,7 @@
         public bool EnableLog { get; set; }
         public int PronunciationBracketMode { get; set; } = 1;
         public bool ShowWordFullMeaning { get; set; }
+        public bool AutoPlayAudioWhenLearnWord { get; set; }
         public string PronunciationFileRootFolder { get; set; }
     }
 }

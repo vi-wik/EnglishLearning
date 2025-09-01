@@ -116,10 +116,9 @@
                     <ColumnDefinition Width="Auto"></ColumnDefinition>
                     <ColumnDefinition Width="*"></ColumnDefinition>
                 </Grid.ColumnDefinitions>
-            </Grid>
+            </Grid>         
 
-            <HorizontalStackLayout x:Name="ExamTypeLayout" Margin="5,10" HorizontalOptions="Start" IsVisible="False">
-            </HorizontalStackLayout>
+            <Label x:Name="lblExamType" Margin="10,10" HorizontalOptions="Start" IsVisible="False" TextColor="Gray" FontSize="13" LineBreakMode="WordWrap"></Label>
 
             <Label x:Name="lblIntroduction" Text="相关介绍"  VerticalOptions="Center" HorizontalOptions="Start" FontAttributes="Bold" Margin="10,10,10,2"  IsVisible="False"/>
 
