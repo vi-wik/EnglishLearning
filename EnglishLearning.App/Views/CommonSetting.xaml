@@ -5,7 +5,7 @@
              x:Class="EnglishLearning.App.Views.CommonSetting"
              Title="通用设置">
     <VerticalStackLayout>
-        <Grid RowDefinitions="*,*,*,*,*,*,*,*" Margin="5,2">
+        <Grid RowDefinitions="*,*,*,*,*,*,*,*,*" Margin="5,2">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"></ColumnDefinition>
                 <ColumnDefinition Width="60"></ColumnDefinition>
@@ -22,14 +22,17 @@
 
             <Label VerticalOptions="Center" Grid.Row="3">显示单词的全部含义（包括不常用、非正式、古语、废语等）</Label>
             <CheckBox x:Name="chkShowWordFullMeaning" Grid.Column="1" Grid.Row="3" CheckedChanged="chkShowWordFullMeaning_CheckedChanged"></CheckBox>
-            
-            <Label VerticalOptions="Center" Grid.Row="4">背单词时自动播放读音</Label>
-            <CheckBox x:Name="chkAutoPlayAudioWhenLearnWord" Grid.Column="1" Grid.Row="4" CheckedChanged="chkAutoPlayAudioWhenLearnWord_CheckedChanged"></CheckBox>
 
-            <Label VerticalOptions="Center" Grid.Row="5">启用日志</Label>
-            <CheckBox x:Name="chkEnableLog" Grid.Column="1" Grid.Row="5" CheckedChanged="chkEnableLog_CheckedChanged"></CheckBox>
+            <Label VerticalOptions="Center" Grid.Row="4">显示单词的音节划分</Label>
+            <CheckBox x:Name="chkShowWordSyllable" Grid.Column="1" Grid.Row="4" CheckedChanged="chkShowWordSyllabe_CheckedChanged"></CheckBox>
 
-            <HorizontalStackLayout Grid.Row="6" Grid.ColumnSpan="2">
+            <Label VerticalOptions="Center" Grid.Row="5">背单词时自动播放读音</Label>
+            <CheckBox x:Name="chkAutoPlayAudioWhenLearnWord" Grid.Column="1" Grid.Row="5" CheckedChanged="chkAutoPlayAudioWhenLearnWord_CheckedChanged"></CheckBox>
+
+            <Label VerticalOptions="Center" Grid.Row="6">启用日志</Label>
+            <CheckBox x:Name="chkEnableLog" Grid.Column="1" Grid.Row="6" CheckedChanged="chkEnableLog_CheckedChanged"></CheckBox>
+
+            <HorizontalStackLayout Grid.Row="7" Grid.ColumnSpan="2">
                 <Label VerticalOptions="Center">音标显示格式：</Label>
 
                 <Label VerticalOptions="Center">[ ɡʊd]</Label>
@@ -39,7 +42,7 @@
                 <RadioButton x:Name="rbPronunciationBracket2"  VerticalOptions="Center" CheckedChanged="rbPronunciationBracket_CheckedChanged" Value="2"  GroupName="PronunciationBracket"></RadioButton>
             </HorizontalStackLayout>
 
-            <VerticalStackLayout  Grid.Row="7" Grid.ColumnSpan="2">
+            <VerticalStackLayout  Grid.Row="8" Grid.ColumnSpan="2">
                 <Label VerticalOptions="Center">发音文件（音频文件）本地根目录：【其子目录应包含两个目录："uk"（英式）、"us"（美式）】</Label>
                 
                 <HorizontalStackLayout >                 

@@ -164,27 +164,39 @@ public partial class WordDetail : ContentPage
             #endregion           
 
             #region “ÙΩ⁄
-            var syllables = await DataProcessor.GetEnglishWordSyllables(wordId);
-            int syllableCount = syllables.Count();
+            bool showSyllable = false;
 
-            this.syllableCount = syllableCount;
-
-            if (syllableCount == 0)
+            if(this.setting.ShowWordSyllable)
             {
-                syllableCount = 1;
+                var syllables = await DataProcessor.GetEnglishWordSyllables(wordId);
+                int syllableCount = syllables.Count();
+
+                this.syllableCount = syllableCount;
+
+                if (syllableCount == 0)
+                {
+                    syllableCount = 1;
+                }
+
+                if (syllableCount > 1)
+                {
+                    showSyllable = true;
+
+                    UIHelper.SetEnglishWordSyllableDisplayText(this.lblSyllable, this.englishWord.Word, syllables);
+                }
+                else
+                {
+                    showSyllable = false;
+                }
             }
 
-            if (syllableCount > 1)
-            {
-                this.lblSyllable.IsVisible = true;
+            this.lblSyllable.IsVisible = showSyllable;
 
-                UIHelper.SetEnglishWordSyllableDisplayText(this.lblSyllable, this.englishWord.Word, syllables);
-            }
-            else
+            if (!showSyllable)
             {
-                this.lblSyllable.Text = "";
-                this.lblSyllable.IsVisible = false;
+                this.lblSyllable.Text = "";               
             }
+
             #endregion
 
             #region ±‰–Œ
