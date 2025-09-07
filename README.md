@@ -3,7 +3,7 @@
 英语学习，主要针对美式发音，适用于有一定英语基础的人。
 
 #### 主要功能
-1. 单词：含义、变形、异体，部分有示例、发音或含义讲解视频；
+1. 单词：含义、变形、异体、音节，部分有示例、发音或含义讲解视频；
 2. 短语：含义，部分有示例、视频讲解；
 3. 生词本：将单词或短语设为生词，包括导入、导出功能；
 4. 语法：列举了相关错误使用示例；
@@ -14,6 +14,23 @@
 
 #### 软件架构
 .NET8 MAUI
+
+#### 部分截图
+1. 单词详细
+
+![单词详细](https://github.com/vi-wik/StaticResources/raw/master/images/screenshots/EnglishLearning/WordDetail.jpg)
+
+2. 背单词
+
+![背单词](https://github.com/vi-wik/StaticResources/raw/master/images/screenshots/EnglishLearning/VOCAB.jpg)
+
+3. 设置
+
+![设置](https://github.com/vi-wik/StaticResources/raw/master/images/screenshots/EnglishLearning/Setting.jpg)
+
+4. 我的
+
+![我的](https://github.com/vi-wik/StaticResources/raw/master/images/screenshots/EnglishLearning/My.jpg)
 
 #### 应用下载
 [下载链接](https://pan.baidu.com/s/1NhF4YA7FVI6HIbaMiNCrPA?pwd=ycan)
