@@ -10,7 +10,7 @@
             }
             else if (word.EndsWith("y"))
             {
-                return word.Substring(word.Length - 1) + "ier";
+                return word.Substring(0, word.Length - 1) + "ier";
             }
             else
             {
@@ -26,7 +26,7 @@
             }
             else if (word.EndsWith("y"))
             {
-                return word.Substring(word.Length - 1) + "iest";
+                return word.Substring(0, word.Length - 1) + "iest";
             }
             else
             {
