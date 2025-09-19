@@ -13,12 +13,17 @@ namespace EnglishLearning.App.Helper
                 return isEnglish ? "." : "。";
             }
 
+            if (isEnglish && lastChar == '"')
+            {
+                return ".";
+            }
+
             return string.Empty;
         }
 
         public static void SetEnglishWordSyllableDisplayText(Label label, string word, IEnumerable<EnglishWordSyllable> syllables)
         {
-            label.FormattedText = new FormattedString();           
+            label.FormattedText = new FormattedString();
 
             string cleanWord = word.Replace("-", "").Replace(" ", "");
 
