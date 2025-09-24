@@ -31,3 +31,5 @@
 /EnglishLearning.Data/bin
 /EnglishLearning.App/bin/ARM64
 /EnglishLearning.Business/bin/ARM64
+/EnglishLearning.Business/bin
+/EnglishLearning.DataAccess/bin
