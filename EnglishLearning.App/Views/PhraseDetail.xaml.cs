@@ -70,7 +70,8 @@ public partial class PhraseDetail : ContentPage
             {
                 EnglishExampleDisplay display = new EnglishExampleDisplay();
 
-                display.Example = $"{order}. {example.Example}{UIHelper.MakeupPunctuation(example.Example, true)}";
+                display.Order = $"{order}.";
+                display.Example = $"{example.Example}{UIHelper.MakeupPunctuation(example.Example, true)}";
                 display.Meaning = $"{example.Meaning}{UIHelper.MakeupPunctuation(example.Meaning, false)}";
 
                 exampleDisplays.Add(display);

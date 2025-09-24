@@ -53,10 +53,10 @@
                     <HorizontalStackLayout x:Name="USPronunciationLayout" Grid.Row="0"  Margin="5,0" IsVisible="False">
                         <Label x:Name="lblUS" Text="美" Margin="5,3" FontSize="16" TextColor="Gray" IsVisible="False" VerticalOptions="Center"></Label>
                         <Label x:Name="lblUS_Pronunciation" TextColor="Blue"  Margin="3,0" FontSize="16" VerticalOptions="Center"></Label>
-                        <ImageButton x:Name="btnUSPronunciation" IsVisible="False" Margin="10,1"  WidthRequest="22" HeightRequest="22"                  
+                        <ImageButton x:Name="btnUSPronunciation" IsVisible="False" Margin="10,1"  WidthRequest="24" HeightRequest="24"          
                              Clicked="OnPronounceButtonClicked" CommandParameter="US" VerticalOptions="Center">
                             <ImageButton.Source>
-                                <FontImageSource   FontFamily="FASolid" Glyph="{StaticResource pronounce}"  Color="Orange" Size="10"/>
+                                <FontImageSource   FontFamily="FASolid" Glyph="{StaticResource pronounce}"  Color="Orange" Size="10" />
                             </ImageButton.Source>
                         </ImageButton>
                     </HorizontalStackLayout>
@@ -65,7 +65,7 @@
                         <Label  x:Name="lblUK" Text="英" IsVisible="False" Margin="5,3" TextColor="Gray" FontSize="16" VerticalOptions="Center"></Label>
                         <Label x:Name="lblUK_Pronunciation" TextColor="Blue"  Margin="3,0"  FontSize="16" VerticalOptions="Center"></Label>
 
-                        <ImageButton x:Name="btnUKPronunciation" IsVisible="False"  Margin="10,1"  WidthRequest="22" HeightRequest="22"                        
+                        <ImageButton x:Name="btnUKPronunciation" IsVisible="False"  Margin="10,1"  WidthRequest="24" HeightRequest="24"                       
                             Clicked="OnPronounceButtonClicked" CommandParameter="UK" VerticalOptions="Center">
                             <ImageButton.Source>
                                 <FontImageSource   FontFamily="FASolid" Glyph="{StaticResource pronounce}"  Color="Orange" Size="10"/>
@@ -74,10 +74,10 @@
 
                         <Label x:Name="lblSyllable" IsVisible="False" Margin="10,1" VerticalOptions="Center"></Label>
                     </HorizontalStackLayout>
-                </Grid>            
+                </Grid>
 
-                <ImageButton Grid.Column="1" x:Name="btnVOCAB" Margin="10,0" IsVisible="False" WidthRequest="22" HeightRequest="22" HorizontalOptions="EndAndExpand"               
-                Clicked="btnVOCAB_Clicked"  VerticalOptions="Start">
+                <ImageButton Grid.Column="1" x:Name="btnVOCAB" Margin="10,3" IsVisible="False" WidthRequest="24" HeightRequest="24" 
+                HorizontalOptions="EndAndExpand"  Clicked="btnVOCAB_Clicked"  VerticalOptions="Start">
                     <ImageButton.Source>
                         <FontImageSource x:Name="Font_VOCAB"  FontFamily="FARegular" Glyph="{StaticResource star}"  Color="Gray"  Size="10"/>
                     </ImageButton.Source>

@@ -46,7 +46,7 @@ public partial class SelectListItem : Popup
             return;
         }
 
-        await CloseAsync(selectedId.Value);
+        await CloseAsync();
     }
 
     private async void btnCancel_Clicked(object sender, EventArgs e)

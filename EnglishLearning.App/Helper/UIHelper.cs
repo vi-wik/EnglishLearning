@@ -13,9 +13,19 @@ namespace EnglishLearning.App.Helper
                 return isEnglish ? "." : "。";
             }
 
-            if (isEnglish && lastChar == '"')
+            if (isEnglish)
             {
-                return ".";
+                if (lastChar == '"' || lastChar == '%')
+                {
+                    return ".";
+                }
+            }
+            else
+            {
+                if (lastChar == '”' || lastChar == '%')
+                {
+                    return "。";
+                }
             }
 
             return string.Empty;

@@ -22,7 +22,7 @@
                TextChanged="txtKeyword_TextChanged" 
                Completed="txtKeyword_Completed"></Entry>           
 
-        <CollectionView x:Name="lvPhrase" Grid.Row="1" Grid.Column="0"  SelectionMode="None" EmptyView="" Margin="3,0" >
+        <CollectionView x:Name="lvPhrase" Grid.Row="1" Grid.Column="0"  SelectionMode="None" EmptyView="" Margin="0,0" >
             <CollectionView.ItemTemplate>
                 <DataTemplate>
                     <Grid>
@@ -45,9 +45,9 @@
         <CollectionView x:Name="lvPhraseAlphabet" Grid.Row="1" Grid.Column="1"  SelectionMode="None" EmptyView="" Margin="3,0" >
             <CollectionView.ItemTemplate>
                 <DataTemplate>
-                    <Grid>                      
+                    <Grid>
 
-                        <Button x:Name="btnAlphabet" Text="{Binding Alphabet}" WidthRequest="20" HeightRequest="20" TextColor="Black" Padding="0"  FontSize="14" Margin="0,1" BackgroundColor="Transparent" Clicked="btnAlphabet_Clicked"></Button>                     
+                        <Button x:Name="btnAlphabet" Text="{Binding Alphabet}" WidthRequest="20" HeightRequest="20" MaximumHeightRequest="20"  TextColor="Black" Padding="0"  FontSize="14" Margin="0,1" BackgroundColor="Transparent" Clicked="btnAlphabet_Clicked"></Button>                     
                       
                     </Grid>
                 </DataTemplate>

@@ -53,9 +53,9 @@
                SuggestionChosen="txtKeyword_SuggestionChosen"                                      
                HeightRequest="50"/>
 
-        <ImageButton  x:Name="btnSearch"  Grid.Column="1"  WidthRequest="20" HeightRequest="20"  Clicked="OnSearchButtonClicked">
+        <ImageButton  x:Name="btnSearch"  Grid.Column="1"  WidthRequest="20" HeightRequest="20" Clicked="OnSearchButtonClicked">
             <ImageButton.Source>
-                <FontImageSource   FontFamily="FASolid" Glyph="{StaticResource search}"  Color="DodgerBlue" Size="16"/>
+                <FontImageSource   FontFamily="FASolid" Glyph="{StaticResource search}"  Color="DodgerBlue" Size="10"/>
             </ImageButton.Source>
         </ImageButton>
 

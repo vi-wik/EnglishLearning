@@ -18,8 +18,8 @@
                 <Label x:Name="lblMeaning" Grid.Column="0" VerticalOptions="Center" HorizontalOptions="Fill"  FontSize="15"></Label>
             </HorizontalStackLayout>           
 
-            <ImageButton Grid.Column="1" x:Name="btnVOCAB" Margin="10,0" IsVisible="False" WidthRequest="22" HeightRequest="22" HorizontalOptions="EndAndExpand"               
-                Clicked="btnVOCAB_Clicked"  VerticalOptions="Center">
+            <ImageButton Grid.Column="1" x:Name="btnVOCAB" Margin="10,3" IsVisible="False" WidthRequest="22" HeightRequest="22" 
+                HorizontalOptions="EndAndExpand"   Clicked="btnVOCAB_Clicked"  VerticalOptions="Center" >
                 <ImageButton.Source>
                     <FontImageSource x:Name="Font_VOCAB"  FontFamily="FARegular" Glyph="{StaticResource star}"  Color="Gray"  Size="10"/>
                 </ImageButton.Source>
@@ -57,14 +57,19 @@
                 <DataTemplate>
                     <Grid>
 
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="20"></ColumnDefinition>
+                            <ColumnDefinition Width="*"></ColumnDefinition>
+                        </Grid.ColumnDefinitions>
                         <Grid.RowDefinitions>
                             <RowDefinition></RowDefinition>
                             <RowDefinition></RowDefinition>
                         </Grid.RowDefinitions>
 
-                        <Label Grid.Row="0" Text="{Binding Example}" Margin="0,2"></Label>
+                        <Label Grid.Column="0" Grid.Row="0" Text="{Binding Order}" HorizontalTextAlignment="Start" VerticalTextAlignment="Start"></Label>
+                        <Label Grid.Column="1" Grid.Row="0" Text="{Binding Example}"  ></Label>
 
-                        <Label Grid.Row="1" Text="{Binding Meaning}" Margin="14,2" TextColor="Gray"></Label>
+                        <Label Grid.Column="1" Grid.Row="1" Text="{Binding Meaning}" Margin="0,2" TextColor="Gray"></Label>
                     </Grid>
 
                 </DataTemplate>

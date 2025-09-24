@@ -23,7 +23,7 @@
         </Grid.ColumnDefinitions>
 
         <Border Grid.RowSpan="3" Padding="0,0">
-            <Image Source="{Binding ImageUrl}"
+            <Image x:Name="img"
                 Aspect="AspectFit"
                 WidthRequest="128"
                 HeightRequest="72"/>

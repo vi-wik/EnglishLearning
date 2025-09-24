@@ -1,3 +1,6 @@
+using CommunityToolkit.Maui.Core;
+using CommunityToolkit.Maui.Core.Primitives;
+using CommunityToolkit.Maui.Extensions;
 using CommunityToolkit.Maui.Views;
 using EnglishLearning.App.Helper;
 using EnglishLearning.Business;
@@ -223,7 +226,7 @@ public partial class MediaPlayer : ContentPage
         }
     }
 
-    private void player_PositionChanged(object sender, CommunityToolkit.Maui.Core.Primitives.MediaPositionChangedEventArgs e)
+    private void player_PositionChanged(object sender, MediaPositionChangedEventArgs e)
     {
         if (!this.hasAutoPaused)
         {

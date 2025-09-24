@@ -1,8 +1,10 @@
 using EnglishLearning.App.Views;
 using EnglishLearning.Business;
+using EnglishLearning.Business.Helper;
 using EnglishLearning.Business.Model;
 using EnglishLearning.Model;
 using System.Globalization;
+using System.Threading.Tasks;
 using MyMediaPlayer = EnglishLearning.App.Views.MediaPlayer;
 
 namespace EnglishLearning.App.Controls;
@@ -13,7 +15,24 @@ public partial class MediaCardView : ContentView
 
     public MediaCardView()
     {
-        InitializeComponent();
+        InitializeComponent();       
+    }
+
+    protected override void OnBindingContextChanged()
+    {
+        base.OnBindingContextChanged();
+
+        this.BindImageSource();
+    }
+
+    private async Task BindImageSource()
+    {
+        var bindingContext = this.BindingContext;
+
+        if (bindingContext != null)
+        {
+            this.img.Source = await MediaHelper.GetImageSource((bindingContext as V_EnglishMedia)?.ImageUrl);
+        }       
     }
 
     private bool CanNavigateToMediaPlayer()

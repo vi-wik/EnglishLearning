@@ -1,6 +1,8 @@
+using EnglishLearning.App.Helper;
 using EnglishLearning.Business;
 using EnglishLearning.Business.Manager;
 using EnglishLearning.Business.Model;
+using EnglishLearning.DataAccess;
 using EnglishLearning.Model;
 using EnglishLearning.Utility;
 using System.Collections.Generic;
@@ -26,7 +28,7 @@ public partial class WordList : ContentPage
 
     private void txtKeyword_Completed(object sender, EventArgs e)
     {
-        this.Search();
+        this.Search();       
     }
 
     private async void Search(bool fullMatch = false)
