@@ -19,8 +19,7 @@ public partial class Prompt : Popup
         InitializeComponent();
 
         this.Margin = 0;
-        this.Padding = 0;
-        
+        this.Padding = 0;       
 
         this.title = title;
         this.defaultContent = defaultContent;

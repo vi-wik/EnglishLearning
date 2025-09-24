@@ -2,12 +2,10 @@
 <toolkit:Popup xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
        xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
        xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"  
-       x:Class="EnglishLearning.App.Views.SelectListItem"   >
+       x:Class="EnglishLearning.App.Views.SelectListItem"   >  
 
-  
-
-    <VerticalStackLayout HeightRequest="400" BackgroundColor="White">
-        <Grid Margin="2,2" HeightRequest="30" WidthRequest="350" BackgroundColor="SkyBlue">
+    <VerticalStackLayout HeightRequest="400" WidthRequest="320" BackgroundColor="White">
+        <Grid HeightRequest="30" WidthRequest="320" BackgroundColor="SkyBlue">
             <Grid.RowDefinitions>
                 <RowDefinition></RowDefinition>
             </Grid.RowDefinitions>
@@ -17,7 +15,7 @@
                 <ColumnDefinition Width="1*" />
             </Grid.ColumnDefinitions>
 
-            <Label x:Name="lblTitle" FontSize="16" Grid.Column="0" HorizontalTextAlignment="Start" VerticalOptions="Center" ></Label>
+            <Label x:Name="lblTitle" FontSize="16" Grid.Column="0" HorizontalTextAlignment="Start" VerticalOptions="Center" Padding="10,0"></Label>
 
             <ImageButton  Grid.Column="1" HorizontalOptions="End" VerticalOptions="Center" HeightRequest="20" WidthRequest="20" Clicked="OnCloseImageClicked"   Margin="2,0" >
                 <ImageButton.Source>

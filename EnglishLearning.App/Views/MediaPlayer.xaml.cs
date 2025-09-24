@@ -1,13 +1,12 @@
+using CommunityToolkit.Maui;
 using CommunityToolkit.Maui.Core;
-using CommunityToolkit.Maui.Core.Primitives;
 using CommunityToolkit.Maui.Extensions;
 using CommunityToolkit.Maui.Views;
-using EnglishLearning.App.Helper;
 using EnglishLearning.Business;
 using EnglishLearning.Business.Helper;
-using EnglishLearning.DataAccess;
 using EnglishLearning.Model;
 using EnglishLearning.Utility;
+using Microsoft.Maui.Controls.Shapes;
 
 namespace EnglishLearning.App.Views;
 
@@ -20,6 +19,9 @@ public partial class MediaPlayer : ContentPage
     private MediaFavorite favorite;
 
     private bool hasAutoPaused;
+    private PopupOptions popupOptions = new PopupOptions() { Shadow = null, Shape = new RoundRectangle() { CornerRadius = new CornerRadius(0, 0, 0, 0) } };
+    private DateTime? popupOpeningTime;
+    private DateTime? popupClosedTime;
 
     public V_EnglishMedia Media
     {
@@ -89,12 +91,12 @@ public partial class MediaPlayer : ContentPage
             this.player.WidthRequest = width;
 
             this.player.MetadataTitle = this.media.MediaTitle;
-            this.player.MetadataArtist = this.media.TeacherName;           
+            this.player.MetadataArtist = this.media.TeacherName;
 
             string description = string.IsNullOrEmpty(this.media.MediaDescriptionExt) ? this.media.MediaDescription : this.media.MediaDescriptionExt;
 
             this.lblDescription.Text = description;
-            this.lblDescription.IsVisible = !string.IsNullOrEmpty(description);
+            //this.lblDescription.IsVisible = !string.IsNullOrEmpty(description);
 
             this.favorite = await DataProcessor.GetMediaFavoriteByMediaId(this.media.MediaId);
 
@@ -147,6 +149,14 @@ public partial class MediaPlayer : ContentPage
 
     protected override async void OnNavigatedTo(NavigatedToEventArgs args)
     {
+        if (this.popupClosedTime.HasValue)
+        {
+            if ((DateTime.Now - this.popupClosedTime.Value).TotalSeconds < 1)
+            {
+                return;
+            }
+        }
+
         this.Play();
     }
 
@@ -190,10 +200,21 @@ public partial class MediaPlayer : ContentPage
         }
 
         return startTime;
-    }
+    }  
+
 
     protected override void OnNavigatedFrom(NavigatedFromEventArgs args)
     {
+        if (this.popupOpeningTime.HasValue)
+        {
+            var seconds = (DateTime.Now - this.popupOpeningTime.Value).TotalSeconds;
+
+            if (seconds < 1)
+            {
+                return;
+            }
+        }
+
         base.OnNavigatedFrom(args);
 
         TimeSpan position = this.player.Position;
@@ -312,39 +333,21 @@ public partial class MediaPlayer : ContentPage
             {
                 var popup = new SelectListItem("选择收藏夹", categories.Select(item => new ListItemInfo() { Id = item.Id, Name = item.Name, IsSelected = !item.CanDelete }));
 
-                object result = await this.ShowPopupAsync(popup);
+                popup.OnPromptConfirm += this.Popup_OnPromptConfirm;
+                popup.Closed += this.Popup_Closed;
 
-                if (result == null)
-                {
-                    return;
-                }
+                this.popupOpeningTime = DateTime.Now;
 
-                categoryId = Convert.ToInt32(result);
+                await this.ShowPopupAsync(popup, this.popupOptions);
             }
             else
             {
                 categoryId = categories?.FirstOrDefault()?.Id;
-            }
 
-            if (!categoryId.HasValue)
-            {
-                await DisplayAlert("提示", "无任何收藏夹！", "确定");
-                return;
-            }
-
-            bool success = await DataProcessor.AddMediaFavorite(this.media.MediaId, categoryId.Value);
-
-            if (success)
-            {
-                this.favorite = await DataProcessor.GetMediaFavoriteByMediaId(this.media.MediaId);
-
-                this.SetStatusForFavorite(true);
-
-                MessageHelper.ShowToastMessage("收藏成功。");
-            }
-            else
-            {
-                await DisplayAlert("错误", $"收藏失败！", "确定");
+                if (categoryId.HasValue)
+                {
+                    await this.AddMediaFavorite(categoryId.Value);
+                }
             }
         }
         else
@@ -357,13 +360,43 @@ public partial class MediaPlayer : ContentPage
 
                 this.SetStatusForFavorite(false);
 
-                MessageHelper.ShowToastMessage("已取消收藏。");
+                //MessageHelper.ShowToastMessage("已取消收藏。");
             }
             else
             {
                 await DisplayAlert("错误", "取消收藏失败！", "确定");
             }
         }
+    }  
+
+    private void Popup_Closed(object? sender, EventArgs e)
+    {
+        this.popupClosedTime = DateTime.Now;
+    }
+
+    private async Task<bool> Popup_OnPromptConfirm(int id)
+    {
+        return await this.AddMediaFavorite(id);
+    }
+
+    private async Task<bool> AddMediaFavorite(int categoryId)
+    {
+        bool success = await DataProcessor.AddMediaFavorite(this.media.MediaId, categoryId);
+
+        if (success)
+        {
+            this.favorite = await DataProcessor.GetMediaFavoriteByMediaId(this.media.MediaId);
+
+            this.SetStatusForFavorite(true);
+
+            //MessageHelper.ShowToastMessage("收藏成功。");           
+        }
+        else
+        {
+            await DisplayAlert("错误", $"收藏失败！", "确定");
+        }
+
+        return success;
     }
 
     public class PlayTimeInfo

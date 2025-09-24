@@ -67,16 +67,14 @@ public partial class FavoriteCategorySetting : ContentPage
                     {
                         MessageHelper.ShowToastMessage("添加成功。");
 
-                        this.LoadData();
-
-                        return true;
+                        this.LoadData();                       
                     }
                     else
                     {
-                        await DisplayAlert("提示", "添加失败！", "确定");
-
-                        return false;
+                        await DisplayAlert("提示", "添加失败！", "确定");                        
                     }
+
+                    return success;
                 }
             }
             else
@@ -89,16 +87,14 @@ public partial class FavoriteCategorySetting : ContentPage
                     {
                         MessageHelper.ShowToastMessage("修改成功。");
 
-                        this.LoadData();
-
-                        return true;
+                        this.LoadData();                        
                     }
                     else
                     {
-                        await DisplayAlert("提示", "修改失败！", "确定");
-
-                        return false;
+                        await DisplayAlert("提示", "修改失败！", "确定");                       
                     }
+
+                    return success;
                 }
             }
         }
