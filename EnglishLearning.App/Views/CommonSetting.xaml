@@ -49,6 +49,7 @@
                     <Entry x:Name="txtPronunciationFileRootFolder"  WidthRequest="290" HeightRequest="40" VerticalOptions="Center" ClearButtonVisibility="WhileEditing" Placeholder=""></Entry>
                     <Button x:Name="btnChoosePronunciationFileRootFolder" Clicked="btnChoosePronunciationFileRootFoldern_Clicked" Text="选择" WidthRequest="60" HeightRequest="40" VerticalOptions="Center" ></Button>
                 </HorizontalStackLayout>
+                <Label Text="说明：使用该功能需要授予应用【管理所有文件】的权限。" FontAttributes="Italic" Margin="3,3" VerticalOptions="Center" TextColor="Gray"></Label>
             </VerticalStackLayout>           
             
         </Grid>        
