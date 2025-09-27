@@ -84,7 +84,7 @@
                 </ImageButton>
             </Grid>
 
-            <CollectionView x:Name="lvMeanings" SelectionMode="None" Margin="10,10">
+            <CollectionView x:Name="lvMeanings" SelectionMode="None" Margin="10,10" VerticalScrollBarVisibility="Never">
                 <CollectionView.ItemTemplate>
                     <DataTemplate>
                         <Grid Margin="0,3">

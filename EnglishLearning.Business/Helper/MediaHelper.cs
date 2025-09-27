@@ -1,4 +1,5 @@
-﻿using EnglishLearning.Business.Model;
+﻿using EnglishLearning.Business.Manager;
+using EnglishLearning.Business.Model;
 using EnglishLearning.Model;
 using Newtonsoft.Json;
 using System.Collections.Specialized;
@@ -19,36 +20,50 @@ namespace EnglishLearning.Business.Helper
             return url?.ToLower().Contains("imagehub.cc") == true;
         }
 
-        public static async Task<ImageSource> GetImageSource(string url)
+        public static async Task<ImageSource> GetImageSource(V_EnglishMedia media)
         {
-            if(string.IsNullOrEmpty(url))
+            if (media == null)
             {
                 return null;
             }
 
-            if(!IsImagehubImage(url))
+            string url = media.ImageUrl;
+
+            if (string.IsNullOrEmpty(url))
             {
-                return url;
+                return null;
             }
 
             try
             {
-                var handler = new HttpClientHandler();
+                string cacheFilePath = CacheManager.GetMediaImageCacheFilePath(media);
 
-                using (var client = new HttpClient(handler))
+                if (File.Exists(cacheFilePath))
                 {
-                    handler.ServerCertificateCustomValidationCallback = (message, cert, chain, errors) => { return true; };
+                    return cacheFilePath;
+                }          
+
+                using (var handler = new HttpClientHandler())
+                {
+                    var client = new HttpClient(handler);
+
+                    if (IsImagehubImage(url))
+                    {
+                        handler.ServerCertificateCustomValidationCallback = (message, cert, chain, errors) => { return true; };
+                    }         
 
                     var response = await client.GetAsync(url);
 
-                    var data = await response.Content.ReadAsStreamAsync();
+                    var data = await response.Content.ReadAsByteArrayAsync();
 
-                    return ImageSource.FromStream(() => data);
+                    File.WriteAllBytes(cacheFilePath, data);
+
+                    return ImageSource.FromStream(() => new MemoryStream(data));
                 }
             }
             catch (Exception ex)
             {
-                return null;              
+                return null;
             }
         }
 
@@ -81,7 +96,7 @@ namespace EnglishLearning.Business.Helper
 
                             var mediaDetailsInfo = JsonConvert.DeserializeObject<BilibiliMediaDetailsInfo>(result);
 
-                            if(mediaDetailsInfo.data == null)
+                            if (mediaDetailsInfo.data == null)
                             {
                                 return null;
                             }

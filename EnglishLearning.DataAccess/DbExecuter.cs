@@ -153,38 +153,12 @@ namespace EnglishLearning.DataAccess
 
         public static async Task<int> ClearMediaAccessHistories()
         {
-            using (var connection = DbUtitlity.CreateDbConnection())
-            {
-                string sql = $"delete from MediaAccessHistory";
-
-                await connection.OpenAsync();
-
-                var transaction = await connection.BeginTransactionAsync();
-
-                int affectedRows = (await connection.ExecuteAsync(sql));
-
-                await transaction.CommitAsync();
-
-                return affectedRows;
-            }
+            return await ClearTableData("MediaAccessHistory");
         }
 
         public static async Task<int> ClearVOCABs()
         {
-            using (var connection = DbUtitlity.CreateDbConnection())
-            {
-                string sql = $"delete from VOCAB";
-
-                await connection.OpenAsync();
-
-                var transaction = await connection.BeginTransactionAsync();
-
-                int affectedRows = (await connection.ExecuteAsync(sql));
-
-                await transaction.CommitAsync();
-
-                return affectedRows;
-            }
+            return await ClearTableData("VOCAB");           
         }
 
         public static async Task<int> DeleteMediaAccessHistoriesByMediaIds(List<int> mediaIds)
@@ -412,27 +386,27 @@ namespace EnglishLearning.DataAccess
                 if (id == 0)
                 {
                     insertSql = $"{insertPrefix}({examTypeId}, {wordId},'{dateTime}')";
-                }    
+                }
                 else
                 {
                     return true;
                 }
-                
-                if(wordExamType.HasValue)
+
+                if (wordExamType.HasValue)
                 {
                     var examTypes = await DbObjectsFetcher.GetEnglishExamTypes();
 
                     List<int> matchExamTypeIds = new List<int>();
 
-                    foreach(var et in examTypes)
+                    foreach (var et in examTypes)
                     {
-                        if(et.Id!= examTypeId && (et.Weight & wordExamType.Value) == et.Weight)
+                        if (et.Id != examTypeId && (et.Weight & wordExamType.Value) == et.Weight)
                         {
                             matchExamTypeIds.Add(et.Id);
                         }
                     }
 
-                    if(matchExamTypeIds.Count>0)
+                    if (matchExamTypeIds.Count > 0)
                     {
                         string strExamTypeIds = string.Join(",", matchExamTypeIds);
 
@@ -442,11 +416,11 @@ namespace EnglishLearning.DataAccess
 
                         var needInsertExamTypeIds = matchExamTypeIds.Except(existingExamTypeIds).ToList();
 
-                        if(needInsertExamTypeIds.Count>0)
+                        if (needInsertExamTypeIds.Count > 0)
                         {
                             StringBuilder sb = new StringBuilder();
 
-                            if(insertSql.Length>0)
+                            if (insertSql.Length > 0)
                             {
                                 insertSql += ",";
                             }
@@ -455,17 +429,17 @@ namespace EnglishLearning.DataAccess
                                 sb.AppendLine(insertPrefix);
                             }
 
-                            foreach(var needInsertExamTypeId in needInsertExamTypeIds)
+                            foreach (var needInsertExamTypeId in needInsertExamTypeIds)
                             {
                                 sb.AppendLine($"({needInsertExamTypeId}, {wordId},'{dateTime}'),");
                             }
 
                             insertSql += sb.ToString().Trim().Trim(',');
                         }
-                    }                   
+                    }
                 }
 
-                int affectedRows = (await connection.ExecuteAsync(insertSql));                    
+                int affectedRows = (await connection.ExecuteAsync(insertSql));
 
                 await transaction.CommitAsync();
 
@@ -475,9 +449,14 @@ namespace EnglishLearning.DataAccess
 
         public static async Task<int> ClearEnglishWordLearnHistories()
         {
+            return await ClearTableData("EnglishWordLearnHistory");
+        }       
+
+        private static async Task<int> ClearTableData(string tableName)
+        {
             using (var connection = DbUtitlity.CreateDbConnection())
             {
-                string sql = $"delete from EnglishWordLearnHistory";
+                string sql = $"delete from {tableName}";
 
                 await connection.OpenAsync();
 

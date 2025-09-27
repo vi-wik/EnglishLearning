@@ -8,7 +8,7 @@ namespace EnglishLearning.Business.Manager
 
         private static string logFolderName => "log";
         private static bool IsEnableLog => SettingManager.GetSetting().EnableLog;
-        public static string LogFolder => Path.Combine(RootFolder, logFolderName);
+        public static string LogFolder => Path.Combine(DataRootFolder, logFolderName);
 
         internal static string LogFilePath
         {
@@ -19,7 +19,7 @@ namespace EnglishLearning.Business.Manager
                     throw new NotImplementedException();
                 }
 
-                return Path.Combine(RootFolder, logFolderName, string.Format(logFileNameFormat, DateTime.Today.ToString("yyyyMMdd")));
+                return Path.Combine(DataRootFolder, logFolderName, string.Format(logFileNameFormat, DateTime.Today.ToString("yyyyMMdd")));
             }
         }
 

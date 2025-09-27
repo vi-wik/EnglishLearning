@@ -35,16 +35,7 @@
             </toolkit:Expander.Header>
             
             <VerticalStackLayout>
-                <Border Padding="2" Margin="15,5" BackgroundColor="SkyBlue">
-
-                    <Border.GestureRecognizers>
-                        <TapGestureRecognizer Tapped="TapGestureRecognizer_ClearWordLearnHistoryTapped" NumberOfTapsRequired="1" />
-                    </Border.GestureRecognizers>
-
-                    <Label Text="清除背单词历史记录"  HorizontalTextAlignment="Start" FontSize="18" Padding="10,5" />
-
-                </Border>
-
+              
                 <Border Padding="2" Margin="15,5" BackgroundColor="SkyBlue">
 
                     <Border.GestureRecognizers>
@@ -64,12 +55,57 @@
                     <Label Text="导入数据"  HorizontalTextAlignment="Start" FontSize="18" Padding="10,5" />
 
                 </Border>
+				
             </VerticalStackLayout>
            
         </toolkit:Expander>
 
+		<toolkit:Expander>
+			<toolkit:Expander.Header>
+				<Border Padding="2" Margin="5,5" BackgroundColor="AliceBlue">
+
+					<Label Text="数据清除"  HorizontalTextAlignment="Start" FontSize="18" Padding="10,5" />
+
+				</Border>
+			</toolkit:Expander.Header>
+
+			<VerticalStackLayout>			
+
+				<Border Padding="2" Margin="15,5" BackgroundColor="SkyBlue">
+
+					<Border.GestureRecognizers>
+						<TapGestureRecognizer Tapped="TapGestureRecognizer_ClearWordLearnHistoryTapped" NumberOfTapsRequired="1" />
+					</Border.GestureRecognizers>
+
+					<Label Text="清除背单词历史记录"  HorizontalTextAlignment="Start" FontSize="18" Padding="10,5" />
+
+				</Border>
+
+				<Border Padding="2" Margin="15,5" BackgroundColor="SkyBlue">
+
+					<Border.GestureRecognizers>
+						<TapGestureRecognizer Tapped="TapGestureRecognizer_ClearMediaAccessHistoryTapped" NumberOfTapsRequired="1" />
+					</Border.GestureRecognizers>
+
+					<Label Text="清除媒体访问记录"  HorizontalTextAlignment="Start" FontSize="18" Padding="10,5" />
+
+				</Border>
+
+				<Border Padding="2" Margin="15,5" BackgroundColor="SkyBlue">
+
+					<Border.GestureRecognizers>
+						<TapGestureRecognizer Tapped="TapGestureRecognizer_ClearCacheTapped" NumberOfTapsRequired="1" />
+					</Border.GestureRecognizers>
+
+					<Label Text="清除缓存"  HorizontalTextAlignment="Start" FontSize="18" Padding="10,5" />
+
+				</Border>
+			</VerticalStackLayout>
+
+		</toolkit:Expander>
+
         <toolkit:Expander>
-            <toolkit:Expander.Header>
+           <toolkit:Expander.Header>
                 <Border Padding="2" Margin="5,5" BackgroundColor="AliceBlue">
 
                     <Label Text="日志管理"  HorizontalTextAlignment="Start" FontSize="18" Padding="10,5" />
@@ -101,6 +137,8 @@
             </VerticalStackLayout>
 
         </toolkit:Expander>
+
+		
 
         <toolkit:Expander>
             <toolkit:Expander.Header>

@@ -9,7 +9,7 @@ namespace EnglishLearning.Business.Manager
 
         private static string settingFolderName => "config";
 
-        public static string SettingFolder => Path.Combine(RootFolder, settingFolderName);
+        public static string SettingFolder => Path.Combine(DataRootFolder, settingFolderName);
 
         internal static string SettingFilePath
         {
@@ -20,7 +20,7 @@ namespace EnglishLearning.Business.Manager
                     throw new NotImplementedException();
                 }
 
-                return Path.Combine(RootFolder, settingFolderName, settingFileName);
+                return Path.Combine(DataRootFolder, settingFolderName, settingFileName);
             }
         }
 

@@ -57,6 +57,25 @@ public partial class Setting : ContentPage
         }
     }
 
+    private async void TapGestureRecognizer_ClearMediaAccessHistoryTapped(object sender, TappedEventArgs e)
+    {
+        bool confirmed = await DisplayAlert("询问?", "确定要清除媒体访问记录吗？", "是", "否");
+
+        if (confirmed)
+        {
+            int affectedRows = await DataProcessor.ClearMediaAccessHistories();
+
+            if (affectedRows > 0)
+            {
+                await DisplayAlert("信息", $"媒体访问记录已被清除。", "确定");
+            }
+            else
+            {
+                await DisplayAlert("信息", $"未清除任何记录。", "确定");
+            }
+        }
+    }
+
     private async void TapGestureRecognizer_BackupDataTapped(object sender, TappedEventArgs e)
     {
         if (!(await PermissionHelper.CheckReadWritePermission(PermissionType.Write)))
@@ -186,5 +205,24 @@ public partial class Setting : ContentPage
         };
 
         await Browser.Default.OpenAsync(this.projectUrl, options);
+    }
+
+    private async void TapGestureRecognizer_ClearCacheTapped(object sender, TappedEventArgs e)
+    {
+        bool confirmed = await DisplayAlert("询问?", "确定要清除缓存吗？", "是", "否");
+
+        if (confirmed)
+        {
+            bool success = CacheManager.Clear();
+
+            if(success)
+            {
+                await DisplayAlert("信息", $"缓存已被清除。", "确定");
+            }
+            else
+            {
+                await DisplayAlert("信息", $"清除缓存失败！", "确定");
+            }           
+        }
     }
 }
