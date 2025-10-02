@@ -33,15 +33,18 @@ public partial class PhraseDetail : ContentPage
 
             if(typeName == nameof(EnglishPhraseTypeName.Proverb) || typeName == nameof(EnglishPhraseTypeName.Slang))
             {
-                this.lblPhraseType.IsVisible = true;
-                this.lblPhraseType.Text = $"<{this.phrase.TypeName.First()}>";
+                this.lblMeaning.FormattedText = new FormattedString();
+
+                Span span = new Span() { Text = $"<{this.phrase.TypeName.First()}>", TextColor=Colors.Gray };               
+
+                this.lblMeaning.FormattedText.Spans.Add(span);
+
+                this.lblMeaning.FormattedText.Spans.Add(new Span() { Text = this.phrase.Meaning });
             }
             else
             {
-                this.lblPhraseType.IsVisible = false;
-            }
-
-            this.lblMeaning.Text = this.phrase.Meaning;
+                this.lblMeaning.Text = this.phrase.Meaning;
+            }           
 
             bool hasSynonym = !string.IsNullOrEmpty(this.phrase.Synonym);
 

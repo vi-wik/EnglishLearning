@@ -83,6 +83,9 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <MauiXaml Update="Controls\EnglishExampleView.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
 	  <MauiXaml Update="Controls\MediaCardView.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>

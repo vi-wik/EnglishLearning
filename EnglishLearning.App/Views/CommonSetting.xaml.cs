@@ -18,6 +18,7 @@ public partial class CommonSetting : ContentPage
         this.chkShowWordMeaningWhenShowWordList.IsChecked = this.setting.ShowWordMeaningWhenShowWordList;
         this.chkShowWordMeaningWhenShowVOCABs.IsChecked = this.setting.ShowWordMeaningWhenShowVOCABs;
         this.chkShowWordFullMeaning.IsChecked = this.setting.ShowWordFullMeaning;
+        this.chkExpandWordInflectionByDefault.IsChecked = this.setting.ExpandWordInflectionByDefault;
         this.chkShowWordSyllable.IsChecked = this.setting.ShowWordSyllable;
         this.chkAutoPlayAudioWhenLearnWord.IsChecked = this.setting.AutoPlayAudioWhenLearnWord;
         this.chkEnableLog.IsChecked = this.setting.EnableLog;
@@ -69,7 +70,14 @@ public partial class CommonSetting : ContentPage
 
         this.Save();
     }
-        
+
+    private void chkExpandWordInflectionByDefault_CheckedChanged(object sender, CheckedChangedEventArgs e)
+    {
+        this.setting.ExpandWordInflectionByDefault = this.chkExpandWordInflectionByDefault.IsChecked;
+
+        this.Save();
+    }
+
     private void chkShowWordSyllabe_CheckedChanged(object sender, CheckedChangedEventArgs e)
     {
         this.setting.ShowWordSyllable = this.chkShowWordSyllable.IsChecked;

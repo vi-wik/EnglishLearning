@@ -1,15 +1,12 @@
 using EnglishLearning.App.Helper;
 using EnglishLearning.App.Model;
 using EnglishLearning.Business;
-using EnglishLearning.DataAccess;
-using EnglishLearning.Model;
-using System.Linq;
-using Microsoft.Maui.Controls.Shapes;
-using zoft.MauiExtensions.Core.Extensions;
-using EnglishLearning.Business.Model;
 using EnglishLearning.Business.Helper;
 using EnglishLearning.Business.Manager;
+using EnglishLearning.Business.Model;
+using EnglishLearning.Model;
 using System.Text;
+using zoft.MauiExtensions.Core.Extensions;
 
 namespace EnglishLearning.App.Views;
 
@@ -35,7 +32,7 @@ public partial class WordDetail : ContentPage
         this.Init(wordId, learningEnglishExamType);
     }
 
-    private void Init(int wordId, EnglishExamType learningEnglishExamType = null)
+    private async void Init(int wordId, EnglishExamType learningEnglishExamType = null)
     {
         InitializeComponent();
 
@@ -45,7 +42,10 @@ public partial class WordDetail : ContentPage
 
         if (learningEnglishExamType != null)
         {
-            this.SetToolbarItemStatus(true);
+            int? previousWordId = await DataProcessor.GetPreviousEnglishLearnedWordId(this.learningEnglishExamType.Id, wordId);
+
+            this.SetToolbarItemStatus(this.tbiPrevious, previousWordId.HasValue);
+            this.SetToolbarItemStatus(this.tbiNext, true);           
         }
         else
         {
@@ -55,12 +55,12 @@ public partial class WordDetail : ContentPage
         this.ShowWord(wordId, this.setting.AutoPlayAudioWhenLearnWord && learningEnglishExamType != null);
     }
 
-    private void SetToolbarItemStatus(bool enable)
+    private void SetToolbarItemStatus(ToolbarItem item, bool enable)
     {
-        FontImageSource fs = this.tbiFinishLearn.IconImageSource as FontImageSource;
+        FontImageSource fs = item.IconImageSource as FontImageSource;
         fs.Color = enable ? Colors.White : Colors.Transparent;
 
-        this.tbiFinishLearn.IsEnabled = enable;
+        item.IsEnabled = enable;
     }
 
 
@@ -74,6 +74,13 @@ public partial class WordDetail : ContentPage
         bool hasUKPronunciation = this.englishWord?.UK_Pronunciation != null;
         bool hasUSAudio = true;
         bool hasUKAudio = true;
+        bool isFullUpperCase = this.englishWord?.Word?.All(item => char.IsUpper(item)) == true;
+
+        if(isFullUpperCase)
+        {
+            hasUSAudio = false;
+            hasUKAudio = false;
+        }
 
         this.lblUS_Pronunciation.IsVisible = hasUSPronunciation;
         this.lblUK_Pronunciation.IsVisible = hasUKPronunciation;
@@ -97,7 +104,7 @@ public partial class WordDetail : ContentPage
             this.SetPronunciationDisplayText(this.lblUK_Pronunciation, this.englishWord.UK_Pronunciation);
             this.btnVOCAB.IsVisible = true;
 
-            if (playAudio)
+            if (playAudio && hasUSAudio)
             {
                 this.PlayAudio(this.englishWord.Word, true);
             }
@@ -121,7 +128,7 @@ public partial class WordDetail : ContentPage
                     {
                         bool isFirst = sb.Length == 0;
 
-                        if(!isFirst)
+                        if (!isFirst)
                         {
                             sb.Append(" / ");
                         }
@@ -166,7 +173,7 @@ public partial class WordDetail : ContentPage
             #region Òô½Ú
             bool showSyllable = false;
 
-            if(this.setting.ShowWordSyllable)
+            if (this.setting.ShowWordSyllable)
             {
                 var syllables = await DataProcessor.GetEnglishWordSyllables(wordId);
                 int syllableCount = syllables.Count();
@@ -194,7 +201,7 @@ public partial class WordDetail : ContentPage
 
             if (!showSyllable)
             {
-                this.lblSyllable.Text = "";               
+                this.lblSyllable.Text = "";
             }
 
             #endregion
@@ -213,7 +220,7 @@ public partial class WordDetail : ContentPage
             this.lblIntroduction.IsVisible = hasMedias;
             #endregion
 
-            #region Àý¾ä
+            #region Àý¾ä            
             var examples = await DataProcessor.GetVEnglishWordExamples(this.englishWord.Id);
 
             List<EnglishExampleDisplay> exampleDisplays = new List<EnglishExampleDisplay>();
@@ -224,8 +231,9 @@ public partial class WordDetail : ContentPage
             {
                 EnglishExampleDisplay display = new EnglishExampleDisplay();
 
+                display.Vocabulary = this.englishWord.Word;
                 display.Order = $"{order}.";
-                display.Example = $"{example.Example}{UIHelper.MakeupPunctuation(example.Example, true)}";
+                display.Example = $"{example.Example}{UIHelper.MakeupPunctuation(example.Meaning, true)}";
                 display.Meaning = $"{example.Meaning}{UIHelper.MakeupPunctuation(example.Meaning, false)}";
 
                 exampleDisplays.Add(display);
@@ -342,7 +350,7 @@ public partial class WordDetail : ContentPage
                     {
                         existing = true;
 
-                        exitingItem.Meaning += $"¼°{wordInflection.TypeName}";
+                        exitingItem.Meaning += $"ºÍ{wordInflection.TypeName}";
                     }
 
                 }
@@ -353,7 +361,7 @@ public partial class WordDetail : ContentPage
 
                 if (!existing)
                 {
-                    virtualMeanings.Add(new EnglishWordMeaningForDisplay() { Word = wordInflection.Word, PartOfSpeech = partOfSpeech, Meaning = meaning });
+                    virtualMeanings.Add(new EnglishWordMeaningForDisplay() { IsVirtual = true, Word = wordInflection.Word, WordId= wordInflection.WordId, PartOfSpeech = partOfSpeech, Meaning = meaning });
                 }
             }
 
@@ -492,7 +500,7 @@ public partial class WordDetail : ContentPage
 
         if (labels.Count > 0)
         {
-            this.gvWordInflection.IsVisible = true;
+            this.InflectionExpander.IsVisible = true;
 
             int columnIndex = 0, rowIndex = 0;
             int count = 0;
@@ -505,23 +513,40 @@ public partial class WordDetail : ContentPage
 
                 columnIndex++;
 
-                if (columnIndex == 4)
+                if (columnIndex == 2)
                 {
                     columnIndex = 0;
                 }
 
                 count++;
 
-                if (count % 4 == 0)
+                if (count % 2 == 0)
                 {
                     rowIndex++;
                 }
             }
+
+            if (setting.ExpandWordInflectionByDefault)
+            {
+                this.InflectionExpander.IsExpanded = true;
+            }
         }
         else
         {
-            this.gvWordInflection.IsVisible = false;
+            this.InflectionExpander.IsVisible = false;
         }
+    }
+
+    private void InflectionExpander_ExpandedChanged(object? sender, CommunityToolkit.Maui.Core.ExpandedChangedEventArgs e)
+    {
+        string iconKey = this.InflectionExpander.IsExpanded ? "up" : "down";
+
+        this.Font_InflectionShow.Glyph = Application.Current.Resources[iconKey].ToString();
+    }
+
+    private void btnInflectionShow_Clicked(object sender, EventArgs e)
+    {
+        this.InflectionExpander.IsExpanded = !this.InflectionExpander.IsExpanded;
     }
 
     private void SetPronunciationDisplayText(Label label, string pronunciation)
@@ -549,9 +574,8 @@ public partial class WordDetail : ContentPage
 
     private Label CreateWordInflectionValueLabel(string value)
     {
-
         Label label = new Label() { Text = value };
-        label.Margin = new Thickness(5, 0, 0, 0);
+        label.Margin = new Thickness(10, 0, 0, 0);
         label.FontAttributes = FontAttributes.Bold;
 
         return label;
@@ -642,6 +666,91 @@ public partial class WordDetail : ContentPage
         this.FinishLearn();
     }
 
+    private void tbiPrevious_Clicked(object sender, EventArgs e)
+    {
+        this.ShowPrevious();
+    }
+
+    private void tbiNext_Clicked(object sender, EventArgs e)
+    {
+        this.ShowNext();
+    }
+
+    private async void ShowPrevious()
+    {
+        if (this.learningEnglishExamType == null)
+        {
+            return;
+        }
+
+        int? previousWordId = null;
+        int index = this.historyWordIds.IndexOf(this.englishWord.Id);
+
+        if (index == -1)
+        {
+            return;
+        }
+       
+        this.SetToolbarItemStatus(this.tbiNext, true);
+
+        if (index > 0)
+        {
+            previousWordId = this.historyWordIds[index - 1];
+        }
+        else
+        {
+            previousWordId = await DataProcessor.GetPreviousEnglishLearnedWordId(this.learningEnglishExamType.Id, this.englishWord.Id);
+        }
+
+        if (previousWordId > 0)
+        {
+            if (index == 0)
+            {
+                this.historyWordIds.Insert(0, previousWordId.Value);
+            }
+
+            this.Reset();
+
+            this.ShowWord(previousWordId.Value);
+        }
+    }
+
+    private async void ShowNext()
+    {
+        if (this.learningEnglishExamType == null)
+        {
+            return;
+        }
+
+        int? nextWordId = null;
+
+        int index = this.historyWordIds.IndexOf(this.englishWord.Id);
+
+        if (index < this.historyWordIds.Count - 1)
+        {
+            nextWordId = this.historyWordIds[index + 1];
+
+            this.Reset();
+
+            bool isLastHistory = index + 1 == this.historyWordIds.Count - 1;
+            
+            this.SetToolbarItemStatus(this.tbiNext, true);
+
+            this.ShowWord(nextWordId.Value);
+        }
+        else
+        {
+            this.FinishLearn();
+        }
+    }
+
+    private bool CanFinishLearn()
+    {
+        int index = this.historyWordIds.IndexOf(this.englishWord.Id);
+
+        return index == this.historyWordIds.Count - 1;
+    }
+
     private async void FinishLearn()
     {
         bool success = await DataProcessor.SaveWordLearnHistory(this.learningEnglishExamType, this.englishWord);
@@ -653,7 +762,7 @@ public partial class WordDetail : ContentPage
             if (nextWordId > 0)
             {
                 this.Reset();
-                this.SetToolbarItemStatus(true);
+                this.SetToolbarItemStatus(this.tbiNext, true);
 
                 this.ShowWord(nextWordId, this.setting.AutoPlayAudioWhenLearnWord);
             }
@@ -673,57 +782,11 @@ public partial class WordDetail : ContentPage
 
         if (e.Direction == SwipeDirection.Left)
         {
-            int? nextWordId = null;
-
-            int index = this.historyWordIds.IndexOf(this.englishWord.Id);
-
-            if (index < this.historyWordIds.Count - 1)
-            {
-                nextWordId = this.historyWordIds[index + 1];
-
-                this.Reset();
-
-                this.SetToolbarItemStatus(index + 1 == this.historyWordIds.Count - 1);
-
-                this.ShowWord(nextWordId.Value);
-            }
-            else
-            {
-                this.FinishLearn();
-            }
+            this.ShowNext();
         }
         else
         {
-            int? previousWordId = null;
-            int index = this.historyWordIds.IndexOf(this.englishWord.Id);
-
-            if (index == -1)
-            {
-                return;
-            }
-
-            this.SetToolbarItemStatus(false);
-
-            if (index > 0)
-            {
-                previousWordId = this.historyWordIds[index - 1];
-            }
-            else
-            {
-                previousWordId = await DataProcessor.GetPreviousEnglishLearnedWordId(this.learningEnglishExamType.Id, this.englishWord.Id);
-            }
-
-            if (previousWordId > 0)
-            {
-                if (index == 0)
-                {
-                    this.historyWordIds.Insert(0, previousWordId.Value);
-                }
-
-                this.Reset();
-
-                this.ShowWord(previousWordId.Value);
-            }
+            this.ShowPrevious();
         }
     }
 
@@ -735,10 +798,15 @@ public partial class WordDetail : ContentPage
 
         if (variant != null)
         {
-            WordDetail wordDetail = (WordDetail)Activator.CreateInstance(typeof(WordDetail), variant.TargetWordId);
-
-            await Navigation.PushAsync(wordDetail);
+            this.NavigateToWordDetailPage(variant.TargetWordId);
         }
+    }
+
+    private async void NavigateToWordDetailPage(int wordId)
+    {
+        WordDetail wordDetail = (WordDetail)Activator.CreateInstance(typeof(WordDetail), wordId);
+
+        await Navigation.PushAsync(wordDetail);
     }
 
     private void btnShowAllMeaning_Clicked(object sender, EventArgs e)
@@ -766,5 +834,54 @@ public partial class WordDetail : ContentPage
     {
         this.btnShowAllMeaning.IsVisible = !isShowAll;
         this.btnHideSpecalMeaning.IsVisible = isShowAll;
+    }
+
+    private void MeaningLable_BindingContextChanged(object sender, EventArgs e)
+    {
+        Label label = sender as Label;
+
+        EnglishWordMeaningForDisplay display = label.BindingContext as EnglishWordMeaningForDisplay;
+
+        if(display.IsVirtual)
+        {
+            string text = label.Text;
+            string word = display.Word;
+
+            if(text.StartsWith(word))
+            {
+                label.FormattedText = new FormattedString();
+
+                Span wordSpan = new Span() { Text = word, TextColor = Colors.Blue };
+
+                var tapGestureRecognizer = new TapGestureRecognizer() { NumberOfTapsRequired = 1, CommandParameter = display.WordId };
+                tapGestureRecognizer.Tapped += this.TapGestureRecognizer_ExampleItemTapped;
+
+                wordSpan.GestureRecognizers.Add(tapGestureRecognizer);
+
+                label.FormattedText.Spans.Add(wordSpan);
+
+                label.FormattedText.Spans.Add(new Span() { Text = text.Substring(word.Length) });
+            }
+        }        
+    }
+
+    private async void TapGestureRecognizer_ExampleItemTapped(object sender, TappedEventArgs e)
+    {
+        int wordId = Convert.ToInt32(e.Parameter);
+
+        this.NavigateToWordDetailPage(wordId);
+    }
+
+    private void TapGestureRecognizer_ScollViewTapped(object sender, TappedEventArgs e)
+    {
+        if (this.learningEnglishExamType == null)
+        {
+            return;
+        }
+
+        if (this.tbiNext.IsEnabled && this.CanFinishLearn())
+        {
+            this.FinishLearn();
+        }
     }
 }

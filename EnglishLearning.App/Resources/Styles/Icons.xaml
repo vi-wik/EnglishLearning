@@ -24,4 +24,8 @@
     <x:String x:Key="check">&#xf00c;</x:String>
     <x:String x:Key="copy">&#xf0c5;</x:String>
     <x:String x:Key="save">&#xf0c7;</x:String>
+    <x:String x:Key="down">&#xf107;</x:String>
+    <x:String x:Key="up">&#xf106;</x:String>
+    <x:String x:Key="left">&#xf060;</x:String>
+    <x:String x:Key="right">&#xf061;</x:String>
 </ResourceDictionary>

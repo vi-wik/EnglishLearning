@@ -9,6 +9,7 @@
         public string PartOfSpeech { get; set; }
         public string CommonMeaning { get; set; }
         public string SpecialMeaning { get; set; }
+        public string Comment { get; set; }
         public bool IsFromWeb { get; set; }      
         public bool IsOld { get; set; }
         public bool Special { get; set; }
@@ -20,7 +21,7 @@
         {
             get
             {
-                return this.CommonMeaning + (string.IsNullOrEmpty(this.SpecialMeaning)? "": "；") + this.SpecialMeaning ?? "";
+                return $"{this.CommonMeaning}{(string.IsNullOrEmpty(this.SpecialMeaning) ? "" : "；")}{(this.SpecialMeaning ?? "")}{(!string.IsNullOrEmpty(this.Comment)? $"（{this.Comment}）":"")}";
             }
         }
     }

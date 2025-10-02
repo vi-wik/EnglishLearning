@@ -6,5 +6,6 @@ namespace EnglishLearning.App.Model
     {
         public object PartOfSpeechColumnWidth { get; set; }
         public new string Meaning { get; set; }
+        public bool IsVirtual { get; set; }
     }
 }

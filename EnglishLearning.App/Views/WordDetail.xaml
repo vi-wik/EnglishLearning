@@ -24,16 +24,22 @@
     </Shell.TitleView>
 
     <ContentPage.ToolbarItems>
-        <ToolbarItem x:Name="tbiFinishLearn" Text="" Clicked="tbiFinishLearn_Clicked" IsEnabled="False">
+        <ToolbarItem x:Name="tbiPrevious" Text="" Clicked="tbiPrevious_Clicked" IsEnabled="False">
             <ToolbarItem.IconImageSource>
-                <FontImageSource FontFamily="FASolid" Glyph="{StaticResource check}"  Color="Transparent" Size="20"></FontImageSource>
+                <FontImageSource FontFamily="FASolid" Glyph="{StaticResource left}"  Color="Transparent" Size="20"></FontImageSource>
             </ToolbarItem.IconImageSource>
         </ToolbarItem>
+        <ToolbarItem x:Name="tbiNext" Text="" Clicked="tbiNext_Clicked" IsEnabled="False">
+            <ToolbarItem.IconImageSource>
+                <FontImageSource FontFamily="FASolid" Glyph="{StaticResource right}"  Color="Transparent" Size="20"></FontImageSource>
+            </ToolbarItem.IconImageSource>
+        </ToolbarItem>      
     </ContentPage.ToolbarItems>
 
-    <ScrollView x:Name="scrollView" Orientation="Vertical" >    
+    <ScrollView x:Name="scrollView" Orientation="Vertical">    
         <ScrollView.GestureRecognizers>
             <SwipeGestureRecognizer Direction="Left,Right" Swiped="SwipeGestureRecognizer_Swiped" Threshold="100" ></SwipeGestureRecognizer>
+            <TapGestureRecognizer NumberOfTapsRequired="2" Tapped="TapGestureRecognizer_ScollViewTapped"></TapGestureRecognizer>
         </ScrollView.GestureRecognizers>
         
         <VerticalStackLayout x:Name="Layout">
@@ -70,19 +76,20 @@
                             <ImageButton.Source>
                                 <FontImageSource   FontFamily="FASolid" Glyph="{StaticResource pronounce}"  Color="Orange" Size="10"/>
                             </ImageButton.Source>
-                        </ImageButton>
+                        </ImageButton>						
 
-                        <Label x:Name="lblSyllable" IsVisible="False" Margin="10,1" VerticalOptions="Center"></Label>
-                    </HorizontalStackLayout>
+					</HorizontalStackLayout>
                 </Grid>
 
-                <ImageButton Grid.Column="1" x:Name="btnVOCAB" Margin="10,3" IsVisible="False" WidthRequest="24" HeightRequest="24" 
+                <ImageButton Grid.Column="1" x:Name="btnVOCAB" Margin="10,3,3,3" IsVisible="False" WidthRequest="24" HeightRequest="24"
                 HorizontalOptions="EndAndExpand"  Clicked="btnVOCAB_Clicked"  VerticalOptions="Start">
                     <ImageButton.Source>
                         <FontImageSource x:Name="Font_VOCAB"  FontFamily="FARegular" Glyph="{StaticResource star}"  Color="Gray"  Size="10"/>
                     </ImageButton.Source>
                 </ImageButton>
             </Grid>
+
+            <Label x:Name="lblSyllable" IsVisible="False" Margin="10,5"  ></Label>
 
             <CollectionView x:Name="lvMeanings" SelectionMode="None" Margin="10,10" VerticalScrollBarVisibility="Never">
                 <CollectionView.ItemTemplate>
@@ -97,7 +104,7 @@
                             </Grid.RowDefinitions>
 
                             <Label Text="{Binding PartOfSpeech}" TextColor="Gray"  VerticalOptions="Start"></Label>
-                            <Label Text="{Binding Meaning}" Grid.Column="1"  VerticalOptions="Start"></Label>
+                            <Label Text="{Binding Meaning}" Grid.Column="1"  VerticalOptions="Start" BindingContextChanged="MeaningLable_BindingContextChanged"></Label>
                         </Grid>
                     </DataTemplate>                    
                 </CollectionView.ItemTemplate>
@@ -109,16 +116,36 @@
                 </CollectionView.Footer>
             </CollectionView>
 
-            <Grid x:Name="gvWordInflection" Padding="0" RowSpacing="5" ColumnSpacing="2" IsVisible="False" Margin="10,10,10,2" BackgroundColor="Transparent">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto"></ColumnDefinition>
-                    <ColumnDefinition Width="*"></ColumnDefinition>
-                    <ColumnDefinition Width="Auto"></ColumnDefinition>
-                    <ColumnDefinition Width="*"></ColumnDefinition>
-                </Grid.ColumnDefinitions>
-            </Grid>         
+			<Label x:Name="lblExamType" Margin="10,10" HorizontalOptions="Start" IsVisible="False" TextColor="Gray" FontSize="13" LineBreakMode="WordWrap"></Label>
 
-            <Label x:Name="lblExamType" Margin="10,10" HorizontalOptions="Start" IsVisible="False" TextColor="Gray" FontSize="13" LineBreakMode="WordWrap"></Label>
+            <toolkit:Expander x:Name="InflectionExpander" IsVisible="False" ExpandedChanged="InflectionExpander_ExpandedChanged">
+				<toolkit:Expander.Header>
+                    <Grid>
+                        <Grid >
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition  Width="9*" />
+                                <ColumnDefinition  Width="1*"/>
+                            </Grid.ColumnDefinitions>
+                        </Grid>
+
+                        <Label x:Name="lblInflection" Text="词态变化"  VerticalOptions="Center" HorizontalOptions="Start" FontAttributes="Bold" Margin="10,10,10,2" />
+
+                        <ImageButton Grid.Column="1" x:Name="btnInflectionShow" Margin="3,3" WidthRequest="22" HeightRequest="22"  
+                                     VerticalOptions="Center" HorizontalOptions="End" Clicked="btnInflectionShow_Clicked">
+                            <ImageButton.Source>
+                                <FontImageSource x:Name="Font_InflectionShow"  FontFamily="FASolid" Glyph="{StaticResource down}"  Color="Gray"  Size="10"/>
+                            </ImageButton.Source>
+                        </ImageButton>
+                    </Grid>                
+                </toolkit:Expander.Header>
+
+				<Grid x:Name="gvWordInflection" Padding="0" RowSpacing="5" ColumnSpacing="2"  Margin="10,10,10,2" BackgroundColor="Transparent">
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition Width="Auto"></ColumnDefinition>
+						<ColumnDefinition Width="*"></ColumnDefinition>
+					</Grid.ColumnDefinitions>
+				</Grid>
+			</toolkit:Expander>	
 
             <Label x:Name="lblIntroduction" Text="相关介绍"  VerticalOptions="Center" HorizontalOptions="Start" FontAttributes="Bold" Margin="10,10,10,2"  IsVisible="False"/>
 
@@ -135,22 +162,7 @@
             <CollectionView x:Name="lvExamples" SelectionMode="None" Margin="10,5">
                 <CollectionView.ItemTemplate>
                     <DataTemplate>
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="20"></ColumnDefinition>
-                                <ColumnDefinition Width="*"></ColumnDefinition>                                
-                            </Grid.ColumnDefinitions>
-                            <Grid.RowDefinitions>
-                                <RowDefinition></RowDefinition>
-                                <RowDefinition></RowDefinition>
-                            </Grid.RowDefinitions>
-
-                            <Label Grid.Column="0" Grid.Row="0" Text="{Binding Order}" HorizontalTextAlignment="Start" VerticalTextAlignment="Start"></Label>
-                            <Label Grid.Column="1" Grid.Row="0" Text="{Binding Example}"  ></Label>
-
-                            <Label Grid.Column="1" Grid.Row="1" Text="{Binding Meaning}" Margin="0,2" TextColor="Gray"></Label>
-                        </Grid>                        
-                     
+                        <controls:EnglishExampleView />
                     </DataTemplate>
                 </CollectionView.ItemTemplate>
             </CollectionView>

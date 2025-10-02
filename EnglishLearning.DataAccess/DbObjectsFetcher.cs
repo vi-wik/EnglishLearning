@@ -305,7 +305,7 @@ namespace EnglishLearning.DataAccess
 
         public static async Task<IEnumerable<EnglishWordMeaning>> GetEnglishWordMeanings(int wordId, EnglishWordMeaningFilter filter = null)
         {
-            string fields = "Id,WordId,Word,ExamType,PartOfSpeechId,PartOfSpeech,CommonMeaning,IsFromWeb,IsOld, Priority";
+            string fields = "Id,WordId,Word,ExamType,PartOfSpeechId,PartOfSpeech,CommonMeaning,Comment,IsFromWeb,IsOld, Priority";
 
             string condition = "";
 
