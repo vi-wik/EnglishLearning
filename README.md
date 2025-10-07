@@ -18,7 +18,7 @@
 #### 部分截图
 1. 单词详细
 
-![单词详细](https://github.com/vi-wik/StaticResources/raw/master/images/screenshots/EnglishLearning/WordDetail.jpg)
+![单词详细](https://github.com/vi-wik/StaticResources/raw/master/images/screenshots/EnglishLearning/WordDetail.jpg?rid=1)
 
 2. 背单词
 
