@@ -50,7 +50,7 @@
                     <ColumnDefinition  Width="1*"/>
                 </Grid.ColumnDefinitions>
 
-                <Grid Grid.Column="0">
+                <Grid x:Name="PronunciationGrid" Grid.Column="0">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"></RowDefinition>
                         <RowDefinition Height="Auto"></RowDefinition>
@@ -89,9 +89,9 @@
                 </ImageButton>
             </Grid>
 
-            <Label x:Name="lblSyllable" IsVisible="False" Margin="10,5"  ></Label>
+            <Label x:Name="lblSyllable" IsVisible="False" Margin="10,5" ></Label>
 
-            <CollectionView x:Name="lvMeanings" SelectionMode="None" Margin="10,10" VerticalScrollBarVisibility="Never">
+            <CollectionView x:Name="lvMeanings" SelectionMode="None" Margin="10,10" VerticalScrollBarVisibility="Never" >
                 <CollectionView.ItemTemplate>
                     <DataTemplate>
                         <Grid Margin="0,3">

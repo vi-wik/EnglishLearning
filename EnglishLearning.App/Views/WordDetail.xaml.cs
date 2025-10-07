@@ -91,6 +91,13 @@ public partial class WordDetail : ContentPage
         this.USPronunciationLayout.IsVisible = this.lblUS.IsVisible = hasUSPronunciation || hasUSAudio;
         this.UKPronunciationLayout.IsVisible = this.lblUK.IsVisible = hasUKPronunciation || hasUKAudio;
 
+        this.PronunciationGrid.IsVisible = this.USPronunciationLayout.IsVisible || this.UKPronunciationLayout.IsVisible;
+
+        if(!this.PronunciationGrid.IsVisible)
+        {
+            this.lvMeanings.Margin = new Thickness(this.lvMeanings.Margin.Left, 0, this.lvMeanings.Margin.Right, this.lvMeanings.Margin.Bottom);
+        }
+
         if (this.englishWord != null)
         {
             if (!this.historyWordIds.Contains(this.englishWord.Id))
