@@ -13,8 +13,7 @@ namespace EnglishLearning.App
 
                  builder
                 .UseMauiApp<App>()
-                .UseMauiCommunityToolkit()
-                .UseMauiCommunityToolkitMediaElement()
+                .UseMauiCommunityToolkit()           
                 .UseMauiCommunityToolkitMarkup()
                 .UseZoftAutoCompleteEntry()            
                 .ConfigureFonts(fonts =>
@@ -28,6 +27,8 @@ namespace EnglishLearning.App
 #if DEBUG
             builder.Logging.AddDebug();
 #endif
+
+            WebViewHandler.EnableVideoFeatures();
 
             return builder.Build();
         }

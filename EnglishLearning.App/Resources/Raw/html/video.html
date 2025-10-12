@@ -1,0 +1,13 @@
+﻿<style>
+    body { margin: 0 0 0 0; }
+</style>
+
+<video id="player" style="height:400px; width:100%; background-color:#000;margin:0 0 0 0;" controls src="$$SRC$$" poster="$$POSTER$$"></video>
+<script>
+   
+    var isLoaded = false;
+
+    document.getElementById("player").onloadeddata = function () {
+        isLoaded = true;        
+    };
+</script>

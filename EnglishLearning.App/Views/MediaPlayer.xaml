@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"  
-             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"            
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"                  
              x:Class="EnglishLearning.App.Views.MediaPlayer"     
              Title=""> 
    
@@ -23,14 +22,9 @@
             <RowDefinition Height="auto"></RowDefinition>
             <RowDefinition Height="25"></RowDefinition>
             <RowDefinition Height="60"></RowDefinition>
-        </Grid.RowDefinitions>
-      
-        <toolkit:MediaElement x:Name="player" Grid.Row="0"
-           ShouldAutoPlay="False"
-           ShouldShowPlaybackControls="True"     
-           WidthRequest="360" HeightRequest="400"         
-           PositionChanged="player_PositionChanged" 
-         />
+        </Grid.RowDefinitions>     
+        
+        <WebView x:Name="player" Grid.Row="0" Loaded="player_Loaded"></WebView>
 
         <Label x:Name="lblDescription" Grid.Row="1" Text=""  MinimumHeightRequest="25"  Margin="10,3"></Label>
 

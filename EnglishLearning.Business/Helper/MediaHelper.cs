@@ -3,8 +3,10 @@ using EnglishLearning.Business.Model;
 using EnglishLearning.Model;
 using Newtonsoft.Json;
 using System.Collections.Specialized;
+using System.IO;
 using System.Net;
 using System.Web;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace EnglishLearning.Business.Helper
 {
@@ -41,7 +43,7 @@ namespace EnglishLearning.Business.Helper
                 if (File.Exists(cacheFilePath))
                 {
                     return cacheFilePath;
-                }          
+                }
 
                 using (var handler = new HttpClientHandler())
                 {
@@ -50,7 +52,7 @@ namespace EnglishLearning.Business.Helper
                     if (IsImagehubImage(url))
                     {
                         handler.ServerCertificateCustomValidationCallback = (message, cert, chain, errors) => { return true; };
-                    }         
+                    }
 
                     var response = await client.GetAsync(url);
 
@@ -58,13 +60,54 @@ namespace EnglishLearning.Business.Helper
 
                     File.WriteAllBytes(cacheFilePath, data);
 
-                    return ImageSource.FromStream(() => new MemoryStream(data));
+                    return ImageSource.FromStream(() => new MemoryStream(data));                                   
                 }
             }
             catch (Exception ex)
             {
                 return null;
             }
+        }
+
+        public static async Task<string> GetImageUrl(V_EnglishMedia media)
+        {
+            ImageSource source = await GetImageSource(media);
+
+            byte[] data = null;
+
+            try
+            {
+                if (source is UriImageSource us)
+                {
+                    return us.Uri.ToString();
+                }
+                else if (source is FileImageSource fs)
+                {
+                    data = File.ReadAllBytes(fs.File);
+                }
+                else if (source is StreamImageSource ss)
+                {
+                    var func = ss.Stream; ;
+
+                    using (Stream stream = await func(CancellationToken.None))
+                    {
+                        BinaryReader reader = new BinaryReader(stream);
+
+                        data = reader.ReadBytes((int)stream.Length);
+                    }
+                }
+
+                if (data != null)
+                {
+                    return $"data:image/jpeg;base64,{Convert.ToBase64String(data)}";
+                }
+            }
+            catch (Exception ex)
+            {
+                                
+            }          
+
+            return null;
         }
 
         public static async Task<string> GetMediaSource(V_EnglishMedia media)

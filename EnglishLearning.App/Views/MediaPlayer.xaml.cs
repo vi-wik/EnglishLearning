@@ -1,12 +1,14 @@
 using CommunityToolkit.Maui;
-using CommunityToolkit.Maui.Core;
 using CommunityToolkit.Maui.Extensions;
-using CommunityToolkit.Maui.Views;
 using EnglishLearning.Business;
 using EnglishLearning.Business.Helper;
 using EnglishLearning.Model;
 using EnglishLearning.Utility;
 using Microsoft.Maui.Controls.Shapes;
+
+#if ANDROID
+using WebView = Android.Webkit.WebView;
+#endif
 
 namespace EnglishLearning.App.Views;
 
@@ -22,15 +24,12 @@ public partial class MediaPlayer : ContentPage
     private PopupOptions popupOptions = new PopupOptions() { Shadow = null, Shape = new RoundRectangle() { CornerRadius = new CornerRadius(0, 0, 0, 0) } };
     private DateTime? popupOpeningTime;
     private DateTime? popupClosedTime;
+    private IDispatcherTimer timer;
+    private bool isPlayed = false;
 
     public V_EnglishMedia Media
     {
         get => media;
-    }
-
-    public MediaPlayer()
-    {
-        InitializeComponent();
     }
 
     public MediaPlayer(V_EnglishMedia media)
@@ -40,9 +39,13 @@ public partial class MediaPlayer : ContentPage
         Connectivity.Current.ConnectivityChanged += Current_ConnectivityChanged;
 
         this.media = media;
+        this.timer = Dispatcher.CreateTimer();
+        this.timer.Interval = TimeSpan.FromMilliseconds(100);     
+        this.timer.Tick += this.Timer_Tick;
 
         this.InitPlayer();
     }
+   
 
     private async void Current_ConnectivityChanged(object? sender, ConnectivityChangedEventArgs e)
     {
@@ -51,7 +54,11 @@ public partial class MediaPlayer : ContentPage
             if (NetworkHelper.IsConnectedToInternet())
             {
                 await this.SetPlayerUrl();
-                this.Play();
+
+                if (!this.timer.IsRunning)
+                {
+                    this.timer.Start();
+                }
             }
         }
     }
@@ -65,6 +72,7 @@ public partial class MediaPlayer : ContentPage
         }
 
         string url = await MediaHelper.GetMediaSource(this.media);
+        string poster = await MediaHelper.GetImageUrl(this.media);
 
         if (string.IsNullOrEmpty(url))
         {
@@ -72,7 +80,13 @@ public partial class MediaPlayer : ContentPage
             return false;
         }
 
-        this.player.Source = url;
+        using (StreamReader sr = new StreamReader(await FileSystem.Current.OpenAppPackageFileAsync("html/video.html")))
+        {
+            string html = sr.ReadToEnd().Replace("$$SRC$$", url).Replace("$$POSTER$$", poster);
+
+            this.player.Source = new HtmlWebViewSource { Html = html };
+        }
+
         this.hasVideo = true;
 
         return true;
@@ -84,23 +98,20 @@ public partial class MediaPlayer : ContentPage
         {
             this.SetPlayTimes();
 
-            this.lblTitle.Text = this.media.MediaTitle;
-
-            var width = AppShell.Current.Window.Width;
-
-            this.player.WidthRequest = width;
-
-            this.player.MetadataTitle = this.media.MediaTitle;
-            this.player.MetadataArtist = this.media.TeacherName;
+            this.lblTitle.Text = this.media.MediaTitle;   
 
             string description = string.IsNullOrEmpty(this.media.MediaDescriptionExt) ? this.media.MediaDescription : this.media.MediaDescriptionExt;
 
             this.lblDescription.Text = description;
-            //this.lblDescription.IsVisible = !string.IsNullOrEmpty(description);
 
             this.favorite = await DataProcessor.GetMediaFavoriteByMediaId(this.media.MediaId);
 
-            await this.SetPlayerUrl();
+            bool success = await this.SetPlayerUrl();
+
+            if(success)
+            {
+                this.timer.Start();
+            }               
         }
         else
         {
@@ -147,20 +158,7 @@ public partial class MediaPlayer : ContentPage
         }
     }
 
-    protected override async void OnNavigatedTo(NavigatedToEventArgs args)
-    {
-        if (this.popupClosedTime.HasValue)
-        {
-            if ((DateTime.Now - this.popupClosedTime.Value).TotalSeconds < 1)
-            {
-                return;
-            }
-        }
-
-        this.Play();
-    }
-
-    private void Play()
+    private async Task Play()
     {
         if (!this.hasVideo)
         {
@@ -171,23 +169,30 @@ public partial class MediaPlayer : ContentPage
 
         if (startTime.HasValue)
         {
-            this.SeekTo(startTime.Value);
+            await this.SeekTo(startTime.Value);
             this.playTimes[0].HasSeeked = true;
 
             this.currentPlayTimeIndex = 0;
         }
-
-        this.player.Play();
-
+        
         this.RecordHistory(startTime);
+
+        await this.player.EvaluateJavaScriptAsync($"{this.GetPlayerJavascript()}.play();");
     }
 
-    private void SeekTo(TimeSpan timeSpan)
+    private string GetPlayerJavascript()
     {
-        //MainThread.BeginInvokeOnMainThread(() =>
-        //{
-        this.player.SeekTo(TimeSpan.FromSeconds(timeSpan.TotalSeconds));
-        //});
+        return "document.getElementById('player')";
+    }
+
+    private async Task SeekTo(TimeSpan timeSpan)
+    {
+        await this.player.EvaluateJavaScriptAsync($"{this.GetPlayerJavascript()}.currentTime={timeSpan.TotalSeconds};");
+    }
+
+    private bool HasPlayTimes()
+    {
+        return this.GetPlayStartTime().HasValue;
     }
 
     private TimeSpan? GetPlayStartTime()
@@ -203,7 +208,7 @@ public partial class MediaPlayer : ContentPage
     }  
 
 
-    protected override void OnNavigatedFrom(NavigatedFromEventArgs args)
+    protected override async void OnNavigatedFrom(NavigatedFromEventArgs args)
     {
         if (this.popupOpeningTime.HasValue)
         {
@@ -215,13 +220,23 @@ public partial class MediaPlayer : ContentPage
             }
         }
 
-        base.OnNavigatedFrom(args);
+        try
+        {
+            this.timer.Stop();
+            this.Pause();          
+        }
+        catch(Exception ex) 
+        {
+        }
 
-        TimeSpan position = this.player.Position;
+        base.OnNavigatedFrom(args);    
+        
+        var position = await this.GetCurrentPosition();
 
-        this.player.Stop();
-
-        this.RecordHistory(position);
+        if (position.HasValue)
+        {
+            this.RecordHistory(position.Value);
+        }      
 
         try
         {
@@ -229,8 +244,44 @@ public partial class MediaPlayer : ContentPage
         }
         catch (Exception ex)
         {
-
         }
+    }
+
+    private async Task<bool> IsLoaded()
+    {
+        try
+        {
+            var isLoaded = await this.player.EvaluateJavaScriptAsync("isLoaded");
+
+            return isLoaded == "true";
+        }
+        catch (Exception ex)
+        {
+            return false;
+        }
+    }
+
+    private async Task<TimeSpan?> GetCurrentPosition()
+    {
+        try
+        {
+            if(this.player.IsLoaded)
+            {
+                var currentTime = await this.player.EvaluateJavaScriptAsync($"{this.GetPlayerJavascript()}.currentTime;");
+
+                if (float.TryParse(currentTime, out _))
+                {
+                    TimeSpan ts = TimeSpan.FromSeconds(float.Parse(currentTime));
+
+                    return ts;
+                }
+            }           
+        }
+        catch (Exception)
+        {
+        }                   
+
+        return default(TimeSpan?);
     }
 
     private async void RecordHistory(TimeSpan? position)
@@ -243,45 +294,87 @@ public partial class MediaPlayer : ContentPage
         }
         catch (Exception ex)
         {
-
         }
     }
 
-    private void player_PositionChanged(object sender, MediaPositionChangedEventArgs e)
+
+    private async void Timer_Tick(object? sender, EventArgs e)
     {
+        if(!this.player.IsLoaded)
+        {
+            return;
+        }
+
+        if(!this.isPlayed)
+        {
+            bool isLoaded = await this.IsLoaded();
+
+            if(isLoaded)
+            {
+                this.isPlayed = true;
+
+                await this.Play();                
+            }
+        }     
+        
+        if(this.isPlayed)
+        {
+            bool needStop = false;
+
+            if (!this.HasPlayTimes() || this.media.PlayTimes?.FirstOrDefault()?.EndTime == null)
+            {
+                this.timer.Stop();
+                return;
+            }              
+        }
+
         if (!this.hasAutoPaused)
         {
-            int currentPlayIndex = this.currentPlayTimeIndex;
+            var position = await this.GetCurrentPosition();
 
-            if (this.playTimes != null && this.playTimes.ContainsKey(currentPlayIndex))
+            if (position.HasValue)
             {
-                PlayTimeInfo playTimeInfo = this.playTimes[currentPlayIndex];
+                int currentPlayIndex = this.currentPlayTimeIndex;
 
-                if (playTimeInfo.EndTime.HasValue && Math.Abs((playTimeInfo.EndTime.Value - e.Position).TotalMilliseconds) <= 300)
+                if (this.playTimes != null && this.playTimes.ContainsKey(currentPlayIndex))
                 {
-                    int nextPlayIndex = currentPlayIndex + 1;
+                    PlayTimeInfo playTimeInfo = this.playTimes[currentPlayIndex];
 
-                    if (this.playTimes.ContainsKey(nextPlayIndex))
+                    if (playTimeInfo.EndTime.HasValue && Math.Abs((playTimeInfo.EndTime.Value - position.Value).TotalMilliseconds) <= 150)
                     {
-                        this.SeekTo(this.playTimes[nextPlayIndex].StartTime);
-                        this.playTimes[nextPlayIndex].HasSeeked = true;
-                        this.currentPlayTimeIndex = nextPlayIndex;
-                    }
-                    else if (playTimeInfo.HasSeeked)
-                    {
-                        this.player.Pause();
-                        this.hasAutoPaused = true;
+                        int nextPlayIndex = currentPlayIndex + 1;
+
+                        if (this.playTimes.ContainsKey(nextPlayIndex))
+                        {
+                            this.SeekTo(this.playTimes[nextPlayIndex].StartTime);
+                            this.playTimes[nextPlayIndex].HasSeeked = true;
+                            this.currentPlayTimeIndex = nextPlayIndex;
+                        }
+                        else if (playTimeInfo.HasSeeked)
+                        {
+                            this.timer.Stop(); 
+                            this.Pause();
+                            this.hasAutoPaused = true;
+                        }
                     }
                 }
-            }
+            }          
         }
+    }
+
+    private async void Pause()
+    {
+        if(this.player.IsLoaded && this.isPlayed)
+        {
+            await this.player.EvaluateJavaScriptAsync($"{this.GetPlayerJavascript()}.pause();");
+        }        
     }
 
     private async void btnOpenInOtherApp_Clicked(object sender, EventArgs e)
     {
         try
         {
-            this.player.Stop();
+            this.Pause();
 
             var options = new BrowserLaunchOptions()
             {
@@ -404,5 +497,21 @@ public partial class MediaPlayer : ContentPage
         public TimeSpan StartTime { get; set; }
         public TimeSpan? EndTime { get; set; }
         public bool HasSeeked { get; set; }
+    }
+
+    private void player_Loaded(object sender, EventArgs e)
+    {
+
+#if ANDROID
+
+        var view = sender as Microsoft.Maui.Controls.WebView;
+        var handler = view.Handler;
+        var webview = handler?.PlatformView as WebView;
+
+        if (webview is not null)
+        {
+            webview.Settings.MediaPlaybackRequiresUserGesture = false;
+        }
+#endif
     }
 }
