@@ -4,15 +4,8 @@ using System.Runtime.CompilerServices;
 
 namespace EnglishLearning.Business.Model
 {
-    public class EnglishMediaForEditing: V_EnglishMedia, INotifyPropertyChanged
+    public class EnglishMediaForEditing: V_EnglishMedia
     {
-        private void NotifyPropertyChanged([CallerMemberName] String propertyName = "")
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
-
-        public event PropertyChangedEventHandler PropertyChanged;
-
         private bool isEditing;
         private bool isSelected;
 
@@ -28,7 +21,7 @@ namespace EnglishLearning.Business.Model
                 if (value != this.isEditing)
                 {
                     this.isEditing = value;
-                    NotifyPropertyChanged();
+                    base.NotifyPropertyChanged();
                 }
             }
         }
@@ -46,7 +39,7 @@ namespace EnglishLearning.Business.Model
                 if (value != this.isSelected)
                 {
                     this.isSelected = value;
-                    NotifyPropertyChanged();
+                    base.NotifyPropertyChanged();
                 }
             }
         }

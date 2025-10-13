@@ -1,4 +1,5 @@
 using EnglishLearning.Business;
+using EnglishLearning.Business.Helper;
 using EnglishLearning.DataAccess;
 using EnglishLearning.Model;
 using System.Xml.Linq;
@@ -44,7 +45,7 @@ public partial class Subject : ContentPage
         this.lblDescription.Text = subject.Description;
         this.lblDescription.IsVisible = !string.IsNullOrEmpty(subject.Description);
 
-        var medias = await DataProcessor.GetVEnglishSubjectMedias(this.subjectId);
+        var medias =await MediaHelper.DecorateMedias(await DataProcessor.GetVEnglishSubjectMedias(this.subjectId));
 
         this.lvMedias.ItemsSource = medias;
 

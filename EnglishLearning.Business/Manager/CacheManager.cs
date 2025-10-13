@@ -19,7 +19,7 @@ namespace EnglishLearning.Business.Manager
 
         public static string GetMediaImageCacheFilePath(V_EnglishMedia media)
         {
-            string extension =!string.IsNullOrEmpty(media.ImageUrl)? Path.GetExtension(media.ImageUrl): ".jpg";
+            string extension =!string.IsNullOrEmpty(media.ImageUrl) ? Path.GetExtension(media.ImageUrl) : ".jpg";
 
             string fileName = $"media_{media.MediaId}{extension}";
 

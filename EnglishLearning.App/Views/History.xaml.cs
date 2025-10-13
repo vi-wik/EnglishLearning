@@ -1,5 +1,6 @@
 using EnglishLearning.App.Controls;
 using EnglishLearning.Business;
+using EnglishLearning.Business.Helper;
 using EnglishLearning.Business.Manager;
 using EnglishLearning.Business.Model;
 using EnglishLearning.Model;
@@ -49,7 +50,7 @@ public partial class History : ContentPage, INotifyPropertyChanged
         {
             string name = "今天";
 
-            var items = todayHistories.Select(item => this.CreateVEnglishMedia(item, name));
+            var items = await MediaHelper.DecorateMedias(todayHistories.Select(item => this.CreateVEnglishMedia(item, name)).ToList());
 
             ObservableCollection<EnglishMediaForEditing> collection = new ObservableCollection<EnglishMediaForEditing>();
             collection.AddRange(items);
@@ -63,7 +64,7 @@ public partial class History : ContentPage, INotifyPropertyChanged
         {
             string name = "昨天";
 
-            var items = yesterdayHistories.Select(item => this.CreateVEnglishMedia(item, name));
+            var items = await MediaHelper.DecorateMedias(yesterdayHistories.Select(item => this.CreateVEnglishMedia(item, name)).ToList());
 
             ObservableCollection<EnglishMediaForEditing> collection = new ObservableCollection<EnglishMediaForEditing>();
             collection.AddRange(items);
@@ -77,7 +78,7 @@ public partial class History : ContentPage, INotifyPropertyChanged
         {
             string name = "更早";
 
-            var items = earlierHistories.Select(item => this.CreateVEnglishMedia(item, null));
+            var items = await MediaHelper.DecorateMedias(earlierHistories.Select(item => this.CreateVEnglishMedia(item, null)).ToList());
 
             ObservableCollection<EnglishMediaForEditing> collection = new ObservableCollection<EnglishMediaForEditing>();
             collection.AddRange(items);

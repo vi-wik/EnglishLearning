@@ -1,10 +1,15 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
 
 namespace EnglishLearning.Model
 {
-    public class V_EnglishMedia
+    public class V_EnglishMedia: INotifyPropertyChanged
     {
         private string title;
+        private string imageUrl { get; set; }
+
         public int MediaId { get; set; }
         public string MediaTitle 
         { 
@@ -12,10 +17,12 @@ namespace EnglishLearning.Model
             {
                 return !string.IsNullOrEmpty(this.MediaTitleExt) ? this.MediaTitleExt : this.title;
             }
-            set { this.title = value; }
+            set 
+            {
+                this.title = value; 
+            }
         }
-        public string Url { get; set; }
-        public string ImageUrl { get; set; }
+        public string Url { get; set; }     
         public int MediaTypeId { get; set; }
         public string MediaTypeName { get; set; }
         public int PlatformId { get; set; }
@@ -29,5 +36,29 @@ namespace EnglishLearning.Model
         public string MediaDescriptionExt { get; set; }       
 
         public List<EnglishMediaPlayTime> PlayTimes { get; set; }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+       
+        public string ImageUrl
+        {
+            get
+            {
+                return this.imageUrl;
+            }
+
+            set
+            {
+                if (value != this.imageUrl)
+                {
+                    this.imageUrl = value;
+                    this.NotifyPropertyChanged();
+                }
+            }
+        }
+
+        protected void NotifyPropertyChanged([CallerMemberName] String propertyName = "")
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
     }    
 }

@@ -16,24 +16,7 @@ public partial class MediaCardView : ContentView
     public MediaCardView()
     {
         InitializeComponent();       
-    }
-
-    protected override async void OnBindingContextChanged()
-    {
-        base.OnBindingContextChanged();
-
-        await this.BindImageSource();
-    }
-
-    private async Task BindImageSource()
-    {
-        var bindingContext = this.BindingContext;
-
-        if (bindingContext != null)
-        {
-            this.img.Source = await MediaHelper.GetImageSource(bindingContext as V_EnglishMedia);
-        }       
-    }
+    }    
 
     private bool CanNavigateToMediaPlayer()
     {

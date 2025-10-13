@@ -1,4 +1,5 @@
 using EnglishLearning.Business;
+using EnglishLearning.Business.Helper;
 using EnglishLearning.Business.Model;
 using EnglishLearning.Model;
 
@@ -73,7 +74,7 @@ public partial class TopicDetail : ContentPage
 
         var topicDetails = await DataProcessor.GetEnglishTopicDetails(this.topic.Id, isFilterByTopic?  keyword: null);
 
-        var topicDetailMedias = await DataProcessor.GetVEnglishTopicDetailMedias(this.topic.Id, isFilterByTitle? keyword: null);
+        var topicDetailMedias = await MediaHelper.DecorateMedias(await DataProcessor.GetVEnglishTopicDetailMedias(this.topic.Id, isFilterByTitle? keyword: null));
 
         List<EnglishTopicDetailMediaGroup> groups = new List<EnglishTopicDetailMediaGroup>();
 

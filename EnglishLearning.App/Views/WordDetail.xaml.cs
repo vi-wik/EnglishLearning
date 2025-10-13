@@ -220,7 +220,7 @@ public partial class WordDetail : ContentPage
             #endregion
 
             #region Γ½Με
-            var medias = await DataProcessor.GetVEnglishWordMedias(this.englishWord.Id);
+            var medias =await MediaHelper.DecorateMedias(await DataProcessor.GetVEnglishWordMedias(this.englishWord.Id));
 
             this.lvMedias.ItemsSource = medias;
             hasMedias = medias.Count() > 0;
@@ -260,7 +260,6 @@ public partial class WordDetail : ContentPage
             this.lblVariant.IsVisible = variants.Count() > 0;
 
             #endregion
-
 
             this.btnVOCAB.IsVisible = true;
 

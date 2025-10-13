@@ -3,10 +3,9 @@ using EnglishLearning.Business.Model;
 using EnglishLearning.Model;
 using Newtonsoft.Json;
 using System.Collections.Specialized;
-using System.IO;
 using System.Net;
+using System.Threading.Tasks;
 using System.Web;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace EnglishLearning.Business.Helper
 {
@@ -22,56 +21,83 @@ namespace EnglishLearning.Business.Helper
             return url?.ToLower().Contains("imagehub.cc") == true;
         }
 
-        public static async Task<ImageSource> GetImageSource(V_EnglishMedia media)
+        public static async Task<string> DecorateImageUrl(V_EnglishMedia media, bool awaitDownladed = false)
         {
             if (media == null)
             {
                 return null;
             }
 
-            string url = media.ImageUrl;
+            string imageUrl = media.ImageUrl;
 
-            if (string.IsNullOrEmpty(url))
+            if (imageUrl == null)
             {
                 return null;
             }
 
+            string cacheFilePath = CacheManager.GetMediaImageCacheFilePath(media);
+
+            if (File.Exists(cacheFilePath))
+            {
+                return cacheFilePath;
+            }
+
+            if(!awaitDownladed)
+            {
+                DownloadImage(media, cacheFilePath);
+            }
+            else
+            {
+                return await DownloadImage(media, cacheFilePath);
+            }
+
+
+            if (!IsImagehubImage(imageUrl))
+            {
+                return imageUrl;
+            }
+
+            return null;
+        }
+
+        private static async Task<string> DownloadImage(V_EnglishMedia media, string cacheFilePath)
+        {
             try
             {
-                string cacheFilePath = CacheManager.GetMediaImageCacheFilePath(media);
-
-                if (File.Exists(cacheFilePath))
-                {
-                    return cacheFilePath;
-                }
+                string imageUrl = media.ImageUrl;
 
                 using (var handler = new HttpClientHandler())
                 {
                     var client = new HttpClient(handler);
 
-                    if (IsImagehubImage(url))
+                    if (IsImagehubImage(imageUrl))
                     {
                         handler.ServerCertificateCustomValidationCallback = (message, cert, chain, errors) => { return true; };
                     }
 
-                    var response = await client.GetAsync(url);
+                    var response = await client.GetAsync(imageUrl);
 
                     var data = await response.Content.ReadAsByteArrayAsync();
 
                     File.WriteAllBytes(cacheFilePath, data);
 
-                    return cacheFilePath;                                  
+                    media.ImageUrl = cacheFilePath;
+
+                    return cacheFilePath;
                 }
+
             }
             catch (Exception ex)
             {
-                return null;
+
             }
+
+            return null;
         }
 
         public static async Task<string> GetImageUrl(V_EnglishMedia media)
         {
-            ImageSource source = await GetImageSource(media);
+            ImageSource source = await DecorateImageUrl(media, true);
 
             byte[] data = null;
 
@@ -104,8 +130,8 @@ namespace EnglishLearning.Business.Helper
             }
             catch (Exception ex)
             {
-                                
-            }          
+
+            }
 
             return null;
         }
@@ -208,6 +234,22 @@ namespace EnglishLearning.Business.Helper
             }
 
             return false;
+        }
+
+        public static async Task<IEnumerable<T>> DecorateMedias<T>(IEnumerable<T> medias)
+            where T : V_EnglishMedia
+        {
+            foreach (var media in medias)
+            {
+                string imageUrl = media.ImageUrl;
+
+                if (!string.IsNullOrEmpty(imageUrl))
+                {
+                    media.ImageUrl = await DecorateImageUrl(media);
+                }
+            }
+
+            return medias;
         }
     }
 }

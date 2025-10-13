@@ -1,5 +1,6 @@
 using EnglishLearning.App.Helper;
 using EnglishLearning.Business;
+using EnglishLearning.Business.Helper;
 using EnglishLearning.Business.Model;
 using EnglishLearning.DataAccess;
 using EnglishLearning.Model;
@@ -55,7 +56,7 @@ public partial class PhraseDetail : ContentPage
                 this.lvSynonym.ItemsSource = this.phrase.Synonym.Split(';').Select(item => new TextItem() { Text = item });
             }           
 
-            var medias = await DataProcessor.GetVEnglishPhraseMedias(this.phrase.Id);
+            var medias = await MediaHelper.DecorateMedias(await DataProcessor.GetVEnglishPhraseMedias(this.phrase.Id));
 
             this.lvMedias.ItemsSource = medias;
 
