@@ -60,7 +60,7 @@ namespace EnglishLearning.Business.Helper
 
                     File.WriteAllBytes(cacheFilePath, data);
 
-                    return ImageSource.FromStream(() => new MemoryStream(data));                                   
+                    return cacheFilePath;                                  
                 }
             }
             catch (Exception ex)
