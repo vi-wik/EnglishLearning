@@ -14,11 +14,11 @@ public partial class EnglishExampleView : ContentView
 
     private void Example_BindingContextChanged(object sender, EventArgs e)
     {
-        Label lable = sender as Label;
+        Label label = sender as Label;
 
-        lable.FormattedText = new FormattedString();
+        label.FormattedText = new FormattedString();
 
-        EnglishExampleDisplay display = lable.BindingContext as EnglishExampleDisplay;
+        EnglishExampleDisplay display = label.BindingContext as EnglishExampleDisplay;
 
         string example = display.Example;
 
@@ -45,7 +45,7 @@ public partial class EnglishExampleView : ContentView
                 span.GestureRecognizers.Add(tapGestureRecognizer);
             }
 
-            lable.FormattedText.Spans.Add(span);
+            label.FormattedText.Spans.Add(span);
         };
 
         foreach (var c in example)
@@ -67,7 +67,7 @@ public partial class EnglishExampleView : ContentView
             {
                 addSpan();
 
-                lable.FormattedText.Spans.Add(new Span() { Text = c.ToString() });
+                label.FormattedText.Spans.Add(new Span() { Text = c.ToString() });
 
                 sb.Clear();
             }
@@ -86,5 +86,5 @@ public partial class EnglishExampleView : ContentView
 
             await Navigation.PushAsync(wordDetail);
         }
-    }
+    } 
 }

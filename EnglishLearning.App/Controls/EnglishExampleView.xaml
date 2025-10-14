@@ -12,7 +12,13 @@
             <RowDefinition></RowDefinition>
         </Grid.RowDefinitions>
 
-        <Label Grid.Column="0" Grid.Row="0" Text="{Binding Order}" HorizontalTextAlignment="Start" VerticalTextAlignment="Start"></Label>
+        <Label Grid.Column="0" Grid.Row="0" HorizontalTextAlignment="Start">
+            <Label.FormattedText>
+                <FormattedString>
+                    <Span Text="{Binding Order}"></Span>
+                </FormattedString>
+            </Label.FormattedText>
+        </Label>
 
         <Label Text="{Binding Example}" Grid.Column="1" Grid.Row="0" BindingContextChanged="Example_BindingContextChanged"></Label>
 
