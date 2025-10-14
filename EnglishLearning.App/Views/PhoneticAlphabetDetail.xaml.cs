@@ -1,4 +1,5 @@
 using EnglishLearning.Business;
+using EnglishLearning.Business.Helper;
 using EnglishLearning.Business.Model;
 using EnglishLearning.Model;
 
@@ -38,7 +39,7 @@ public partial class PhoneticAlphabetDetail : ContentPage
             this.lblDescription.Text = consonant.Description;
             this.lblDescription.IsVisible = !string.IsNullOrEmpty(consonant.Description);
 
-            var medias = await DataProcessor.GetVEnglishConsonantMedias(consonant.Id);
+            var medias =await MediaHelper.DecorateMedias(await DataProcessor.GetVEnglishConsonantMedias(consonant.Id));
 
             var groupedMedias = (from item in medias 
                                 group item by new { SubcategoryName = item.SubcategoryName?? "Overview", Description = item.SubcategoryDescription, Priority= item.SubcategoryPriority } into gp 
@@ -64,7 +65,7 @@ public partial class PhoneticAlphabetDetail : ContentPage
             this.lblDescription.Text = vowel.Description;
             this.lblDescription.IsVisible = !string.IsNullOrEmpty(vowel.Description);
 
-            var medias = await DataProcessor.GetVEnglishVowelMedias(vowel.Id);
+            var medias = await MediaHelper.DecorateMedias(await DataProcessor.GetVEnglishVowelMedias(vowel.Id));
 
             var groupedMedias = (from item in medias
                                  group item by new { SubcategoryName = item.SubcategoryName ?? "Overview", Description = item.SubcategoryDescription, Priority = item.SubcategoryPriority } into gp

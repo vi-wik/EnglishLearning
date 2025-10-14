@@ -5,6 +5,10 @@ using EnglishLearning.Business.Helper;
 using EnglishLearning.Model;
 using EnglishLearning.Utility;
 using Microsoft.Maui.Controls.Shapes;
+using System.Reflection;
+using System.Threading.Tasks;
+
+
 
 #if ANDROID
 using WebView = Android.Webkit.WebView;
@@ -26,6 +30,8 @@ public partial class MediaPlayer : ContentPage
     private DateTime? popupClosedTime;
     private IDispatcherTimer timer;
     private bool isPlayed = false;
+    private ContentPage previousPage = null;
+    private TimeSpan? navigateFromMediaTime = default(TimeSpan?);
 
     public V_EnglishMedia Media
     {
@@ -40,12 +46,61 @@ public partial class MediaPlayer : ContentPage
 
         this.media = media;
         this.timer = Dispatcher.CreateTimer();
-        this.timer.Interval = TimeSpan.FromMilliseconds(100);     
+        this.timer.Interval = TimeSpan.FromMilliseconds(100);
         this.timer.Tick += this.Timer_Tick;
 
         this.InitPlayer();
     }
-   
+
+    protected override async void OnNavigatedTo(NavigatedToEventArgs args)
+    {
+        if (this.popupClosedTime.HasValue)
+        {
+            if ((DateTime.Now - this.popupClosedTime.Value).TotalSeconds < 1)
+            {
+                return;
+            }
+        }
+
+        base.OnNavigatedTo(args);
+
+        Type type = args.GetType();
+
+        PropertyInfo propertyInfo = type.GetProperty("PreviousPage", BindingFlags.NonPublic | BindingFlags.Instance);
+
+        ContentPage page = null;
+
+        if (propertyInfo != null)
+        {
+            page = propertyInfo.GetValue(args) as ContentPage;
+        }
+
+        if (this.previousPage == null)
+        {
+            this.previousPage = page;
+        }
+        else
+        {
+            if (this.previousPage != null && page != null)
+            {
+                if (this.previousPage.Id != page.Id)
+                {
+                    bool isPaused = await this.IsPaused();
+
+                    if (isPaused)
+                    {
+                        if (this.navigateFromMediaTime.HasValue)
+                        {
+                            await this.SeekTo(this.navigateFromMediaTime.Value);
+
+                            this.navigateFromMediaTime = null;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
 
     private async void Current_ConnectivityChanged(object? sender, ConnectivityChangedEventArgs e)
     {
@@ -98,7 +153,7 @@ public partial class MediaPlayer : ContentPage
         {
             this.SetPlayTimes();
 
-            this.lblTitle.Text = this.media.MediaTitle;   
+            this.lblTitle.Text = this.media.MediaTitle;
 
             string description = string.IsNullOrEmpty(this.media.MediaDescriptionExt) ? this.media.MediaDescription : this.media.MediaDescriptionExt;
 
@@ -108,10 +163,10 @@ public partial class MediaPlayer : ContentPage
 
             bool success = await this.SetPlayerUrl();
 
-            if(success)
+            if (success)
             {
                 this.timer.Start();
-            }               
+            }
         }
         else
         {
@@ -174,7 +229,7 @@ public partial class MediaPlayer : ContentPage
 
             this.currentPlayTimeIndex = 0;
         }
-        
+
         this.RecordHistory(startTime);
 
         await this.player.EvaluateJavaScriptAsync($"{this.GetPlayerJavascript()}.play();");
@@ -205,7 +260,7 @@ public partial class MediaPlayer : ContentPage
         }
 
         return startTime;
-    }  
+    }
 
 
     protected override async void OnNavigatedFrom(NavigatedFromEventArgs args)
@@ -220,23 +275,47 @@ public partial class MediaPlayer : ContentPage
             }
         }
 
-        try
-        {
-            this.timer.Stop();
-            this.Pause();          
-        }
-        catch(Exception ex) 
-        {
-        }
-
-        base.OnNavigatedFrom(args);    
-        
         var position = await this.GetCurrentPosition();
 
         if (position.HasValue)
         {
             this.RecordHistory(position.Value);
-        }      
+        }
+
+        bool isPaused = await this.IsPaused();
+
+        if (isPaused)
+        {
+            this.navigateFromMediaTime = await this.GetCurrentPosition();
+        }
+
+        Type type = args.GetType();
+
+        PropertyInfo propertyInfo = type.GetProperty("DestinationPage", BindingFlags.NonPublic | BindingFlags.Instance);
+
+        if (propertyInfo != null)
+        {
+            var page = propertyInfo.GetValue(args) as ContentPage;
+
+            if (page != null && this.previousPage != null)
+            {
+                if (page.Id != this.previousPage.Id)
+                {
+                    return;
+                }
+            }
+        }
+
+        try
+        {
+            this.timer.Stop();
+            this.Pause();           
+        }
+        catch (Exception ex)
+        {
+        }
+
+        base.OnNavigatedFrom(args);        
 
         try
         {
@@ -265,7 +344,7 @@ public partial class MediaPlayer : ContentPage
     {
         try
         {
-            if(this.player.IsLoaded)
+            if (this.player.IsLoaded)
             {
                 var currentTime = await this.player.EvaluateJavaScriptAsync($"{this.GetPlayerJavascript()}.currentTime;");
 
@@ -275,13 +354,31 @@ public partial class MediaPlayer : ContentPage
 
                     return ts;
                 }
-            }           
+            }
         }
         catch (Exception)
         {
-        }                   
+        }
 
         return default(TimeSpan?);
+    }
+
+    private async Task<bool> IsPaused()
+    {
+        try
+        {
+            if (this.isPlayed)
+            {
+                string value = await this.player.EvaluateJavaScriptAsync($"{this.GetPlayerJavascript()}.paused;");
+
+                return value == "true";
+            }
+        }
+        catch (Exception)
+        {
+        }
+
+        return false;
     }
 
     private async void RecordHistory(TimeSpan? position)
@@ -300,32 +397,37 @@ public partial class MediaPlayer : ContentPage
 
     private async void Timer_Tick(object? sender, EventArgs e)
     {
-        if(!this.player.IsLoaded)
+        if (!this.player.IsLoaded)
         {
             return;
         }
 
-        if(!this.isPlayed)
+        if (!this.isPlayed)
         {
             bool isLoaded = await this.IsLoaded();
 
-            if(isLoaded)
+            if (isLoaded)
             {
                 this.isPlayed = true;
 
-                await this.Play();                
+                await this.Play();
             }
-        }     
-        
-        if(this.isPlayed)
+        }
+
+        if (this.isPlayed)
         {
-            bool needStop = false;
+            bool needStop = false;     
 
             if (!this.HasPlayTimes() || this.media.PlayTimes?.FirstOrDefault()?.EndTime == null)
             {
+                needStop = true;
+            }           
+
+            if(needStop)
+            {
                 this.timer.Stop();
                 return;
-            }              
+            }
         }
 
         if (!this.hasAutoPaused)
@@ -352,22 +454,22 @@ public partial class MediaPlayer : ContentPage
                         }
                         else if (playTimeInfo.HasSeeked)
                         {
-                            this.timer.Stop(); 
+                            this.timer.Stop();
                             this.Pause();
                             this.hasAutoPaused = true;
                         }
                     }
                 }
-            }          
+            }
         }
     }
 
     private async void Pause()
     {
-        if(this.player.IsLoaded && this.isPlayed)
+        if (this.player.IsLoaded && this.isPlayed)
         {
             await this.player.EvaluateJavaScriptAsync($"{this.GetPlayerJavascript()}.pause();");
-        }        
+        }
     }
 
     private async void btnOpenInOtherApp_Clicked(object sender, EventArgs e)
@@ -460,7 +562,7 @@ public partial class MediaPlayer : ContentPage
                 await DisplayAlert("错误", "取消收藏失败！", "确定");
             }
         }
-    }  
+    }
 
     private void Popup_Closed(object? sender, EventArgs e)
     {
