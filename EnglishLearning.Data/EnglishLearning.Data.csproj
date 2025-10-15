@@ -3,15 +3,15 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.1</TargetFramework>
     <Nullable>enable</Nullable>
-    <AssemblyVersion>1.0.11</AssemblyVersion>
-    <FileVersion>1.0.11</FileVersion>
+    <AssemblyVersion>1.0.12</AssemblyVersion>
+    <FileVersion>1.0.12</FileVersion>
     <PackageId>viwik.$(AssemblyName)</PackageId>
-    <Version>1.0.11</Version>
+    <Version>1.0.12</Version>
     <Authors>vi-wik</Authors>
     <AssemblyName>viwik.$(MSBuildProjectName)</AssemblyName>
     <RootNamespace>viwik.$(MSBuildProjectName.Replace(" ", "_"))</RootNamespace>
     <Description>英语学习数据文件</Description>
-    <PackageReleaseNotes>整理和清除一些数据</PackageReleaseNotes>
+    <PackageReleaseNotes>部分单词含义重整</PackageReleaseNotes>
     <PackageProjectUrl>https://github.com/vi-wik/EnglishLearning</PackageProjectUrl>
     <RepositoryUrl>https://github.com/vi-wik/EnglishLearning</RepositoryUrl>
   </PropertyGroup>
