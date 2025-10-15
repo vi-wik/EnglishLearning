@@ -30,5 +30,20 @@
                 return this.CommonMeaning + (string.IsNullOrEmpty(this.SpecialMeaning) ? "" : "；") + this.SpecialMeaning ?? "";
             }
         }
+
+        public int MeaningOrder
+        {
+            get
+            {
+                if(!string.IsNullOrEmpty(this.Meaning))
+                {
+                    return 0;
+                }
+                else
+                {
+                    return 1;
+                }
+            }
+        }
     }
 }

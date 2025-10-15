@@ -56,7 +56,7 @@ public partial class WordList : ContentPage
                 fuzzyMatchWordIds.AddRange(words.Where(item => item.Word.ToLower() != keyword.ToLower()).Select(item => item.Id));
 
                 this.lvWord.ItemsSource = words.Where(item => fullMatchWordIds.Contains(item.Id)).OrderBy(item => item.ExamTypeOrder).ThenBy(item => item.Word.ToLower())
-                    .Concat(words.Where(item => fuzzyMatchWordIds.Contains(item.Id)).OrderBy(item => item.ExamTypeOrder).ThenBy(item => item.Word.ToLower()));
+                    .Concat(words.Where(item => fuzzyMatchWordIds.Contains(item.Id)).OrderBy(item => item.ExamTypeOrder).ThenBy(item=>item.MeaningOrder).ThenBy(item => item.Word.ToLower()));
             }
             else
             {

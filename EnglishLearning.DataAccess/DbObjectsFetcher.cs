@@ -226,7 +226,6 @@ namespace EnglishLearning.DataAccess
             string condition = GetWordMatchCondition(keyword, fullMatch, ignoreCase, isMatchPrefix, isMatchSuffix);
             string limitCondition = filter?.NoLimit == true ? "" : $"limit {limitCount}";
 
-
             if (!string.IsNullOrEmpty(notBeginWith))
             {
                 condition += GetEnglishWordNotBeginWithCondition(notBeginWith);
@@ -239,7 +238,7 @@ namespace EnglishLearning.DataAccess
 
             string tableName = needMeaning ? "V_EnlishWordSimpleMeaning" : "EnglishWord";
 
-            string columns = "Id,Word";
+            string columns = "Id,Word,ExamType";
 
             if (needMeaning)
             {
