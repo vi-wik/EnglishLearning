@@ -25,7 +25,7 @@
 
                         <Label Text="{Binding Word}"  HorizontalTextAlignment="Start" FontSize="14" FontAttributes="Bold" Padding="2,5" />
 
-                        <Label Text="{Binding CommonMeaning}" Grid.Column="1" HorizontalTextAlignment="End" TextColor="Gray" FontSize="14" Margin="10,5" LineBreakMode="TailTruncation" MaxLines="1" />
+                        <Label Text="{Binding Meaning}" Grid.Column="1" HorizontalTextAlignment="End" TextColor="Gray" FontSize="14" Margin="10,5" LineBreakMode="TailTruncation" MaxLines="1" />
                     </Grid>
                 </DataTemplate>
             </CollectionView.ItemTemplate>

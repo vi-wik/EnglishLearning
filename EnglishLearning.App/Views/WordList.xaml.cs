@@ -1,11 +1,8 @@
-using EnglishLearning.App.Helper;
 using EnglishLearning.Business;
 using EnglishLearning.Business.Manager;
 using EnglishLearning.Business.Model;
-using EnglishLearning.DataAccess;
 using EnglishLearning.Model;
 using EnglishLearning.Utility;
-using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
 namespace EnglishLearning.App.Views;
@@ -45,12 +42,12 @@ public partial class WordList : ContentPage
 
             EnglishWordFilter filter = new EnglishWordFilter() { Keyword = keyword, FullMatch = fullMatch, NeedMeaning = this.setting.ShowWordMeaningWhenShowWordList };
 
-            List<int> fullMatchWordIds = new List<int>();
-            List<int> fuzzyMatchWordIds = new List<int>();
-
             if (!isChinese)
             {
                 words = (await DataProcessor.GetEnglishWords(filter));
+
+                List<int> fullMatchWordIds = new List<int>();
+                List<int> fuzzyMatchWordIds = new List<int>();
 
                 fullMatchWordIds.AddRange(words.Where(item => item.Word.ToLower() == keyword.ToLower()).Select(item=>item.Id));
                 fuzzyMatchWordIds.AddRange(words.Where(item => item.Word.ToLower() != keyword.ToLower()).Select(item => item.Id));
@@ -60,36 +57,59 @@ public partial class WordList : ContentPage
             }
             else
             {
-                var meanings = await DataProcessor.GetEnglishWordMeanings(keyword);               
+                var meanings = await DataProcessor.GetEnglishWordMeanings(keyword);
+
+                Dictionary<int,int> dictFullMatchWordId = new Dictionary<int, int>();
+                Dictionary<int,int> dictFuzzyMatchWordId = new Dictionary<int, int>();
 
                 foreach (var m in meanings)
                 {
-                    string meaning = m.Meaning;                  
+                    string commonMeaning = this.GetCleanMeaning(m.CommonMeaning);
+                    string specialMeaning = this.GetCleanMeaning(m.SpecialMeaning);
 
-                    string content = meaning;
+                    var commonItems = this.GetMeaningItems(commonMeaning);
+                    var specialItems = this.GetMeaningItems(specialMeaning);
 
-                    if(this.HasBracketChar(meaning))
+                    bool fullMatchInCommon = false;
+                    bool fullMatchInSpecial = false;
+
+                    if (commonItems.Any(item => item == keyword))
                     {
-                        Regex regex = new Regex(@"[\[<£¨][\w £»£¬]+[\]>£©]");
-
-                        content = regex.Replace(meaning, "");                       
+                        fullMatchInCommon = true;
+                    }
+                    else if(specialItems.Any(item => item == keyword))
+                    {
+                        fullMatchInSpecial = true;
                     }
 
-                    var items = content.Split('£¬', '£»');                   
-
-                    if (items.Any(item => item == keyword))
+                    if(fullMatchInCommon || fullMatchInSpecial)
                     {
-                        if (!fullMatchWordIds.Contains(m.WordId) && !fuzzyMatchWordIds.Contains(m.WordId))
+                        if (!dictFullMatchWordId.ContainsKey(m.WordId) && !dictFuzzyMatchWordId.ContainsKey(m.WordId))
                         {
-                            fullMatchWordIds.Add(m.WordId);
+                            dictFullMatchWordId.Add(m.WordId, (fullMatchInCommon? 1: 2));
                         }
                     }
-                    else if(items.Any(item=>item.Contains(keyword)))
+                    else 
                     {
-                        if(!fullMatchWordIds.Contains(m.WordId) && !fuzzyMatchWordIds.Contains(m.WordId))
+                        bool fuzzyMatchInCommon = false;
+                        bool fuzzyMatchInSpecial = false;
+
+                        if (commonItems.Any(item => item.Contains(keyword)))
                         {
-                            fuzzyMatchWordIds.Add(m.WordId);
+                            fuzzyMatchInCommon = true;
                         }
+                        else if(specialItems.Any(item => item.Contains(keyword)))
+                        {
+                            fuzzyMatchInSpecial = false;
+                        }
+
+                        if(fuzzyMatchInCommon || fuzzyMatchInSpecial)
+                        {
+                            if (!dictFullMatchWordId.ContainsKey(m.WordId) && !dictFuzzyMatchWordId.ContainsKey(m.WordId))
+                            {
+                                dictFuzzyMatchWordId.Add(m.WordId, fuzzyMatchInCommon? 1: 2);
+                            }
+                        }                      
                     }
                 }
 
@@ -99,15 +119,37 @@ public partial class WordList : ContentPage
 
                 foreach (var gp in groups)
                 {
-                    V_EnglishWordWithMeaning wm = new V_EnglishWordWithMeaning() { Id = gp.Key.WordId, Word = gp.Key.Word, ExamType = gp.Key.ExamType };
+                    int id = gp.Key.WordId;                    
 
-                    wm.CommonMeaning = string.Join("£»", meanings.Where(item => item.WordId == gp.Key.WordId && item.Meaning.Contains(keyword)).OrderBy(item => item.Priority).Select(item => item.CommonMeaning));
+                    V_EnglishWordWithMeaning wm = new V_EnglishWordWithMeaning() { Id = id, Word = gp.Key.Word, ExamType = gp.Key.ExamType };
 
-                    wordList.Add(wm);
-                }
+                    var matchedMeanings = meanings.Where(item => item.WordId == id && (item.Meaning.Contains(keyword) || item?.SpecialMeaning?.Contains(keyword)==true));
 
-                words = wordList.Where(item => fullMatchWordIds.Any(t => t == item.Id)).OrderBy(item=>item.ExamTypeOrder).ThenBy(item=>item.Word.ToLower())
-                    .Concat(wordList.Where(item => fuzzyMatchWordIds.Any(t => t == item.Id)).OrderBy(item => item.ExamTypeOrder).ThenBy(item => item.Word.ToLower())
+                    if(matchedMeanings.Count()>0)
+                    {
+                        wm.CommonMeaning = string.Join("£»", matchedMeanings.OrderBy(item => item.Priority).Select(item=>item.CommonMeaning));
+
+                        if(matchedMeanings.Any(item=>item.SpecialMeaning?.Contains(keyword) == true) )
+                        {
+                            wm.SpecialMeaning = string.Join("£»", matchedMeanings.OrderBy(item => item.Priority).Select(item => item.SpecialMeaning));
+                        }                        
+
+                        if (dictFullMatchWordId.ContainsKey(id))
+                        {
+                            wm.MeaningPriority = dictFullMatchWordId[id];
+                        }
+
+                        if (dictFuzzyMatchWordId.ContainsKey(id))
+                        {
+                            wm.MeaningPriority = dictFuzzyMatchWordId[id];
+                        }
+
+                        wordList.Add(wm);
+                    }                   
+                }    
+
+                words = wordList.Where(item => dictFullMatchWordId.Keys.Any(t => t == item.Id)).OrderBy(item=>item.MeaningPriority).ThenBy(item => item.ExamTypeOrder).ThenBy(item=>item.ExamType).ThenBy(item => item.Word.ToLower())
+                    .Concat(wordList.Where(item => dictFuzzyMatchWordId.Keys.Any(t => t == item.Id)).OrderBy(item=>item.MeaningPriority).ThenBy(item => item.ExamTypeOrder).ThenBy(item=>item.ExamType).ThenBy(item => item.Word.ToLower())
                     ).ToList();
 
                 this.lvWord.ItemsSource = words;
@@ -124,8 +166,35 @@ public partial class WordList : ContentPage
         }
     }
 
+    private string[] GetMeaningItems(string meaning)
+    {
+        if(string.IsNullOrEmpty(meaning))
+        {
+            return Array.Empty<string>();
+        }
+
+        return meaning.Split('£¬', '£»');
+    }
+
+    private string GetCleanMeaning(string meaning)
+    {
+        if (this.HasBracketChar(meaning))
+        {
+            Regex regex = new Regex(@"[\[<£¨][\w £»£¬]+[\]>£©]");
+
+            return  regex.Replace(meaning, "");
+        }
+
+        return meaning;
+    }
+
     private bool HasBracketChar(string value)
     {
+        if(string.IsNullOrWhiteSpace(value))
+        {
+            return false;
+        }
+
         return value.Contains('£¨') || value.Contains("<") || value.Contains('[');
     }
 
