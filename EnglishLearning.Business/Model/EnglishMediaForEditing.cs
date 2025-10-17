@@ -43,6 +43,9 @@ namespace EnglishLearning.Business.Model
                 }
             }
         }
+
+        public bool TeacherNameIsVisible { get; set; } = true;
+        public int TitleRowSpan { get; set; } = 1;
        
         public double Progress { get; set; }
     }

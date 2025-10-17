@@ -128,6 +128,8 @@ public partial class History : ContentPage, INotifyPropertyChanged
             PlatformId = mediaAccessHistory.PlatformId,
             Url = mediaAccessHistory.Url,
             Source = mediaAccessHistory.Source,
+            TeacherNameIsVisible = false,
+            TitleRowSpan = 2,
             MediaTypeName = this.GetDateTimeDisplayString(name, mediaAccessHistory.LastAccessTime)
         };
 

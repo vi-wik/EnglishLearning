@@ -28,13 +28,13 @@
                 HeightRequest="72"/>
         </Border>
 
-        <Label Grid.Column="1"
+        <Label Grid.Column="1" Grid.RowSpan="{Binding TitleRowSpan}"
                Text="{Binding MediaTitle}"
                FontAttributes="Bold" 
                Margin="5,0,0,0">
         </Label>
 
-        <Label Grid.Row="1"
+        <Label Grid.Row="1" IsVisible="{Binding TeacherNameIsVisible}"
                Grid.Column="1"
                Text="{Binding TeacherName}"
                VerticalOptions="Center" 

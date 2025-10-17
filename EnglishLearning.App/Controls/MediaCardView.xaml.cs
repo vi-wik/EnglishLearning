@@ -105,7 +105,7 @@ public partial class MediaCardView : ContentView
     public void ShowProgressBar()
     {
         this.pb.IsVisible = true;
-        this.InvalidateLayout();
+        this.InvalidateMeasure();
     }
 }
 
