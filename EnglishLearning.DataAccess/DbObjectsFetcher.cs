@@ -1246,5 +1246,15 @@ where w.Word like '%{affixName}' and LOWER(w.Word)<> '{affixName}' {wordConditio
                 return await connection.QueryAsync<V_EnglishWordMeaning>(sql, para);
             }
         }
+
+        public static async Task<IEnumerable<V_EnglishWordForm>> GetVEnglishWordForms(int wordId)
+        {
+            using (var connection = DbUtitlity.CreateDbConnection())
+            {
+                string sql = $"select * from V_EnglishWordForm where WordId={wordId} order by Priority";
+
+                return await connection.QueryAsync<V_EnglishWordForm>(sql);
+            }
+        }
     }
 }

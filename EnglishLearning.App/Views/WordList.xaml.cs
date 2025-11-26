@@ -180,7 +180,7 @@ public partial class WordList : ContentPage
     {
         if (this.HasBracketChar(meaning))
         {
-            Regex regex = new Regex(@"[\[<£¨][\w £»£¬]+[\]>£©]");
+            Regex regex = new Regex(@"[\[<£¨][\w £»£¬¡¢¡£]+[\]>£©]");
 
             return  regex.Replace(meaning, "");
         }

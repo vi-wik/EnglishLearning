@@ -445,5 +445,10 @@ namespace EnglishLearning.Business
         {
             return await DbObjectsFetcher.GetEnglishWordMeaningBySuffixDetail(detail, affixName);
         }
+
+        public static async Task<IEnumerable<V_EnglishWordForm>> GetVEnglishWordForms(int wordId)
+        {
+            return await DbObjectsFetcher.GetVEnglishWordForms(wordId);
+        }
     }
 }

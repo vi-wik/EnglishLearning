@@ -9,6 +9,7 @@
         public int PronunciationBracketMode { get; set; } = 1;
         public bool ShowWordFullMeaning { get; set; }
         public bool ExpandWordInflectionByDefault { get; set; } = true;
+        public bool ExpandWordFormByDefault { get; set; } = true;
         public bool ShowWordSyllable { get; set; } = true;
         public bool AutoPlayAudioWhenLearnWord { get; set; }
         public string PronunciationFileRootFolder { get; set; }

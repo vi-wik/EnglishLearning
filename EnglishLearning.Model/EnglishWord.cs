@@ -6,6 +6,7 @@
         public string Word { get; set; }
         public int? ExamType { get; set; }       
         public bool? HasDegree { get; set; }
+        public bool? IsMoreDegree { get; set; }
     }
 
     public class EnglishWordSuggestion : EnglishWord

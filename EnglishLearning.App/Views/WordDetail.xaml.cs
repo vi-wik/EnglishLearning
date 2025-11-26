@@ -45,7 +45,7 @@ public partial class WordDetail : ContentPage
             int? previousWordId = await DataProcessor.GetPreviousEnglishLearnedWordId(this.learningEnglishExamType.Id, wordId);
 
             this.SetToolbarItemStatus(this.tbiPrevious, previousWordId.HasValue);
-            this.SetToolbarItemStatus(this.tbiNext, true);           
+            this.SetToolbarItemStatus(this.tbiNext, true);
         }
         else
         {
@@ -76,7 +76,7 @@ public partial class WordDetail : ContentPage
         bool hasUKAudio = true;
         bool isFullUpperCase = this.englishWord?.Word?.All(item => char.IsUpper(item)) == true;
 
-        if(isFullUpperCase)
+        if (isFullUpperCase)
         {
             hasUSAudio = false;
             hasUKAudio = false;
@@ -93,7 +93,7 @@ public partial class WordDetail : ContentPage
 
         this.PronunciationGrid.IsVisible = this.USPronunciationLayout.IsVisible || this.UKPronunciationLayout.IsVisible;
 
-        if(!this.PronunciationGrid.IsVisible)
+        if (!this.PronunciationGrid.IsVisible)
         {
             this.lvMeanings.Margin = new Thickness(this.lvMeanings.Margin.Left, 0, this.lvMeanings.Margin.Right, this.lvMeanings.Margin.Bottom);
         }
@@ -220,7 +220,7 @@ public partial class WordDetail : ContentPage
             #endregion
 
             #region 媒体
-            var medias =await MediaHelper.DecorateMedias(await DataProcessor.GetVEnglishWordMedias(this.englishWord.Id));
+            var medias = await MediaHelper.DecorateMedias(await DataProcessor.GetVEnglishWordMedias(this.englishWord.Id));
 
             this.lvMedias.ItemsSource = medias;
             hasMedias = medias.Count() > 0;
@@ -259,6 +259,23 @@ public partial class WordDetail : ContentPage
             this.lvVariants.ItemsSource = variants;
             this.lblVariant.IsVisible = variants.Count() > 0;
 
+            #endregion
+
+            #region 相关单词
+            var forms = await DataProcessor.GetVEnglishWordForms(wordId);
+
+            this.lvWordForm.ItemsSource = forms;
+            int formCount = forms.Count();
+
+            if (formCount > 0)
+            {
+                this.FormExpander.IsVisible = true;
+
+                if (this.setting.ExpandWordFormByDefault)
+                {
+                    this.FormExpander.IsExpanded = true;
+                }
+            }
             #endregion
 
             this.btnVOCAB.IsVisible = true;
@@ -367,7 +384,7 @@ public partial class WordDetail : ContentPage
 
                 if (!existing)
                 {
-                    virtualMeanings.Add(new EnglishWordMeaningForDisplay() { IsVirtual = true, Word = wordInflection.Word, WordId= wordInflection.WordId, PartOfSpeech = partOfSpeech, Meaning = meaning });
+                    virtualMeanings.Add(new EnglishWordMeaningForDisplay() { IsVirtual = true, Word = wordInflection.Word, WordId = wordInflection.WordId, PartOfSpeech = partOfSpeech, Meaning = meaning });
                 }
             }
 
@@ -438,32 +455,25 @@ public partial class WordDetail : ContentPage
 
         if ((this.HasAdj() || this.HasAdv()) && this.englishWord.HasDegree == true)
         {
-            string comparativeDegree = EnglishWordInflectionHelper.GetComparativeDegree(this.englishWord.Word);
-            string superlativeDegree = EnglishWordInflectionHelper.GetSuperlativeDegree(this.englishWord.Word);
-
             int comparativeDegreeCount = inflections.Count(item => item.TypeId == 6);
             int superlativeDegreeCount = inflections.Count(item => item.TypeId == 7);
 
-            if (this.syllableCount >= 1)
+            if (comparativeDegreeCount + superlativeDegreeCount == 0)
             {
-                if (comparativeDegreeCount == 0 && this.syllableCount <= 2)
-                {
-                    addInflection(6, comparativeDegree);
-                }
+                string comparativeDegree = EnglishWordInflectionHelper.GetComparativeDegree(this.englishWord.Word);
+                string superlativeDegree = EnglishWordInflectionHelper.GetSuperlativeDegree(this.englishWord.Word);
 
-                if (this.syllableCount > 2)
+                bool isMoreDegree = this.englishWord.IsMoreDegree == true;
+
+                if (isMoreDegree || this.syllableCount > 2)
                 {
                     addInflection(6, "more " + this.englishWord.Word);
-                }
-
-                if (superlativeDegreeCount == 0 && this.syllableCount <= 2)
-                {
-                    addInflection(7, superlativeDegree);
-                }
-
-                if (this.syllableCount > 2)
-                {
                     addInflection(7, "most " + this.englishWord.Word);
+                }
+                else
+                {
+                    addInflection(6, comparativeDegree);
+                    addInflection(7, superlativeDegree);
                 }
             }
         }
@@ -553,6 +563,18 @@ public partial class WordDetail : ContentPage
     private void btnInflectionShow_Clicked(object sender, EventArgs e)
     {
         this.InflectionExpander.IsExpanded = !this.InflectionExpander.IsExpanded;
+    }
+
+    private void FormExpander_ExpandedChanged(object? sender, CommunityToolkit.Maui.Core.ExpandedChangedEventArgs e)
+    {
+        string iconKey = this.FormExpander.IsExpanded ? "up" : "down";
+
+        this.Font_FormShow.Glyph = Application.Current.Resources[iconKey].ToString();
+    }
+
+    private void btnFormShow_Clicked(object sender, EventArgs e)
+    {
+        this.FormExpander.IsExpanded = !this.FormExpander.IsExpanded;
     }
 
     private void SetPronunciationDisplayText(Label label, string pronunciation)
@@ -696,7 +718,7 @@ public partial class WordDetail : ContentPage
         {
             return;
         }
-       
+
         this.SetToolbarItemStatus(this.tbiNext, true);
 
         if (index > 0)
@@ -739,7 +761,7 @@ public partial class WordDetail : ContentPage
             this.Reset();
 
             bool isLastHistory = index + 1 == this.historyWordIds.Count - 1;
-            
+
             this.SetToolbarItemStatus(this.tbiNext, true);
 
             this.ShowWord(nextWordId.Value);
@@ -848,12 +870,12 @@ public partial class WordDetail : ContentPage
 
         EnglishWordMeaningForDisplay display = label.BindingContext as EnglishWordMeaningForDisplay;
 
-        if(display.IsVirtual)
+        if (display.IsVirtual)
         {
             string text = label.Text;
             string word = display.Word;
 
-            if(text.StartsWith(word))
+            if (text.StartsWith(word))
             {
                 label.FormattedText = new FormattedString();
 
@@ -868,7 +890,7 @@ public partial class WordDetail : ContentPage
 
                 label.FormattedText.Spans.Add(new Span() { Text = text.Substring(word.Length) });
             }
-        }        
+        }
     }
 
     private async void TapGestureRecognizer_ExampleItemTapped(object sender, TappedEventArgs e)
@@ -888,6 +910,18 @@ public partial class WordDetail : ContentPage
         if (this.tbiNext.IsEnabled && this.CanFinishLearn())
         {
             this.FinishLearn();
+        }
+    }
+
+    private async void TapGestureRecognizer_FormTapped(object sender, TappedEventArgs e)
+    {
+        Grid grid = sender as Grid;
+
+        var form = grid.BindingContext as V_EnglishWordForm;
+
+        if (form != null)
+        {
+            this.NavigateToWordDetailPage(form.TargetWordId);
         }
     }
 }

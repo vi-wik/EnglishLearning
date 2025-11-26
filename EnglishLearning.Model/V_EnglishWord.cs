@@ -10,5 +10,6 @@
     
         public int? ExamType { get; set; }    
         public bool? HasDegree { get; set; }
+        public bool? IsMoreDegree { get; set; }
     }
 }

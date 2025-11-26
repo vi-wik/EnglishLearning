@@ -188,6 +188,49 @@
                     </DataTemplate>
                 </CollectionView.ItemTemplate>
             </CollectionView>
+
+            <toolkit:Expander x:Name="FormExpander" IsVisible="False" ExpandedChanged="FormExpander_ExpandedChanged">
+                <toolkit:Expander.Header>                   
+                    <Grid>
+                        <Grid >
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition  Width="9*" />
+                                <ColumnDefinition  Width="1*"/>
+                            </Grid.ColumnDefinitions>
+                        </Grid>
+
+                        <Label x:Name="lblForm" Text="相关单词"  VerticalOptions="Center" HorizontalOptions="Start" FontAttributes="Bold" Margin="10,10,10,2" />
+
+                        <ImageButton Grid.Column="1" x:Name="btnFormShow" Margin="3,3" WidthRequest="22" HeightRequest="22"  
+                          VerticalOptions="Center" HorizontalOptions="End" Clicked="btnFormShow_Clicked">
+                            <ImageButton.Source>
+                                <FontImageSource x:Name="Font_FormShow"  FontFamily="FASolid" Glyph="{StaticResource down}"  Color="Gray"  Size="10"/>
+                            </ImageButton.Source>
+                        </ImageButton>
+                    </Grid>
+                </toolkit:Expander.Header>
+
+                <CollectionView x:Name="lvWordForm" SelectionMode="None"  Margin="10,10,10,2">
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate>
+                            <Grid  RowSpacing="5" ColumnSpacing="20" BackgroundColor="Transparent">
+                                <Grid.GestureRecognizers>
+                                    <TapGestureRecognizer Tapped="TapGestureRecognizer_FormTapped" NumberOfTapsRequired="1" />
+                                </Grid.GestureRecognizers>
+
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"></ColumnDefinition>
+                                    <ColumnDefinition Width="*"></ColumnDefinition>
+                                </Grid.ColumnDefinitions>                            
+
+                                <Label Text="{Binding TargetWord}"  VerticalOptions="Start" Margin="0,3"></Label>
+                                <Label Text="{Binding Meaning}" Grid.Column="1"  VerticalOptions="Start" TextColor="Gray" LineBreakMode="TailTruncation"  Margin="0,3"></Label>
+                            </Grid>
+
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>              
+            </toolkit:Expander>
         </VerticalStackLayout>
     </ScrollView>
 </ContentPage>
