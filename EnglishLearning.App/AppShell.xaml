@@ -15,7 +15,7 @@
             <ShellContent Title="单词" ContentTemplate="{DataTemplate local:WordList}"  Route="WordList" />
             <ShellContent Title="短语" ContentTemplate="{DataTemplate local:PhraseList}"  Route="PhraseList" />          
             <ShellContent Title="背单词" ContentTemplate="{DataTemplate local:WordLearn}"  Route="WordLearn" />
-            <ShellContent Title="统计" ContentTemplate="{DataTemplate local:WordStatistic}"  Route="WordStatistic" />
+            <ShellContent Title="词根词缀" ContentTemplate="{DataTemplate local:WordRootAffixList}"  Route="WordRootAffixList" />
             <ShellContent  Title="技巧与辨析" ContentTemplate="{DataTemplate local:Subject }" Route="Vocabulary" />
         </Tab>
         <Tab Title="学习">

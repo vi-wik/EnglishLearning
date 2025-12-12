@@ -531,7 +531,7 @@ namespace EnglishLearning.DataAccess
             {
                 return (await connection.QueryAsync<V_EnglishVowelMedia>(sql));
             }
-        }       
+        }
 
         public static async Task<IEnumerable<V_EnglishPhraseMedia>> GetVEnglishPhraseMedias(int phraseId)
         {
@@ -1005,13 +1005,24 @@ where WordId = {wordId} ";
             }
         }
 
-        public static async Task<IEnumerable<EnglishWordPrefix>> GetEnglishWordPrefixSuggestions(string keyword)
+        public static async Task<IEnumerable<EnglishWordPrefix>> GetEnglishWordPrefixes(string keyword = null, bool excludeHidden = false)
         {
-            string sql = "select * from EnglishWordPrefix where Hidden=0 and INSTR(LOWER(Name),LOWER(@Keyword))=1 order by Name";
+            string sql = "select * from EnglishWordPrefix where 1=1";
+
+            if (excludeHidden)
+            {
+                sql += " and Hidden=0";
+            }
 
             Dictionary<string, object> para = new Dictionary<string, object>();
 
-            para.Add("@Keyword", DbUtitlity.GetParameterValue(keyword));
+            if (!string.IsNullOrEmpty(keyword))
+            {
+                sql += " and INSTR(LOWER(Name),LOWER(@Keyword))>0";
+                para.Add("@Keyword", DbUtitlity.GetParameterValue(keyword));
+            }
+
+            sql += " order by name";
 
             using (var connection = DbUtitlity.CreateDbConnection())
             {
@@ -1019,17 +1030,68 @@ where WordId = {wordId} ";
             }
         }
 
-        public static async Task<IEnumerable<EnglishWordSuffix>> GetEnglishWordSuffixSuggestions(string keyword)
+        public static async Task<IEnumerable<EnglishWordSuffix>> GetEnglishWordSuffixes(string keyword, bool excludeHidden = false)
         {
-            string sql = "select * from EnglishWordSuffix where Hidden=0 and INSTR(LOWER(Name),LOWER(@Keyword))=1 order by Name";
+            string sql = "select * from EnglishWordSuffix where 1=1";
+
+            if (excludeHidden)
+            {
+                sql += " and Hidden=0";
+            }
 
             Dictionary<string, object> para = new Dictionary<string, object>();
 
-            para.Add("@Keyword", DbUtitlity.GetParameterValue(keyword));
+            if (!string.IsNullOrEmpty(keyword))
+            {
+                sql += " and INSTR(LOWER(Name),LOWER(@Keyword))>0";
+                para.Add("@Keyword", DbUtitlity.GetParameterValue(keyword));
+            }
+
+            sql += " order by name";
 
             using (var connection = DbUtitlity.CreateDbConnection())
             {
                 return await connection.QueryAsync<EnglishWordSuffix>(sql, para);
+            }
+        }
+
+        public static async Task<IEnumerable<EnglishWordElement>> GetEnglishWordRoots(string keyword)
+        {
+            string sql = "select * from EnglishWordRoot";
+
+            Dictionary<string, object> para = new Dictionary<string, object>();
+
+            if (!string.IsNullOrEmpty(keyword))
+            {
+                sql += " where INSTR(LOWER(Name),LOWER(@Keyword))>0";
+
+                para.Add("@Keyword", DbUtitlity.GetParameterValue(keyword));
+            }
+
+            sql += " order by Name";
+
+            using (var connection = DbUtitlity.CreateDbConnection())
+            {
+                return await connection.QueryAsync<EnglishWordElement>(sql, para);
+            }
+        }
+
+        public static async Task<IEnumerable<V_EnglishWordRootMeaning>> GetVEnglishWordRootMeanings(string keyword)
+        {
+            string sql = @"select * from V_EnglishWordRootMeaning";
+
+            Dictionary<string, object> para = new Dictionary<string, object>();
+
+            if (!string.IsNullOrEmpty(keyword))
+            {
+                sql += " where INSTR(LOWER(RootName),LOWER(@Keyword))>0";
+
+                para.Add("@Keyword", DbUtitlity.GetParameterValue(keyword));
+            }
+
+            using (var connection = DbUtitlity.CreateDbConnection())
+            {
+                return await connection.QueryAsync<V_EnglishWordRootMeaning>(sql, para);
             }
         }
 
@@ -1071,9 +1133,9 @@ where WordId = {wordId} ";
             }
         }
 
-        public static async Task<IEnumerable<EnglishWordPrefixDetail>> GetEnglishWordPrefixDetailsByAffixName(string affixName)
+        public static async Task<IEnumerable<EnglishWordPrefixStatistic>> GetEnglishWordPrefixStatisticsByAffixName(string affixName)
         {
-            string sql = "select d.* from EnglishWordPrefixDetail d join EnglishWordPrefix p on p.Id=d.AffixId where LOWER(p.Name)=LOWER(@Name) order by Priority";
+            string sql = "select d.* from EnglishWordPrefixStatistic d join EnglishWordPrefix p on p.Id=d.AffixId where LOWER(p.Name)=LOWER(@Name) order by Priority";
 
             Dictionary<string, object> para = new Dictionary<string, object>();
 
@@ -1081,13 +1143,13 @@ where WordId = {wordId} ";
 
             using (var connection = DbUtitlity.CreateDbConnection())
             {
-                return await connection.QueryAsync<EnglishWordPrefixDetail>(sql, para);
+                return await connection.QueryAsync<EnglishWordPrefixStatistic>(sql, para);
             }
         }
 
-        public static async Task<IEnumerable<EnglishWordSuffixDetail>> GetEnglishWordSuffixDetailsByAffixName(string affixName)
+        public static async Task<IEnumerable<EnglishWordSuffixStatistic>> GetEnglishWordSuffixStatisticsByAffixName(string affixName)
         {
-            string sql = "select d.* from EnglishWordSuffixDetail d join EnglishWordSuffix s on s.Id=d.AffixId where LOWER(s.Name)=LOWER(@Name) order by Priority";
+            string sql = "select d.* from EnglishWordSuffixStatistic d join EnglishWordSuffix s on s.Id=d.AffixId where LOWER(s.Name)=LOWER(@Name) order by Priority";
 
             Dictionary<string, object> para = new Dictionary<string, object>();
 
@@ -1095,33 +1157,33 @@ where WordId = {wordId} ";
 
             using (var connection = DbUtitlity.CreateDbConnection())
             {
-                return await connection.QueryAsync<EnglishWordSuffixDetail>(sql, para);
+                return await connection.QueryAsync<EnglishWordSuffixStatistic>(sql, para);
             }
         }
 
-        public static async Task<IEnumerable<EnglishWordPrefixDetail>> GetEnglishWordPrefixDetailsByAffixId(int affixId)
+        public static async Task<IEnumerable<EnglishWordPrefixStatistic>> GetEnglishWordPrefixStatisticsByAffixId(int affixId)
         {
-            string sql = $"select d.* from EnglishWordPrefixDetail d join EnglishWordPrefix p on p.Id=d.AffixId where p.Id={affixId} order by Priority";
+            string sql = $"select d.* from EnglishWordPrefixStatistic d join EnglishWordPrefix p on p.Id=d.AffixId where p.Id={affixId} order by Priority";
 
             using (var connection = DbUtitlity.CreateDbConnection())
             {
-                return await connection.QueryAsync<EnglishWordPrefixDetail>(sql);
+                return await connection.QueryAsync<EnglishWordPrefixStatistic>(sql);
             }
         }
 
-        public static async Task<IEnumerable<V_EnglishWordMeaning>> GetEnglishWordMeaningByPrefixDetail(EnglishWordAffixDetail detail, string affixName)
+        public static async Task<IEnumerable<V_EnglishWordMeaning>> GetEnglishWordMeaningByPrefixStatistic(EnglishWordAffixStatistic statistic, string affixName)
         {
-            return await GetEnglishWordMeaningByAffixDetail(detail, affixName, true);
+            return await GetEnglishWordMeaningByAffixStatistic(statistic, affixName, true);
         }
 
-        public static async Task<IEnumerable<V_EnglishWordMeaning>> GetEnglishWordMeaningBySuffixDetail(EnglishWordAffixDetail detail, string affixName)
+        public static async Task<IEnumerable<V_EnglishWordMeaning>> GetEnglishWordMeaningBySuffixStatistic(EnglishWordAffixStatistic statistic, string affixName)
         {
-            return await GetEnglishWordMeaningByAffixDetail(detail, affixName, false);
+            return await GetEnglishWordMeaningByAffixStatistic(statistic, affixName, false);
         }
 
-        public static async Task<IEnumerable<V_EnglishWordMeaning>> GetEnglishWordMeaningByAffixDetail(EnglishWordAffixDetail detail, string affixName, bool isPrefix)
+        public static async Task<IEnumerable<V_EnglishWordMeaning>> GetEnglishWordMeaningByAffixStatistic(EnglishWordAffixStatistic statistic, string affixName, bool isPrefix)
         {
-            bool isOthers = detail.Id < 0;
+            bool isOthers = statistic.Id < 0;
 
             string wordCondition = "";
             string contentCondition = "";
@@ -1139,37 +1201,37 @@ where WordId = {wordId} ";
 
             if (!isOthers)
             {
-                if(!detail.Content.Contains("...") || detail.Content.StartsWith("...") || detail.Content.EndsWith("..."))
+                if (!statistic.Content.Contains("...") || statistic.Content.StartsWith("...") || statistic.Content.EndsWith("..."))
                 {
                     contentCondition = "and (instr(m.CommonMeaning,@Content)>0 or instr(m.SpecialMeaning,@Content)>0)";
                 }
                 else
                 {
-                    string likeContent = detail.Content.Replace("...", "%");
+                    string likeContent = statistic.Content.Replace("...", "%");
 
                     contentCondition = $"and (m.CommonMeaning like '%{likeContent}%' or ifnull(m.SpecialMeaning,'') like '%{likeContent}%')";
                 }
             }
             else
             {
-                IEnumerable<EnglishWordAffixDetail> details = null;
+                IEnumerable<EnglishWordAffixStatistic> statistics = null;
 
                 if (isPrefix)
                 {
-                    details = await GetEnglishWordPrefixDetailsByAffixName(affixName);
+                    statistics = await GetEnglishWordPrefixStatisticsByAffixName(affixName);
                 }
                 else
                 {
-                    details = await GetEnglishWordSuffixDetailsByAffixName(affixName);
+                    statistics = await GetEnglishWordSuffixStatisticsByAffixName(affixName);
                 }
 
                 StringBuilder sb = new StringBuilder();
 
-                foreach (var d in details)
+                foreach (var s in statistics)
                 {
-                    string content = d.Content;
+                    string content = s.Content;
 
-                    if(!content.Contains("...") || content.StartsWith("...") || content.EndsWith("..."))
+                    if (!content.Contains("...") || content.StartsWith("...") || content.EndsWith("..."))
                     {
                         string trimedContent = content.Replace("...", "");
 
@@ -1180,15 +1242,15 @@ where WordId = {wordId} ";
                         string likeContent = content.Replace("...", "%");
 
                         sb.AppendLine($"and (m.CommonMeaning not like '%{likeContent}%' and ifnull(m.SpecialMeaning,'') not like '%{likeContent}%')");
-                    }                    
+                    }
                 }
 
                 contentCondition = sb.ToString();
             }
 
-            if (detail.ExcludeContent != null)
+            if (statistic.ExcludeContent != null)
             {
-                var items = detail.ExcludeContent.Split(',', '，');
+                var items = statistic.ExcludeContent.Split(',', '，');
 
                 StringBuilder sb = new StringBuilder();
 
@@ -1204,7 +1266,7 @@ where WordId = {wordId} ";
             {
                 if (affix.ExcludeName != null)
                 {
-                    if(isPrefix)
+                    if (isPrefix)
                     {
                         wordCondition = GetEnglishWordNotBeginWithCondition(affix.ExcludeName);
                     }
@@ -1232,14 +1294,14 @@ join Englishword w on m.WordId=w.Id
 where w.Word like '%{affixName}' and LOWER(w.Word)<> '{affixName}' {wordCondition} {contentCondition}";
             }
 
-            if(affix!=null && affix.OnlyShowWithExamType)
+            if (affix != null && affix.OnlyShowWithExamType)
             {
                 sql += " and w.ExamType is not null";
             }
 
             Dictionary<string, object> para = new Dictionary<string, object>();
 
-            para.Add("@Content", DbUtitlity.GetParameterValue(detail.Content.Replace("...","")));
+            para.Add("@Content", DbUtitlity.GetParameterValue(statistic.Content.Replace("...", "")));
 
             using (var connection = DbUtitlity.CreateDbConnection())
             {
@@ -1254,6 +1316,115 @@ where w.Word like '%{affixName}' and LOWER(w.Word)<> '{affixName}' {wordConditio
                 string sql = $"select * from V_EnglishWordForm where WordId={wordId} order by Priority";
 
                 return await connection.QueryAsync<V_EnglishWordForm>(sql);
+            }
+        }
+
+        public static async Task<IEnumerable<V_EnglishWordForm>> GetVEnglishWordFormByTargetWordId(int targetWordId)
+        {
+            using (var connection = DbUtitlity.CreateDbConnection())
+            {
+                string sql = $"select * from V_EnglishWordForm where TargetWordId={targetWordId}";
+
+                return await connection.QueryAsync<V_EnglishWordForm>(sql);
+            }
+        }
+
+        public static async Task<IEnumerable<EnglishWordStructureType>> GetEnglishWordStructureTypes()
+        {
+            using (var connection = DbUtitlity.CreateDbConnection())
+            {
+                string sql = "select * from EnglishWordStructureType";
+
+                return await connection.QueryAsync<EnglishWordStructureType>(sql);
+            }
+        }
+
+        public static async Task<IEnumerable<V_EnglishWordStructure>> GetVEnglishWordStructures(int wordId)
+        {
+            using (var connection = DbUtitlity.CreateDbConnection())
+            {
+                string sql = $"select * from V_EnglishWordStructure where WordId={wordId} order by Priority";
+
+                return await connection.QueryAsync<V_EnglishWordStructure>(sql);
+            }
+        }
+
+        public static async Task<IEnumerable<EnglishWordRoot>> GetEnglishWordRoots()
+        {
+            string sql = "select * from EnglishWordRoot order by Name";
+
+            using (var connection = DbUtitlity.CreateDbConnection())
+            {
+                return await connection.QueryAsync<EnglishWordRoot>(sql);
+            }
+        }
+
+        public static async Task<IEnumerable<V_EnglishWordWithMeaning>> GetEnglishWordByRootAffix(int id, EnglishWordElementType type)
+        {
+            string condition = "";
+
+            if (type == EnglishWordElementType.Prefix)
+            {
+                condition = $"s.PrefixId={id}";
+            }
+            else if (type == EnglishWordElementType.Suffix)
+            {
+                condition = $"s.SuffixId={id}";
+            }
+            else if (type == EnglishWordElementType.WordRoot)
+            {
+                condition = $"s.RootId={id}";
+            }
+
+            string sql = $@"select v.Id,v.Word,v.CommonMeaning,v.SpecialMeaning 
+from EnglishWordStructure s
+join V_EnlishWordSimpleMeaning v on s.WordId=v.Id
+where {condition}
+group by v.Id,v.Word,v.CommonMeaning,v.SpecialMeaning";
+
+            using (var connection = DbUtitlity.CreateDbConnection())
+            {
+                return await connection.QueryAsync<V_EnglishWordWithMeaning>(sql);
+            }
+        }
+
+        public static async Task<IEnumerable<V_EnglishWordWithMeaning>> GetEnglishWordsByForm(string affix, EnglishWordElementType type, int limitCount = 0)
+        {
+            using (var connection = DbUtitlity.CreateDbConnection())
+            {
+                string sql = $"select TargetWordId as Id, TargetWord as Word, CommonMeaning, SpecialMeaning, case when TargetExamType is null then 100000 else TargetExamType end as Priority from V_EnglishWordForm";
+
+                string condition = "";
+
+                if (type == EnglishWordElementType.Prefix)
+                {
+                    condition = $"'{affix}' || Word=TargetWord";
+                }
+                else if (type == EnglishWordElementType.Suffix)
+                {
+                    condition = $"Word || '{affix}'=TargetWord";
+                }
+
+                sql += $" where {condition}";
+
+                sql = $@"select * from({sql}) order by Priority,Word";
+
+                if (limitCount > 0)
+                {
+                    sql += $" limit {limitCount}";
+                }
+
+                return await connection.QueryAsync<V_EnglishWordWithMeaning>(sql);
+            }
+        }
+
+        public static async Task<V_EnglishWordFormRule> GetVEnglishWordFormRule(int id)
+        {
+            string sql = $"select * from V_EnglishWordFormRule where Id={id}";
+
+            using (var connection = DbUtitlity.CreateDbConnection())
+            {
+                return (await connection.QueryAsync<V_EnglishWordFormRule>(sql)).FirstOrDefault();
             }
         }
     }

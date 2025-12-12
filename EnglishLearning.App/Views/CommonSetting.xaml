@@ -5,7 +5,7 @@
              x:Class="EnglishLearning.App.Views.CommonSetting"
              Title="通用设置">
     <VerticalStackLayout>
-        <Grid RowDefinitions="*,*,*,*,*,*,*,*,*,*,*" Margin="5,2" RowSpacing="2">
+        <Grid RowDefinitions="*,*,*,*,*,*,*,*,*,*,*,*" Margin="5,2" RowSpacing="2">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"></ColumnDefinition>
                 <ColumnDefinition Width="60"></ColumnDefinition>
@@ -29,16 +29,19 @@
             <Label VerticalOptions="Center" Grid.Row="5">默认展示相关单词</Label>
             <CheckBox x:Name="chkExpandWordFormByDefault" Grid.Column="1" Grid.Row="5" CheckedChanged="chkExpandWordFormByDefault_CheckedChanged"></CheckBox>
 
-            <Label VerticalOptions="Center" Grid.Row="6">显示单词的音节划分</Label>
-            <CheckBox x:Name="chkShowWordSyllable" Grid.Column="1" Grid.Row="6" CheckedChanged="chkShowWordSyllabe_CheckedChanged"></CheckBox>
+            <Label VerticalOptions="Center" Grid.Row="6">默认展示单词结构</Label>
+            <CheckBox x:Name="chkExpandWordStructureByDefault" Grid.Column="1" Grid.Row="6" CheckedChanged="chkExpandWordStructureByDefault_CheckedChanged"></CheckBox>
 
-            <Label VerticalOptions="Center" Grid.Row="7">背单词时自动播放读音</Label>
-            <CheckBox x:Name="chkAutoPlayAudioWhenLearnWord" Grid.Column="1" Grid.Row="7" CheckedChanged="chkAutoPlayAudioWhenLearnWord_CheckedChanged"></CheckBox>
+            <Label VerticalOptions="Center" Grid.Row="7">显示单词的音节划分</Label>
+            <CheckBox x:Name="chkShowWordSyllable" Grid.Column="1" Grid.Row="7" CheckedChanged="chkShowWordSyllabe_CheckedChanged"></CheckBox>
 
-            <Label VerticalOptions="Center" Grid.Row="8">启用日志</Label>
-            <CheckBox x:Name="chkEnableLog" Grid.Column="1" Grid.Row="8" CheckedChanged="chkEnableLog_CheckedChanged"></CheckBox>
+            <Label VerticalOptions="Center" Grid.Row="8">背单词时自动播放读音</Label>
+            <CheckBox x:Name="chkAutoPlayAudioWhenLearnWord" Grid.Column="1" Grid.Row="8" CheckedChanged="chkAutoPlayAudioWhenLearnWord_CheckedChanged"></CheckBox>
 
-            <HorizontalStackLayout Grid.Row="9" Grid.ColumnSpan="2">
+            <Label VerticalOptions="Center" Grid.Row="9">启用日志</Label>
+            <CheckBox x:Name="chkEnableLog" Grid.Column="1" Grid.Row="9" CheckedChanged="chkEnableLog_CheckedChanged"></CheckBox>
+
+            <HorizontalStackLayout Grid.Row="10" Grid.ColumnSpan="2">
                 <Label VerticalOptions="Center">音标显示格式：</Label>
 
                 <Label VerticalOptions="Center">[ ɡʊd]</Label>
@@ -48,7 +51,7 @@
                 <RadioButton x:Name="rbPronunciationBracket2"  VerticalOptions="Center" CheckedChanged="rbPronunciationBracket_CheckedChanged" Value="2"  GroupName="PronunciationBracket"></RadioButton>
             </HorizontalStackLayout>
 
-            <VerticalStackLayout  Grid.Row="10" Grid.ColumnSpan="2">
+            <VerticalStackLayout  Grid.Row="11" Grid.ColumnSpan="2">
                 <Label VerticalOptions="Center">发音文件（音频文件）本地根目录：【其子目录应包含两个目录："uk"（英式）、"us"（美式）】</Label>
                 
                 <HorizontalStackLayout >                 

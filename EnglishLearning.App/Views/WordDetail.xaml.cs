@@ -262,20 +262,36 @@ public partial class WordDetail : ContentPage
             #endregion
 
             #region 相关单词
-            var forms = await DataProcessor.GetVEnglishWordForms(wordId);
-
-            this.lvWordForm.ItemsSource = forms;
-            int formCount = forms.Count();
-
-            if (formCount > 0)
+            if (this.setting.ExpandWordFormByDefault)
             {
-                this.FormExpander.IsVisible = true;
+                var forms = await DataProcessor.GetVEnglishWordForms(wordId);
 
-                if (this.setting.ExpandWordFormByDefault)
+                this.lvWordForm.ItemsSource = forms;
+                int formCount = forms.Count();
+
+                if (formCount > 0)
                 {
+                    this.FormExpander.IsVisible = true;
                     this.FormExpander.IsExpanded = true;
                 }
             }
+
+            #endregion
+
+            #region 单词结构
+            if (this.setting.ExpandWordStructureByDefault)
+            {
+                var dictStructures = await DataProcessor.GetEnglishWordStructures(wordId);
+
+                if (dictStructures.Count > 0)
+                {
+                    this.ShowWordStructures(dictStructures);
+
+                    this.StructureExpander.IsVisible = true;
+                    this.StructureExpander.IsExpanded = true;
+                }
+            }
+
             #endregion
 
             this.btnVOCAB.IsVisible = true;
@@ -882,7 +898,7 @@ public partial class WordDetail : ContentPage
                 Span wordSpan = new Span() { Text = word, TextColor = Colors.Blue };
 
                 var tapGestureRecognizer = new TapGestureRecognizer() { NumberOfTapsRequired = 1, CommandParameter = display.WordId };
-                tapGestureRecognizer.Tapped += this.TapGestureRecognizer_ExampleItemTapped;
+                tapGestureRecognizer.Tapped += this.TapGestureRecognizer_WordTapped;
 
                 wordSpan.GestureRecognizers.Add(tapGestureRecognizer);
 
@@ -893,12 +909,6 @@ public partial class WordDetail : ContentPage
         }
     }
 
-    private async void TapGestureRecognizer_ExampleItemTapped(object sender, TappedEventArgs e)
-    {
-        int wordId = Convert.ToInt32(e.Parameter);
-
-        this.NavigateToWordDetailPage(wordId);
-    }
 
     private void TapGestureRecognizer_ScollViewTapped(object sender, TappedEventArgs e)
     {
@@ -922,6 +932,191 @@ public partial class WordDetail : ContentPage
         if (form != null)
         {
             this.NavigateToWordDetailPage(form.TargetWordId);
+        }
+    }
+
+    private void SturctureExpander_ExpandedChanged(object sender, CommunityToolkit.Maui.Core.ExpandedChangedEventArgs e)
+    {
+        string iconKey = this.StructureExpander.IsExpanded ? "up" : "down";
+
+        this.Font_StructureShow.Glyph = Application.Current.Resources[iconKey].ToString();
+    }
+
+    private void btnStructureShow_Clicked(object sender, EventArgs e)
+    {
+        this.StructureExpander.IsExpanded = !this.StructureExpander.IsExpanded;
+    }
+
+    private void ShowWordStructures(Dictionary<int, IEnumerable<V_EnglishWordStructure>> dict)
+    {
+        RowDefinition[] rowDefinations = new RowDefinition[dict.Count];
+
+        for (int i = 0; i < rowDefinations.Length; i++)
+        {
+            rowDefinations[i] = new RowDefinition(new GridLength(0, GridUnitType.Star));
+        }
+
+        this.gridStructure.RowDefinitions = new RowDefinitionCollection(rowDefinations);
+
+        int rowIndex = 0;
+
+        foreach (var kp in dict)
+        {
+            var structrues = kp.Value;
+
+            Label lbl = new Label();
+            lbl.FormattedText = new FormattedString();
+
+            List<Span> spans = new List<Span>();
+
+            int count = 0;
+
+            foreach (var structrue in structrues)
+            {
+                count++;
+
+                Span span = new Span();
+                Span extraSpan = null;
+                bool needAddGestrue = false;
+
+                if (structrue.Prefix != null)
+                {
+                    span.Text = structrue.Prefix;
+                    span.TextColor = Colors.Green;                   
+
+                    if (structrue.PrefixId > 0)
+                    {
+                        needAddGestrue = true;                      
+                    }
+                }
+                else if (structrue.Suffix != null)
+                {
+                    span.Text = structrue.Suffix;
+                    span.TextColor = structrue.SuffixId > 0 ? Colors.Orange : Colors.Black;
+
+                    if(structrue.SuffixId>0)
+                    {
+                        needAddGestrue = true;
+                    }
+                }
+                else if (structrue.Root != null)
+                {
+                    span.Text = structrue.Root;
+                    span.TextColor = Colors.Purple;
+
+                    if(structrue.RootId>0)
+                    {
+                        needAddGestrue = true;
+                    }
+                }
+                else if (structrue.SubWord != null)
+                {
+                    V_EnglishWordStructure nextStructure = null;
+
+                    if (count < structrues.Count())
+                    {
+                        nextStructure = structrues.Skip(count).Take(1).FirstOrDefault();
+                    }
+
+                    string displayText = structrue.SubWord;
+
+                    if (nextStructure != null && nextStructure.ChangeEndOldContent != null)
+                    {
+                        displayText = structrue.SubWord.Substring(0, structrue.SubWord.Length - nextStructure.ChangeEndOldContent.Length);
+                    }
+
+                    span.Text = displayText;
+                    span.TextColor = Colors.Blue;
+
+                    if (structrue.SubWordId > 0)
+                    {
+                        var tapGestureRecognizer = new TapGestureRecognizer() { NumberOfTapsRequired = 1, CommandParameter = structrue.SubWordId };
+                        tapGestureRecognizer.Tapped += this.TapGestureRecognizer_WordTapped;
+
+                        span.GestureRecognizers.Add(tapGestureRecognizer);
+                    }
+
+                    if (nextStructure != null && nextStructure.ChangeEndOldContent != null)
+                    {
+                        extraSpan = new Span() { Text = nextStructure.ChangeEndOldContent, TextColor = Colors.Gray };
+                    }
+                }
+
+                if(needAddGestrue)
+                {
+                    var tapGestureRecognizer = new TapGestureRecognizer() { NumberOfTapsRequired = 1, CommandParameter = structrue };
+                    tapGestureRecognizer.Tapped += this.TapGestureRecognizer_WordElementTapped;
+
+                    span.GestureRecognizers.Add(tapGestureRecognizer);
+                }
+
+                spans.Add(span);
+
+                if (extraSpan != null)
+                {
+                    spans.Add(extraSpan);
+                }
+            }
+
+            for (int i = 0; i < spans.Count; i++)
+            {
+                lbl.FormattedText.Spans.Add(spans[i]);
+
+                if (i < spans.Count - 1)
+                {
+                    if (spans[i + 1].TextColor != Colors.Gray)
+                    {
+                        var separator = new Span() { Text = " + ", TextColor = Colors.Black };
+
+                        lbl.FormattedText.Spans.Add(separator);
+                    }
+                }
+            }
+
+            this.gridStructure.Add(lbl, 0, rowIndex);
+
+            rowIndex++;
+        }
+    }
+
+    private async void TapGestureRecognizer_WordTapped(object sender, TappedEventArgs e)
+    {
+        int wordId = Convert.ToInt32(e.Parameter);
+
+        this.NavigateToWordDetailPage(wordId);
+    }
+
+    private async void TapGestureRecognizer_WordElementTapped(object sender, TappedEventArgs e)
+    {
+        var structure = e.Parameter as V_EnglishWordStructure;
+
+        if (structure != null)
+        {
+            EnglishWordElementType type = EnglishWordElementType.None;
+            string name = null;
+
+            if (structure.PrefixId > 0)
+            {
+                type = EnglishWordElementType.Prefix;
+                name = structure.Prefix;
+            }
+            else if(structure.SuffixId>0)
+            {
+                type = EnglishWordElementType.Suffix;
+                name = structure.Suffix;
+            }
+            else if(structure.RootId>0)
+            {
+                type = EnglishWordElementType.WordRoot;
+                name = structure.Root;
+            }
+
+            if(type!= EnglishWordElementType.None)
+            {
+                WordRootAffixList page = (WordRootAffixList)Activator.CreateInstance(typeof(WordRootAffixList), type, name);
+
+                await Navigation.PushAsync(page);
+            }             
         }
     }
 }

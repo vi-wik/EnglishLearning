@@ -81,6 +81,15 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <Compile Update="Views\WordRootAffixDetail.xaml.cs">
+	    <DependentUpon>WordRootAffixDetail.xaml</DependentUpon>
+	  </Compile>
+	  <Compile Update="Views\WordRootAffixList.xaml.cs">
+	    <DependentUpon>WordRootAffixList.xaml</DependentUpon>
+	  </Compile>
+	</ItemGroup>
+
+	<ItemGroup>
 	  <MauiXaml Update="Controls\EnglishExampleView.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
@@ -147,6 +156,9 @@
 	  <MauiXaml Update="Views\VOCABManage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
+	  <MauiXaml Update="Views\WordAffixStatistic.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
 	  <MauiXaml Update="Views\WordDetail.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
@@ -156,7 +168,10 @@
 	  <MauiXaml Update="Views\WordList.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
-	  <MauiXaml Update="Views\WordStatistic.xaml">
+	  <MauiXaml Update="Views\WordRootAffixDetail.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Views\WordRootAffixList.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	</ItemGroup>

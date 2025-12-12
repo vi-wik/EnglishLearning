@@ -2,6 +2,9 @@
 using EnglishLearning.DataAccess;
 using EnglishLearning.Model;
 using Microsoft.Data.Sqlite;
+using System.Collections.Generic;
+using System.Data;
+using System.Text;
 
 namespace EnglishLearning.Business
 {
@@ -65,7 +68,7 @@ namespace EnglishLearning.Business
         public static async Task<int> UpdateMediaSource(int id, string source)
         {
             return await DbExecuter.UpdateMediaSource(id, source);
-        }        
+        }
 
         public static async Task<IEnumerable<EnglishTopic>> GetEnglishTopics(int subjectId)
         {
@@ -120,7 +123,7 @@ namespace EnglishLearning.Business
         public static async Task<IEnumerable<EnglishVowel>> GetEnglishVowels()
         {
             return await DbObjectsFetcher.GetEnglishVowels();
-        }               
+        }
 
         public static async Task<EnglishVowel> GetEnglishVowel(int vowelId)
         {
@@ -142,7 +145,7 @@ namespace EnglishLearning.Business
             return await DbObjectsFetcher.GetVEnglishPhrase(phraseId);
         }
 
-        public static async Task<IEnumerable<EnglishPhrase>> GetEnglishPhrases(EnglishWordFilter filter=null, bool isByMeaning = false)
+        public static async Task<IEnumerable<EnglishPhrase>> GetEnglishPhrases(EnglishWordFilter filter = null, bool isByMeaning = false)
         {
             return await DbObjectsFetcher.GetEnglishPhrases(filter, isByMeaning);
         }
@@ -338,13 +341,13 @@ namespace EnglishLearning.Business
             userData.WordLearnHistories = await DbObjectsFetcher.GetEnglishWordLearnHistories(dbFilePath);
 
             return userData;
-        }    
+        }
 
         public static async Task<int> ImportUserData(string sourceDbFilePath)
         {
             string targetDbFilePath = DataFileManager.DataFilePath;
 
-            if(!File.Exists(targetDbFilePath))
+            if (!File.Exists(targetDbFilePath))
             {
                 return 0;
             }
@@ -406,24 +409,29 @@ namespace EnglishLearning.Business
             return await DbObjectsFetcher.GetEnglishWordMeaningSpecialStatistic(wordId);
         }
 
-        public static async Task<IEnumerable<EnglishWordPrefix>> GetEnglishWordPrefixSuggestions(string keyword)
+        public static async Task<IEnumerable<EnglishWordPrefix>> GetEnglishWordPrefixes(string keyword, bool excludeHidden = false)
         {
-            return await DbObjectsFetcher.GetEnglishWordPrefixSuggestions(keyword);
+            return await DbObjectsFetcher.GetEnglishWordPrefixes(keyword, excludeHidden);
         }
 
-        public static async Task<IEnumerable<EnglishWordSuffix>> GetEnglishWordSuffixSuggestions(string keyword)
+        public static async Task<IEnumerable<EnglishWordSuffix>> GetEnglishWordSuffixes(string keyword, bool excludeHidden = false)
         {
-            return await DbObjectsFetcher.GetEnglishWordSuffixSuggestions(keyword);
+            return await DbObjectsFetcher.GetEnglishWordSuffixes(keyword);
         }
 
-        public static async Task<IEnumerable<EnglishWordPrefixDetail>> GetEnglishWordPrefixDetailsByAffixName(string affixName)
+        public static async Task<IEnumerable<EnglishWordElement>> GetEnglishWordRoots(string keyword)
         {
-            return await DbObjectsFetcher.GetEnglishWordPrefixDetailsByAffixName(affixName);
+            return await DbObjectsFetcher.GetEnglishWordRoots(keyword);
         }
 
-        public static async Task<IEnumerable<V_EnglishWordMeaning>> GetEnglishWordMeaningByPrefixDetail(EnglishWordAffixDetail detail, string affixName)
+        public static async Task<IEnumerable<EnglishWordPrefixStatistic>> GetEnglishWordPrefixStatisticsByAffixName(string affixName)
         {
-            return await DbObjectsFetcher.GetEnglishWordMeaningByPrefixDetail(detail, affixName);
+            return await DbObjectsFetcher.GetEnglishWordPrefixStatisticsByAffixName(affixName);
+        }
+
+        public static async Task<IEnumerable<V_EnglishWordMeaning>> GetEnglishWordMeaningByPrefixDetail(EnglishWordAffixStatistic detail, string affixName)
+        {
+            return await DbObjectsFetcher.GetEnglishWordMeaningByPrefixStatistic(detail, affixName);
         }
 
         public static async Task<EnglishWordPrefix> GetEnglishWordPrefixByName(string name)
@@ -436,19 +444,140 @@ namespace EnglishLearning.Business
             return await DbObjectsFetcher.GetEnglishWordSuffixByName(name);
         }
 
-        public static async Task<IEnumerable<EnglishWordSuffixDetail>> GetEnglishWordSuffixDetailsByAffixName(string affixName)
+        public static async Task<IEnumerable<EnglishWordSuffixStatistic>> GetEnglishWordSuffixStatisticsByAffixName(string affixName)
         {
-            return await DbObjectsFetcher.GetEnglishWordSuffixDetailsByAffixName(affixName);
+            return await DbObjectsFetcher.GetEnglishWordSuffixStatisticsByAffixName(affixName);
         }
 
-        public static async Task<IEnumerable<V_EnglishWordMeaning>> GetEnglishWordMeaningBySuffixDetail(EnglishWordAffixDetail detail, string affixName)
+        public static async Task<IEnumerable<V_EnglishWordMeaning>> GetEnglishWordMeaningBySuffixDetail(EnglishWordAffixStatistic detail, string affixName)
         {
-            return await DbObjectsFetcher.GetEnglishWordMeaningBySuffixDetail(detail, affixName);
+            return await DbObjectsFetcher.GetEnglishWordMeaningBySuffixStatistic(detail, affixName);
         }
 
         public static async Task<IEnumerable<V_EnglishWordForm>> GetVEnglishWordForms(int wordId)
         {
             return await DbObjectsFetcher.GetVEnglishWordForms(wordId);
+        }
+
+        public static async Task<IEnumerable<V_EnglishWordRootMeaning>> GetVEnglishWordRootMeanings(string keyword)
+        {
+            return await DbObjectsFetcher.GetVEnglishWordRootMeanings(keyword);
+        }
+
+        public static async Task<IEnumerable<V_EnglishWordWithMeaning>> GetEnglishWordByRootAffix(int id, EnglishWordElementType type)
+        {
+            return await DbObjectsFetcher.GetEnglishWordByRootAffix(id, type);
+        }
+
+        public static async Task<IEnumerable<V_EnglishWordWithMeaning>> GetEnglishWordsByForm(string affix, EnglishWordElementType type, int limitCount = 0)
+        {
+            return await DbObjectsFetcher.GetEnglishWordsByForm(affix, type, limitCount);
+        }
+
+        public static async Task<Dictionary<int, IEnumerable<V_EnglishWordStructure>>> GetEnglishWordStructures(int wordId)
+        {
+            Dictionary<int, IEnumerable<V_EnglishWordStructure>> dict = new Dictionary<int, IEnumerable<V_EnglishWordStructure>>();
+
+            var structures = await DbObjectsFetcher.GetVEnglishWordStructures(wordId);
+
+            if (structures.Count() == 0)
+            {
+                var forms = await DbObjectsFetcher.GetVEnglishWordFormByTargetWordId(wordId);
+
+                int count = 0;
+
+                Action<List<V_EnglishWordStructure>, int?, string> insertStructure = (list, prefixId, prefix) =>
+                {
+                    list.Insert(0, new V_EnglishWordStructure() { PrefixId = prefixId, Prefix = prefix, Priority = 1 });
+                    list[1].Priority = 2;
+                };
+
+                Action<List<V_EnglishWordStructure>, int?, string> appendStructure = async (list, suffixId, suffix) =>
+                {
+                    if (!suffixId.HasValue)
+                    {
+                        var result = await DbObjectsFetcher.GetEnglishWordSuffixByName(suffix);
+
+                        if (result != null)
+                        {
+                            suffixId = result.Id;
+                        }
+                    }
+
+                    list.Add(new V_EnglishWordStructure() { SuffixId = suffixId, Suffix = suffix, Priority = 2 });
+                    list[0].Priority = 1;
+                };
+
+                foreach (var form in forms)
+                {
+                    count++;
+
+                    List<V_EnglishWordStructure> list = new List<V_EnglishWordStructure>();
+
+                    if (form.RuleId > 0)
+                    {
+                        list.Add(new V_EnglishWordStructure() { SubWordId = form.WordId, SubWord = form.Word });
+
+                        var rule = await DbObjectsFetcher.GetVEnglishWordFormRule(form.RuleId.Value);
+
+                        if (rule.Prefix != null)
+                        {
+                            insertStructure(list, rule.PrefixId, rule.Prefix);
+                        }
+                        else if (rule.Suffix != null)
+                        {
+                            appendStructure(list, rule.SuffixId, rule.Suffix);
+                        }
+                        else if (rule.IsInsertBefore)
+                        {
+                            insertStructure(list, null, rule.InsertBeforeContent);
+                        }
+                        else if (rule.IsAppend)
+                        {
+                            appendStructure(list, null, rule.AppendContent);
+                        }
+                        else if (rule.IsChangeEnd)
+                        {
+                            appendStructure(list, null, rule.ChangeNewContent);
+                            list[1].ChangeEndOldContent = rule.ChangeOldContent;
+                        }
+
+                        dict.Add(count, list);
+                    }
+                    else
+                    {
+                        StringBuilder sb = new StringBuilder();
+
+                        for (int i = 0; i < form.Word.Length; i++)
+                        {
+                            if (i < form.TargetWord.Length && form.Word[i] == form.TargetWord[i])
+                            {
+                                sb.Append(form.Word[i]);
+                            }
+                            else
+                            {
+                                break;
+                            }
+                        }
+
+                        if (sb.Length > 0 && sb.Length < form.TargetWord.Length)
+                        {
+                            list.Add(new V_EnglishWordStructure() { SubWordId = form.WordId, SubWord = form.Word });
+
+                            appendStructure(list, null, form.TargetWord.Substring(sb.Length));
+                            list[1].ChangeEndOldContent = form.Word.Substring(sb.Length);
+
+                            dict.Add(1, list);
+                        }
+                    }
+                }
+            }
+            else
+            {
+                dict.Add(1, structures);
+            }
+
+            return dict;
         }
     }
 }
