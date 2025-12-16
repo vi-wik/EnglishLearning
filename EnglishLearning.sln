@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 18
-VisualStudioVersion = 18.0.11012.119
+# Visual Studio Version 17
+VisualStudioVersion = 17.14.36518.9 d17.14
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EnglishLearning.Model", "EnglishLearning.Model\EnglishLearning.Model.csproj", "{E5095E97-87EE-4B5F-B0B2-6F3C7CE88A2B}"
 EndProject
@@ -71,6 +71,7 @@ Global
 		{26B15CAE-03B9-4E0F-A9AB-911B4B76924B}.Debug|ARM64.Deploy.0 = Debug|Any CPU
 		{26B15CAE-03B9-4E0F-A9AB-911B4B76924B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{26B15CAE-03B9-4E0F-A9AB-911B4B76924B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{26B15CAE-03B9-4E0F-A9AB-911B4B76924B}.Release|Any CPU.Deploy.0 = Release|Any CPU
 		{26B15CAE-03B9-4E0F-A9AB-911B4B76924B}.Release|ARM64.ActiveCfg = Release|Any CPU
 		{26B15CAE-03B9-4E0F-A9AB-911B4B76924B}.Release|ARM64.Build.0 = Release|Any CPU
 		{26B15CAE-03B9-4E0F-A9AB-911B4B76924B}.Release|ARM64.Deploy.0 = Release|Any CPU

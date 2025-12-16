@@ -65,7 +65,7 @@
             </ImageButton.Source>
         </ImageButton>
 
-        <CollectionView x:Name="lvVOCAB" Grid.Row="1"   SelectionMode="None" EmptyView="暂无数据" Margin="3,0"  >          
+        <CollectionView x:Name="lvVOCAB" Grid.Row="1" Grid.ColumnSpan="3"  SelectionMode="None" EmptyView="暂无数据" Margin="3,0"  >          
             <CollectionView.ItemTemplate>
                 <DataTemplate>
 
