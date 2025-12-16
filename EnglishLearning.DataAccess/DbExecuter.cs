@@ -14,7 +14,6 @@ namespace EnglishLearning.DataAccess
             Dictionary<string, object> parameters = new Dictionary<string, object>();
             parameters.Add("@Source", source);
 
-
             using (var connection = DbUtitlity.CreateDbConnection())
             {
                 await connection.OpenAsync();
@@ -28,7 +27,6 @@ namespace EnglishLearning.DataAccess
                 return affectedRows;
             }
         }
-
 
         public static async Task<int> KeepUserData(UserData userData, string dbFilePath = null)
         {
@@ -87,11 +85,11 @@ namespace EnglishLearning.DataAccess
                 }
 
                 needExectue = false;
-                sb = new StringBuilder("insert into VOCAB(Id,WordId,PhraseId,CreateTime)values");
+                sb = new StringBuilder("insert into EnglishWordVOCAB(Id,WordId,CreateTime)values");
 
-                foreach (var vocab in userData.VOCABs)
+                foreach (var vocab in userData.EnglishWordVOCABs)
                 {
-                    sb.AppendLine($"({vocab.Id},{DbUtitlity.GetHandledNullValue(vocab.WordId)},{DbUtitlity.GetHandledNullValue(vocab.PhraseId)},'{DateTimeHelper.GetStandardFormattedDateTimeString(vocab.CreateTime)}'),");
+                    sb.AppendLine($"({vocab.Id},{DbUtitlity.GetHandledNullValue(vocab.WordId)},'{DateTimeHelper.GetStandardFormattedDateTimeString(vocab.CreateTime)}'),");
                     needExectue = true;
                 }
 
@@ -101,10 +99,37 @@ namespace EnglishLearning.DataAccess
                 }
 
                 needExectue = false;
-                sb = new StringBuilder("insert into EnglishWordLearnHistory(Id,ExamTypeId,WordId,CreateTime)values");
-                foreach (var wh in userData.WordLearnHistories)
+                sb = new StringBuilder("insert into EnglishPhraseVOCAB(Id,PhraseId,CreateTime)values");
+
+                foreach (var vocab in userData.EnglishPhraseVOCABs)
                 {
-                    sb.AppendLine($"({wh.Id},{wh.ExamTypeId},{wh.WordId},'{DateTimeHelper.GetStandardFormattedDateTimeString(wh.CreateTime)}'),");
+                    sb.AppendLine($"({vocab.Id},{DbUtitlity.GetHandledNullValue(vocab.PhraseId)},'{DateTimeHelper.GetStandardFormattedDateTimeString(vocab.CreateTime)}'),");
+                    needExectue = true;
+                }
+
+                if (needExectue)
+                {
+                    affectedRows += (await connection.ExecuteAsync(sb.ToString().Trim().TrimEnd(',')));
+                }
+
+                needExectue = false;
+                sb = new StringBuilder("insert into EnglishWordLearnedHistory(Id,WordId,CreateTime)values");
+                foreach (var wh in userData.WordLearnedHistories)
+                {
+                    sb.AppendLine($"({wh.Id},{wh.WordId},'{DateTimeHelper.GetStandardFormattedDateTimeString(wh.CreateTime)}'),");
+                    needExectue = true;
+                }
+
+                if (needExectue)
+                {
+                    affectedRows += (await connection.ExecuteAsync(sb.ToString().Trim().TrimEnd(',')));
+                }
+
+                needExectue = false;
+                sb = new StringBuilder("insert into EnglishPhraseLearnedHistory(Id,PhraseId,CreateTime)values");
+                foreach (var wh in userData.PhraseLearnedHistories)
+                {
+                    sb.AppendLine($"({wh.Id},{wh.PhraseId},'{DateTimeHelper.GetStandardFormattedDateTimeString(wh.CreateTime)}'),");
                     needExectue = true;
                 }
 
@@ -156,9 +181,14 @@ namespace EnglishLearning.DataAccess
             return await ClearTableData("MediaAccessHistory");
         }
 
-        public static async Task<int> ClearVOCABs()
+        public static async Task<int> ClearEnglishWordVOCABs()
         {
-            return await ClearTableData("VOCAB");           
+            return await ClearTableData("EnglishWordVOCAB");
+        }
+
+        public static async Task<int> ClearEnglishPhraseVOCABs()
+        {
+            return await ClearTableData("EnglishPhraseVOCAB");
         }
 
         public static async Task<int> DeleteMediaAccessHistoriesByMediaIds(List<int> mediaIds)
@@ -184,13 +214,11 @@ namespace EnglishLearning.DataAccess
             }
         }
 
-        public static async Task<bool> AddVOCAB(EnglishObjectType objectType, int objectId)
+        public static async Task<bool> AddEnglishWordVOCAB(int wordId)
         {
-            string idField = objectType == EnglishObjectType.Word ? "WordId" : "PhraseId";
-
             using (var connection = DbUtitlity.CreateDbConnection())
             {
-                string sql = $"insert into VOCAB({idField},CreateTime) values({objectId}, '{DateTimeHelper.GetStandardFormattedDateTimeString(DateTime.Now)}')";
+                string sql = $"insert into EnglishWordVOCAB(WordId,CreateTime) values({wordId}, '{DateTimeHelper.GetStandardFormattedDateTimeString(DateTime.Now)}')";
 
                 await connection.OpenAsync();
 
@@ -204,11 +232,47 @@ namespace EnglishLearning.DataAccess
             }
         }
 
-        public static async Task<bool> DeleteVOCAB(int id)
+        public static async Task<bool> AddEnglishPhraseVOCAB(int phraseId)
         {
             using (var connection = DbUtitlity.CreateDbConnection())
             {
-                string sql = $"delete from VOCAB where Id={id}";
+                string sql = $"insert into EnglishPhraseVOCAB(PhraseId,CreateTime) values({phraseId}, '{DateTimeHelper.GetStandardFormattedDateTimeString(DateTime.Now)}')";
+
+                await connection.OpenAsync();
+
+                var transaction = await connection.BeginTransactionAsync();
+
+                int affectedRows = (await connection.ExecuteAsync(sql));
+
+                await transaction.CommitAsync();
+
+                return affectedRows == 1;
+            }
+        }
+
+        public static async Task<bool> DeleteEnglishWordVOCAB(int id)
+        {
+            using (var connection = DbUtitlity.CreateDbConnection())
+            {
+                string sql = $"delete from EnglishWordVOCAB where Id={id}";
+
+                await connection.OpenAsync();
+
+                var transaction = await connection.BeginTransactionAsync();
+
+                int affectedRows = (await connection.ExecuteAsync(sql));
+
+                await transaction.CommitAsync();
+
+                return affectedRows == 1;
+            }
+        }
+
+        public static async Task<bool> DeleteEnglishPhraseVOCAB(int id)
+        {
+            using (var connection = DbUtitlity.CreateDbConnection())
+            {
+                string sql = $"delete from EnglishPhraseVOCAB where Id={id}";
 
                 await connection.OpenAsync();
 
@@ -333,22 +397,17 @@ namespace EnglishLearning.DataAccess
             }
         }
 
-        public static async Task<int> BatchInsertVOCAB(IEnumerable<int> wordIds, IEnumerable<int> phraseIds)
+        public static async Task<int> BatchInsertEnglishWordVOCAB(IEnumerable<int> wordIds)
         {
             using (var connection = DbUtitlity.CreateDbConnection())
             {
                 string createTime = DateTimeHelper.GetStandardFormattedDateTimeString(DateTime.Now);
 
-                StringBuilder sb = new StringBuilder("insert into VOCAB(WordId,PhraseId,CreateTime)values");
+                StringBuilder sb = new StringBuilder("insert into EnglishWordVOCAB(WordId,CreateTime)values");
 
                 foreach (var wordId in wordIds)
                 {
-                    sb.AppendLine($"({wordId},null,'{createTime}'),");
-                }
-
-                foreach (var phraseId in phraseIds)
-                {
-                    sb.AppendLine($"(null,{phraseId},'{createTime}'),");
+                    sb.AppendLine($"({wordId},'{createTime}'),");
                 }
 
                 await connection.OpenAsync();
@@ -363,11 +422,56 @@ namespace EnglishLearning.DataAccess
             }
         }
 
-        public static async Task<bool> SaveWordLearnHistory(EnglishExamType examType, V_EnglishWord word)
+        public static async Task<int> BatchInsertEnglishPhraseVOCAB(IEnumerable<int> phraseIds)
         {
-            int examTypeId = examType.Id;
-            int wordId = word.Id;
-            int? wordExamType = word.ExamType;
+            using (var connection = DbUtitlity.CreateDbConnection())
+            {
+                string createTime = DateTimeHelper.GetStandardFormattedDateTimeString(DateTime.Now);
+
+                StringBuilder sb = new StringBuilder("insert into EnglishPhraseVOCAB(PhraseId,CreateTime)values");
+
+                foreach (var phraseId in phraseIds)
+                {
+                    sb.AppendLine($"({phraseId},'{createTime}'),");
+                }
+
+                await connection.OpenAsync();
+
+                var transaction = await connection.BeginTransactionAsync();
+
+                int affectedRows = (await connection.ExecuteAsync(sb.ToString().Trim().TrimEnd(',')));
+
+                await transaction.CommitAsync();
+
+                return affectedRows;
+            }
+        }
+
+        public static async Task<bool> SaveEnglishWordLearnedHistory(V_EnglishWord word)
+        {
+            int wordId = word.Id;          
+
+            using (var connection = DbUtitlity.CreateDbConnection())
+            {
+                string dateTime = DateTimeHelper.GetStandardFormattedDateTimeString(DateTime.Now);
+
+                await connection.OpenAsync();
+
+                var transaction = await connection.BeginTransactionAsync();
+    
+                string sql = $"insert into EnglishWordLearnedHistory(WordId,CreateTime) values({wordId},'{dateTime}')";               
+
+                int affectedRows = (await connection.ExecuteAsync(sql));
+
+                await transaction.CommitAsync();
+
+                return affectedRows ==1;
+            }
+        }
+
+        public static async Task<bool> SaveEnglishPhraseLearnedHistory(V_EnglishPhrase phrase)
+        {
+            int phraseId = phrase.Id;           
 
             using (var connection = DbUtitlity.CreateDbConnection())
             {
@@ -377,80 +481,66 @@ namespace EnglishLearning.DataAccess
 
                 var transaction = await connection.BeginTransactionAsync();
 
-                string selectSql = $"select Id from EnglishWordLearnHistory where ExamTypeId={examTypeId} and WordId={wordId}";
-                string insertSql = "";
-                string insertPrefix = "insert into EnglishWordLearnHistory(ExamTypeId,WordId,CreateTime) values";
+                string sql = $"insert into EnglishPhraseLearnedHistory(PhraseId,CreateTime) values({phraseId},'{dateTime}')";
 
-                int id = (await connection.QueryAsync<int>(selectSql))?.FirstOrDefault() ?? 0;
-
-                if (id == 0)
-                {
-                    insertSql = $"{insertPrefix}({examTypeId}, {wordId},'{dateTime}')";
-                }
-                else
-                {
-                    return true;
-                }
-
-                if (wordExamType.HasValue)
-                {
-                    var examTypes = await DbObjectsFetcher.GetEnglishExamTypes();
-
-                    List<int> matchExamTypeIds = new List<int>();
-
-                    foreach (var et in examTypes)
-                    {
-                        if (et.Id != examTypeId && (et.Weight & wordExamType.Value) == et.Weight)
-                        {
-                            matchExamTypeIds.Add(et.Id);
-                        }
-                    }
-
-                    if (matchExamTypeIds.Count > 0)
-                    {
-                        string strExamTypeIds = string.Join(",", matchExamTypeIds);
-
-                        selectSql = $"select ExamTypeId from EnglishWordLearnHistory where WordId={wordId} and ExamTypeId in({strExamTypeIds})";
-
-                        var existingExamTypeIds = await connection.QueryAsync<int>(selectSql);
-
-                        var needInsertExamTypeIds = matchExamTypeIds.Except(existingExamTypeIds).ToList();
-
-                        if (needInsertExamTypeIds.Count > 0)
-                        {
-                            StringBuilder sb = new StringBuilder();
-
-                            if (insertSql.Length > 0)
-                            {
-                                insertSql += ",";
-                            }
-                            else
-                            {
-                                sb.AppendLine(insertPrefix);
-                            }
-
-                            foreach (var needInsertExamTypeId in needInsertExamTypeIds)
-                            {
-                                sb.AppendLine($"({needInsertExamTypeId}, {wordId},'{dateTime}'),");
-                            }
-
-                            insertSql += sb.ToString().Trim().Trim(',');
-                        }
-                    }
-                }
-
-                int affectedRows = (await connection.ExecuteAsync(insertSql));
+                int affectedRows = (await connection.ExecuteAsync(sql));
 
                 await transaction.CommitAsync();
 
-                return affectedRows > 0;
+                return affectedRows == 1;
             }
         }
 
-        public static async Task<int> ClearEnglishWordLearnHistories()
+        public static async Task<int> ClearEnglishWordLearnedHistories(List<int?> examTypeIds = null)
         {
-            return await ClearTableData("EnglishWordLearnHistory");
-        }       
+            if (examTypeIds == null)
+            {
+                return await ClearTableData("EnglishWordLearnedHistory");
+            }
+            else
+            {
+                using (var connection = DbUtitlity.CreateDbConnection())
+                {
+                    var exIds = examTypeIds.Where(item => item > 0);
+                    IEnumerable<int> examTypeWeights = Enumerable.Empty<int>();
+
+                    if (exIds.Any())
+                    {
+                        string strIds = string.Join(",", exIds);
+                        examTypeWeights = await connection.QueryAsync<int>($"select Weight from EnglishExamType where Id in({strIds})");
+                    }
+
+                    string condition = "";
+
+                    if (examTypeWeights.Any())
+                    {
+                        condition += string.Join(" or ", examTypeWeights.Select(item => $"ExamType&{item}={item}"));
+                    }
+
+                    if (examTypeIds.Any(item => item == null))
+                    {
+                        condition += $" {(examTypeWeights.Any() ? "or " : "")}ExamType is null";
+                    }
+
+                    string sql = $"delete from EnglishWordLearnedHistory where WordId in(select Id from EnglishWord where {condition})";
+
+                    await connection.OpenAsync();
+
+                    var transaction = await connection.BeginTransactionAsync();
+
+                    int affectedRows = (await connection.ExecuteAsync(sql));
+
+                    await transaction.CommitAsync();
+
+                    return affectedRows;
+                }
+            }
+        }
+
+        public static async Task<int> ClearEnglishPhraseLearnedHistories()
+        {
+            return await ClearTableData("EnglishPhraseLearnedHistory");
+        }
 
         private static async Task<int> ClearTableData(string tableName)
         {

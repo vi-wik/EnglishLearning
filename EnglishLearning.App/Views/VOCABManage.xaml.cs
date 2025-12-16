@@ -15,9 +15,19 @@ public partial class VOCABManage : ContentPage
         InitializeComponent();
     }
 
+    private bool IsWordVOCAB()
+    {
+        return this.rbWordVOVAB.IsChecked;
+    }
+
+    private bool IsPhraseVOCAB()
+    {
+        return this.rbPhraseVOCAB.IsChecked;
+    }
+
     private async Task<bool> HasData()
     {
-        int count = await DataProcessor.GetVOCABCount();
+        int count = this.IsWordVOCAB()? await DataProcessor.GetEnglishWordVOCABCount() : await DataProcessor.GetEnglishPhraseVOCABCount();
 
         return count > 0;
     }
@@ -37,9 +47,9 @@ public partial class VOCABManage : ContentPage
                 return;
             }
 
-            var vocabs = await DataProcessor.GetVVOCABs();
+            IEnumerable<V_EnglishVOCAB> vocabs = this.IsWordVOCAB() ? await DataProcessor.GetVEnglishWordVOCABs() : await DataProcessor.GetVEnglishPhraseVOCABs() ;
 
-            string fileName = $"生词本_{DateTime.Now.ToString("yyyyMMdd")}.txt";
+            string fileName = $"生词本_{(this.IsWordVOCAB()?"单词":"短语")}_{DateTime.Now.ToString("yyyyMMdd")}.txt";
 
             using (MemoryStream ms = new MemoryStream())
             {
@@ -83,25 +93,33 @@ public partial class VOCABManage : ContentPage
                     return;
                 }
 
-                var wordIds = await DataProcessor.GetEnglishWordIdsByWords(items);
+                IEnumerable<int> idsNotInVOCAB = null;
 
-                var wordIdsInVOCAB = await DataProcessor.GetExistingWordIdsOrPhraseIdsOfVOCAB(EnglishObjectType.Word, wordIds);
+                if(this.IsWordVOCAB())
+                {
+                    var wordIds = await DataProcessor.GetEnglishWordIdsByWords(items);
 
-                var wordIdsNotInVOCAB = wordIds.Where(item => !wordIdsInVOCAB.Any(t => item == t));
+                    var wordIdsInVOCAB = await DataProcessor.GetExistingWordIdsOfEnglishWordVOCAB(wordIds);
 
-                var phraseIds = await DataProcessor.GetEnglishPhraseIdsByPhrases(items);
+                    idsNotInVOCAB = wordIds.Where(item => !wordIdsInVOCAB.Any(t => item == t));                 
+                }
+                else
+                {
+                    var phraseIds = await DataProcessor.GetEnglishPhraseIdsByPhrases(items);
 
-                var phraseIdsInVOCAB = await DataProcessor.GetExistingWordIdsOrPhraseIdsOfVOCAB(EnglishObjectType.Phrase, phraseIds);
+                    var phraseIdsInVOCAB = await DataProcessor.GetExistingPhraseIdsOfEnglishPhraseVOCAB(phraseIds);
 
-                var phraseIdsNotInVOCAB = phraseIds.Where(item => !phraseIdsInVOCAB.Any(t => item == t)).Where(item => !wordIdsNotInVOCAB.Any(t => item == t));
+                    idsNotInVOCAB = phraseIds.Where(item => !phraseIdsInVOCAB.Any(t => item == t));                   
+                }              
 
-                if (wordIdsNotInVOCAB.Count() == 0 && phraseIdsNotInVOCAB.Count() == 0)
+                if (idsNotInVOCAB.Count() == 0)
                 {
                     await DisplayAlert("提示", "未匹配到任何记录！", "确定");
                     return;
                 }
 
-                int affectedRows = await DataProcessor.BatchInsertVOCAB(wordIdsNotInVOCAB, phraseIdsNotInVOCAB);
+                int affectedRows =this.IsWordVOCAB()?  await DataProcessor.BatchInsertEnglishWordVOCAB(idsNotInVOCAB):
+                    await DataProcessor.BatchInsertEnglishPhraseVOCAB(idsNotInVOCAB);
 
                 await DisplayAlert("消息", $"导入了{affectedRows}条记录。", "确定");
             }
@@ -126,7 +144,7 @@ public partial class VOCABManage : ContentPage
 
         if (confirmed)
         {
-            int affectedRows = await DataProcessor.ClearVOCABs();
+            int affectedRows = this.IsWordVOCAB()? await DataProcessor.ClearEnglishWordVOCABs(): await DataProcessor.ClearEnglishPhraseVOCABs();
 
             await DisplayAlert("信息", $"已删除{affectedRows}条记录。", "确定");
         }

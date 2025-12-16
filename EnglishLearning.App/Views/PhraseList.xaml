@@ -4,14 +4,14 @@
              x:Class="EnglishLearning.App.Views.PhraseList"
              Title="">
    
-        <Grid>
+        <Grid x:Name="gvMain">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"></RowDefinition>
                 <RowDefinition Height="*"></RowDefinition>
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"></ColumnDefinition>
-                <ColumnDefinition Width="20"></ColumnDefinition>
+                <ColumnDefinition Width="30"></ColumnDefinition>
             </Grid.ColumnDefinitions>
 
         <Entry x:Name="txtKeyword" Text="" Grid.Row="0" Grid.Column="0"  Grid.ColumnSpan="2"
@@ -47,7 +47,8 @@
                 <DataTemplate>
                     <Grid>
 
-                        <Button x:Name="btnAlphabet" Text="{Binding Alphabet}" WidthRequest="20" HeightRequest="20" MaximumHeightRequest="20"  TextColor="Black" Padding="0"  FontSize="14" Margin="0,1" BackgroundColor="Transparent" Clicked="btnAlphabet_Clicked"></Button>                     
+                        <Button x:Name="btnAlphabet" Text="{Binding Alphabet}" WidthRequest="20" HeightRequest="20" MaximumHeightRequest="20" MaximumWidthRequest="20"
+                                HorizontalOptions="Start"  TextColor="Black" Padding="0"  FontSize="14" Margin="0,1" BackgroundColor="Transparent" Clicked="btnAlphabet_Clicked"></Button>                     
                       
                     </Grid>
                 </DataTemplate>

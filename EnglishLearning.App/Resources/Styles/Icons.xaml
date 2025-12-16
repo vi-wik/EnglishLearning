@@ -28,4 +28,8 @@
     <x:String x:Key="up">&#xf106;</x:String>
     <x:String x:Key="left">&#xf060;</x:String>
     <x:String x:Key="right">&#xf061;</x:String>
+    <x:String x:Key="pen">&#xf304;</x:String>
+    <x:String x:Key="arrowUpWithDots">&#xe4b7;</x:String>
+    <x:String x:Key="list">&#xf03a;</x:String>
+    <x:String x:Key="listCheck">&#xf0ae;</x:String>
 </ResourceDictionary>

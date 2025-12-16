@@ -40,9 +40,14 @@ namespace EnglishLearning.Business
             return await DbObjectsFetcher.GetEnglishWordMeanings(wordId, filter);
         }
 
-        public static async Task<IEnumerable<V_VOCAB>> GetVOCABSuggestions(string keyword)
+        public static async Task<IEnumerable<V_EnglishWordVOCAB>> GetEnglishWordVOCABSuggestions(string keyword)
         {
-            return await DbObjectsFetcher.GetVOCABSuggestions(keyword);
+            return await DbObjectsFetcher.GetEnglishWordVOCABSuggestions(keyword);
+        }
+
+        public static async Task<IEnumerable<V_EnglishPhraseVOCAB>> GetEnglishPhraseVOCABSuggestions(string keyword)
+        {
+            return await DbObjectsFetcher.GetEnglishPhraseVOCABSuggestions(keyword);
         }
 
         public static async Task<IEnumerable<V_EnglishSubjectMedia>> GetVEnglishSubjectMedias(int subjectId)
@@ -175,34 +180,64 @@ namespace EnglishLearning.Business
             return await DbExecuter.DeleteMediaAccessHistoriesByMediaIds(mediaIds);
         }
 
-        public static async Task<VOCAB> GetVOCAB(EnglishObjectType objectType, int objectId)
+        public static async Task<EnglishWordVOCAB> GetEnglishWordVOCAB(int wordId)
         {
-            return await DbObjectsFetcher.GetVOCAB(objectType, objectId);
+            return await DbObjectsFetcher.GetEnglishWordVOCAB(wordId);
         }
 
-        public static async Task<bool> AddVOCAB(EnglishObjectType objectType, int objectId)
+        public static async Task<EnglishPhraseVOCAB> GetEnglishPhraseVOCAB(int phraseId)
         {
-            return await DbExecuter.AddVOCAB(objectType, objectId);
+            return await DbObjectsFetcher.GetEnglishPhraseVOCAB(phraseId);
         }
 
-        public static async Task<bool> DeleteVOCAB(int id)
+        public static async Task<bool> AddEnglishWordVOCAB(int wordId)
         {
-            return await DbExecuter.DeleteVOCAB(id);
+            return await DbExecuter.AddEnglishWordVOCAB(wordId);
         }
 
-        public static async Task<IEnumerable<V_VOCAB>> GetVVOCABs(EnglishWordFilter filter = null, DataSortInfo sortInfo = null)
+        public static async Task<bool> DeleteEnglishWordVOCAB(int id)
         {
-            return await DbObjectsFetcher.GetVVOCABs(filter, sortInfo);
+            return await DbExecuter.DeleteEnglishWordVOCAB(id);
         }
 
-        public static async Task<bool> IsVOCAB(int id)
+        public static async Task<bool> AddEnglishPhraseVOCAB(int phraseId)
         {
-            return await DbObjectsFetcher.IsVOCAB(id);
+            return await DbExecuter.AddEnglishPhraseVOCAB(phraseId);
         }
 
-        public static async Task<int> GetVOCABCount()
+        public static async Task<bool> DeleteEnglishPhraseVOCAB(int id)
         {
-            return await DbObjectsFetcher.GetVOCABCount();
+            return await DbExecuter.DeleteEnglishPhraseVOCAB(id);
+        }
+
+        public static async Task<IEnumerable<V_EnglishWordVOCAB>> GetVEnglishWordVOCABs(EnglishWordFilter filter = null, DataSortInfo sortInfo = null)
+        {
+            return await DbObjectsFetcher.GetVEnglishWordVOCABs(filter, sortInfo);
+        }
+
+        public static async Task<IEnumerable<V_EnglishPhraseVOCAB>> GetVEnglishPhraseVOCABs(EnglishWordFilter filter = null, DataSortInfo sortInfo = null)
+        {
+            return await DbObjectsFetcher.GetVEnglishPhraseVOCABs(filter, sortInfo);
+        }
+
+        public static async Task<bool> IsEnglishWordVOCAB(int id)
+        {
+            return await DbObjectsFetcher.IsEnglishWordVOCAB(id);
+        }
+
+        public static async Task<bool> IsEnglishPhraseVOCAB(int id)
+        {
+            return await DbObjectsFetcher.IsEnglishPhraseVOCAB(id);
+        }
+
+        public static async Task<int> GetEnglishWordVOCABCount()
+        {
+            return await DbObjectsFetcher.GetEnglishWordVOCABCount();
+        }
+
+        public static async Task<int> GetEnglishPhraseVOCABCount()
+        {
+            return await DbObjectsFetcher.GetEnglishPhraseVOCABCount();
         }
 
         public static async Task<MediaFavorite> GetMediaFavoriteByMediaId(int mediaId)
@@ -270,19 +305,34 @@ namespace EnglishLearning.Business
             return await DbObjectsFetcher.GetEnglishPhraseIdsByPhrases(phrases);
         }
 
-        public static async Task<IEnumerable<int>> GetExistingWordIdsOrPhraseIdsOfVOCAB(EnglishObjectType objectType, IEnumerable<int> ids)
+        public static async Task<IEnumerable<int>> GetExistingWordIdsOfEnglishWordVOCAB(IEnumerable<int> ids)
         {
-            return await DbObjectsFetcher.GetExistingWordIdsOrPhraseIdsOfVOCAB(objectType, ids);
+            return await DbObjectsFetcher.GetExistingWordIdsOfEnglishWordVOCAB(ids);
         }
 
-        public static async Task<int> BatchInsertVOCAB(IEnumerable<int> wordIds, IEnumerable<int> phraseIds)
+        public static async Task<IEnumerable<int>> GetExistingPhraseIdsOfEnglishPhraseVOCAB(IEnumerable<int> ids)
         {
-            return await DbExecuter.BatchInsertVOCAB(wordIds, phraseIds);
+            return await DbObjectsFetcher.GetExistingPhraseIdsOfEnglishPhraseVOCAB(ids);
         }
 
-        public static async Task<int> ClearVOCABs()
+        public static async Task<int> BatchInsertEnglishWordVOCAB(IEnumerable<int> wordIds)
         {
-            return await DbExecuter.ClearVOCABs();
+            return await DbExecuter.BatchInsertEnglishWordVOCAB(wordIds);
+        }
+
+        public static async Task<int> BatchInsertEnglishPhraseVOCAB(IEnumerable<int> phraseIds)
+        {
+            return await DbExecuter.BatchInsertEnglishPhraseVOCAB(phraseIds);
+        }
+
+        public static async Task<int> ClearEnglishWordVOCABs()
+        {
+            return await DbExecuter.ClearEnglishWordVOCABs();
+        }
+
+        public static async Task<int> ClearEnglishPhraseVOCABs()
+        {
+            return await DbExecuter.ClearEnglishPhraseVOCABs();
         }
 
         public static async Task<IEnumerable<EnglishExamType>> GetEnglishExamTypes()
@@ -290,29 +340,55 @@ namespace EnglishLearning.Business
             return await DbObjectsFetcher.GetEnglishExamTypes();
         }
 
-        public static async Task<int> GetEnglishWordNotLearnNextId(EnglishExamType examType)
+        public static async Task<int?> GetEnglishWordNotLearnedNextId(EnglishExamType examType, bool isForNonExamType = false, bool isForVOCAB = false,
+                                                                     EnglishVOCABLearnSortMode sortMode = EnglishVOCABLearnSortMode.AlphabetAsc)
         {
-            return await DbObjectsFetcher.GetEnglishWordNotLearnNextId(examType);
+            return await DbObjectsFetcher.GetEnglishWordNotLearnedNextId(examType, isForNonExamType, isForVOCAB, sortMode);
         }
 
-        public static async Task<bool> SaveWordLearnHistory(EnglishExamType examType, V_EnglishWord word)
+        public static async Task<bool> SaveEnglishWordLearnedHistory(V_EnglishWord word)
         {
-            return await DbExecuter.SaveWordLearnHistory(examType, word);
+            return await DbExecuter.SaveEnglishWordLearnedHistory(word);
         }
 
-        public static async Task<IEnumerable<EnglishExamStatisticInfo>> GetEnglishExamStatistics()
+        public static async Task<IEnumerable<EnglishExamTypeWordLearnedStatisticInfo>> GetEnglishExamTypeWordLearnedStatistics()
         {
-            return await DbObjectsFetcher.GetEnglishExamStatistics();
+            return await DbObjectsFetcher.GetEnglishExamTypeWordLearnedStatistics();
         }
 
-        public static async Task<int> ClearEnglishWordLearnHistories()
+        public static async Task<IEnumerable<EnglishExamTypeWordLearnedStatisticInfo>> GetEnglishWordVOCABLearnedStatistics()
         {
-            return await DbExecuter.ClearEnglishWordLearnHistories();
+            return await DbObjectsFetcher.GetEnglishWordVOCABLearnedStatistics();
         }
 
-        public static async Task<int?> GetPreviousEnglishLearnedWordId(int examTypeId, int wordId)
+        public static async Task<int> ClearEnglishWordLearnedHistories(List<int?> examTypeIds = null)
         {
-            return await DbObjectsFetcher.GetPreviousEnglishLearnedWordId(examTypeId, wordId);
+            return await DbExecuter.ClearEnglishWordLearnedHistories(examTypeIds);
+        }
+
+        public static async Task<int?> GetEnglishWordLearnedPreviousWordId(int? examTypeId, int wordId, bool isForNonExamType = false, bool isForVOCAB = false)
+        {
+            return await DbObjectsFetcher.GetEnglishWordLearnedPreviousWordId(examTypeId, wordId, isForNonExamType, isForVOCAB);
+        }
+
+        public static async Task<int?> GetEnglishPhraseNotLearnedNextId(bool isForVOCAB = false, EnglishVOCABLearnSortMode sortMode = EnglishVOCABLearnSortMode.AlphabetAsc)
+        {
+            return await DbObjectsFetcher.GetEnglishPhraseNotLearnedNextId(isForVOCAB, sortMode);
+        }
+
+        public static async Task<int?> GetEnglishPhraseLearnedPreviousPhraseId(int phraseId, bool isForVOCAB = false)
+        {
+            return await DbObjectsFetcher.GetEnglishPhraseLearnedPreviousPhraseId(phraseId, isForVOCAB);
+        }
+
+        public static async Task<bool> SaveEnglishPhraseLearnedHistory(V_EnglishPhrase phrase)
+        {
+            return await DbExecuter.SaveEnglishPhraseLearnedHistory(phrase);
+        }
+
+        public static async Task<int> ClearEnglishPhraseLearnedHistories()
+        {
+            return await DbExecuter.ClearEnglishPhraseLearnedHistories();
         }
 
         public static async Task<IEnumerable<V_EnglishWordExample>> GetVEnglishWordExamples(int wordId)
@@ -337,8 +413,10 @@ namespace EnglishLearning.Business
             userData.MediaFavoriteCategories = await DbObjectsFetcher.GetMediaFavoriteCategories(dbFilePath);
             userData.MediaFavorites = await DbObjectsFetcher.GetMediaFavorites(dbFilePath);
             userData.MediaAccessHistories = await DbObjectsFetcher.GetMediaAccessHistories(dbFilePath);
-            userData.VOCABs = await DbObjectsFetcher.GetVOCABs(dbFilePath);
-            userData.WordLearnHistories = await DbObjectsFetcher.GetEnglishWordLearnHistories(dbFilePath);
+            userData.EnglishWordVOCABs = await DbObjectsFetcher.GetEnglishWordVOCABs(dbFilePath);
+            userData.EnglishPhraseVOCABs = await DbObjectsFetcher.GetEnglishPhraseVOCABs(dbFilePath);
+            userData.WordLearnedHistories = await DbObjectsFetcher.GetEnglishWordLearnHistories(dbFilePath);
+            userData.PhraseLearnedHistories = await DbObjectsFetcher.GetEnglishPhraseLearnHistories(dbFilePath);
 
             return userData;
         }
@@ -416,7 +494,7 @@ namespace EnglishLearning.Business
 
         public static async Task<IEnumerable<EnglishWordSuffix>> GetEnglishWordSuffixes(string keyword, bool excludeHidden = false)
         {
-            return await DbObjectsFetcher.GetEnglishWordSuffixes(keyword);
+            return await DbObjectsFetcher.GetEnglishWordSuffixes(keyword, excludeHidden);
         }
 
         public static async Task<IEnumerable<EnglishWordElement>> GetEnglishWordRoots(string keyword)

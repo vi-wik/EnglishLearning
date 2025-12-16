@@ -11,7 +11,7 @@ namespace EnglishLearning.Business.Manager
 
         public static string SettingFolder => Path.Combine(DataRootFolder, settingFolderName);
 
-        internal static string SettingFilePath
+        public static string SettingFilePath
         {
             get
             {

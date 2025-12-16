@@ -81,11 +81,17 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <Compile Update="Popup\MultiSelectListItem.xaml.cs">
+	    <DependentUpon>MultiSelectListItem.xaml</DependentUpon>
+	  </Compile>
 	  <Compile Update="Views\WordRootAffixDetail.xaml.cs">
 	    <DependentUpon>WordRootAffixDetail.xaml</DependentUpon>
 	  </Compile>
 	  <Compile Update="Views\WordRootAffixList.xaml.cs">
 	    <DependentUpon>WordRootAffixList.xaml</DependentUpon>
+	  </Compile>
+	  <Compile Update="Views\WordLearnVOCAB.xaml.cs">
+	    <DependentUpon>WordLearnVOCAB.xaml</DependentUpon>
 	  </Compile>
 	</ItemGroup>
 
@@ -97,6 +103,9 @@
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	  <MauiXaml Update="Popup\Prompt.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Popup\MultiSelectListItem.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	  <MauiXaml Update="Popup\SelectListItem.xaml">
@@ -165,6 +174,12 @@
 	  <MauiXaml Update="Views\WordLearn.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
+	  <MauiXaml Update="Views\WordLearnDetail.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Views\WordLearnSetting.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
 	  <MauiXaml Update="Views\WordList.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
@@ -172,6 +187,9 @@
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	  <MauiXaml Update="Views\WordRootAffixList.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Views\WordLearnVOCAB.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	</ItemGroup>

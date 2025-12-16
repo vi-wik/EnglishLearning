@@ -30,6 +30,11 @@ public partial class PhraseList : ContentPage
 
         this.lvPhraseAlphabet.ItemsSource = this.alphabets.Select(item => new { Alphabet = item });
         this.lvPhraseAlphabet.Loaded += this.LvPhraseAlphabet_Loaded;
+
+        if(DeviceInfo.Platform == DevicePlatform.WinUI)
+        {
+            this.gvMain.ColumnDefinitions[1].Width = new GridLength(60);
+        }
     }
 
     private void LvPhraseAlphabet_Loaded(object? sender, EventArgs e)
@@ -141,7 +146,7 @@ public partial class PhraseList : ContentPage
 
         if (phrase != null)
         {
-            PhraseDetail phraseDetail = (PhraseDetail)Activator.CreateInstance(typeof(PhraseDetail), phrase.Id);
+            PhraseDetail phraseDetail = (PhraseDetail)Activator.CreateInstance(typeof(PhraseDetail), phrase.Id, false, false);
 
             await Navigation.PushAsync(phraseDetail);
         }

@@ -1,9 +1,11 @@
+using CommunityToolkit.Maui.Views;
 using EnglishLearning.App.Helper;
 using EnglishLearning.App.Model;
 using EnglishLearning.Business;
 using EnglishLearning.Business.Helper;
 using EnglishLearning.Business.Manager;
 using EnglishLearning.Business.Model;
+using EnglishLearning.DataAccess;
 using EnglishLearning.Model;
 using System.Text;
 using zoft.MauiExtensions.Core.Extensions;
@@ -13,7 +15,7 @@ namespace EnglishLearning.App.Views;
 public partial class WordDetail : ContentPage
 {
     private V_EnglishWord englishWord = null;
-    private EnglishLearning.Model.VOCAB vocab;
+    private EnglishLearning.Model.EnglishWordVOCAB vocab;
     private SettingInfo setting;
     private List<string> partOfSpeeches = null;
     private bool hasSpecialMeaning = false;
@@ -21,6 +23,10 @@ public partial class WordDetail : ContentPage
     private List<int> historyWordIds = new List<int>();
 
     private EnglishExamType learningEnglishExamType { get; set; }
+    private bool isForNonExamType;
+    private bool isForVOCAB;
+    private bool isLearningMode = false;
+    private int? lastWordId;
 
     public WordDetail(int wordId)
     {
@@ -29,30 +35,40 @@ public partial class WordDetail : ContentPage
 
     public WordDetail(int wordId, EnglishExamType learningEnglishExamType)
     {
-        this.Init(wordId, learningEnglishExamType);
+        this.learningEnglishExamType = learningEnglishExamType;
+
+        this.Init(wordId);
     }
 
-    private async void Init(int wordId, EnglishExamType learningEnglishExamType = null)
+    public WordDetail(int wordId, EnglishExamType learningEnglishExamType, bool isForVOCAB = false)
+    {
+        this.learningEnglishExamType = learningEnglishExamType;
+        this.isForVOCAB = isForVOCAB;
+
+        this.Init(wordId);
+    }
+
+    public WordDetail(int wordId, bool isForNonExamType, bool isForVOCAB = false)
+    {
+        this.isForNonExamType = isForNonExamType;
+        this.isForVOCAB = isForVOCAB;
+
+        this.Init(wordId);
+    }
+
+    private async void Init(int wordId)
     {
         InitializeComponent();
 
         this.setting = SettingManager.GetSetting();
+        this.isLearningMode = this.learningEnglishExamType != null || this.isForNonExamType;
 
-        this.learningEnglishExamType = learningEnglishExamType;
-
-        if (learningEnglishExamType != null)
-        {
-            int? previousWordId = await DataProcessor.GetPreviousEnglishLearnedWordId(this.learningEnglishExamType.Id, wordId);
-
-            this.SetToolbarItemStatus(this.tbiPrevious, previousWordId.HasValue);
-            this.SetToolbarItemStatus(this.tbiNext, true);
-        }
-        else
+        if (!this.isLearningMode)
         {
             this.scrollView.GestureRecognizers.Clear();
         }
 
-        this.ShowWord(wordId, this.setting.AutoPlayAudioWhenLearnWord && learningEnglishExamType != null);
+        this.ShowWord(wordId, this.setting.AutoPlayAudioWhenLearnWord && this.isLearningMode);
     }
 
     private void SetToolbarItemStatus(ToolbarItem item, bool enable)
@@ -63,10 +79,9 @@ public partial class WordDetail : ContentPage
         item.IsEnabled = enable;
     }
 
-
     private async void ShowWord(int wordId, bool playAudio = false)
     {
-        bool hasMedias = false;
+        bool hasMedia = false;
 
         this.englishWord = await DataProcessor.GetVEnglishWord(wordId);
 
@@ -215,71 +230,99 @@ public partial class WordDetail : ContentPage
 
             #region 变形
 
-            this.ShowInflections(wordId);
+            this.InflectionExpander.IsVisible = false;
+
+            if (this.setting.WordInflectionDisplayMode != ExpanderDisplayMode.Hidden)
+            {
+                this.ShowInflections(wordId);
+            }
 
             #endregion
 
             #region 媒体
-            var medias = await MediaHelper.DecorateMedias(await DataProcessor.GetVEnglishWordMedias(this.englishWord.Id));
+            this.MediaExpander.IsVisible = false;
+            this.lvMedias.ItemsSource = null;
 
-            this.lvMedias.ItemsSource = medias;
-            hasMedias = medias.Count() > 0;
-            this.lblIntroduction.IsVisible = hasMedias;
-            #endregion
-
-            #region 例句            
-            var examples = await DataProcessor.GetVEnglishWordExamples(this.englishWord.Id);
-
-            List<EnglishExampleDisplay> exampleDisplays = new List<EnglishExampleDisplay>();
-
-            int order = 1;
-
-            foreach (var example in examples)
+            if (this.setting.WordMediaDisplayMode != ExpanderDisplayMode.Hidden)
             {
-                EnglishExampleDisplay display = new EnglishExampleDisplay();
+                var medias = await MediaHelper.DecorateMedias(await DataProcessor.GetVEnglishWordMedias(this.englishWord.Id));
 
-                display.Vocabulary = this.englishWord.Word;
-                display.Order = $"{order}.";
-                display.Example = $"{example.Example}{UIHelper.MakeupPunctuation(example.Meaning, true)}";
-                display.Meaning = $"{example.Meaning}{UIHelper.MakeupPunctuation(example.Meaning, false)}";
+                hasMedia = medias.Count() > 0;
 
-                exampleDisplays.Add(display);
-
-                order++;
+                if (hasMedia)
+                {
+                    this.lvMedias.ItemsSource = medias;
+                    this.MediaExpander.IsVisible = true;
+                    this.MediaExpander.IsExpanded = this.setting.WordMediaDisplayMode == ExpanderDisplayMode.Expanded;
+                }
             }
 
-            this.lblExample.IsVisible = exampleDisplays.Count > 0;
-            this.lvExamples.ItemsSource = exampleDisplays;
-
             #endregion
 
-            #region 异体
-            var variants = await DataProcessor.GetVEnglishWordVariants(wordId);
+            #region 例句      
 
-            this.lvVariants.ItemsSource = variants;
-            this.lblVariant.IsVisible = variants.Count() > 0;
+            this.ExampleExpander.IsVisible = false;
+            this.lvExamples.ItemsSource = null;
+
+            if (this.setting.WordExampleDisplayMode != ExpanderDisplayMode.Hidden)
+            {
+                var examples = await DataProcessor.GetVEnglishWordExamples(this.englishWord.Id);
+
+                if (examples.Count() > 0)
+                {
+                    List<EnglishExampleDisplay> exampleDisplays = new List<EnglishExampleDisplay>();
+
+                    int order = 1;
+
+                    foreach (var example in examples)
+                    {
+                        EnglishExampleDisplay display = new EnglishExampleDisplay();
+
+                        display.Vocabulary = this.englishWord.Word;
+                        display.Order = $"{order}.";
+                        display.Example = $"{example.Example}{UIHelper.MakeupPunctuation(example.Meaning, true)}";
+                        display.Meaning = $"{example.Meaning}{UIHelper.MakeupPunctuation(example.Meaning, false)}";
+
+                        exampleDisplays.Add(display);
+
+                        order++;
+                    }
+                   
+                    this.lvExamples.ItemsSource = exampleDisplays;
+                    this.ExampleExpander.IsVisible = true;
+                    this.ExampleExpander.IsExpanded = this.setting.WordExampleDisplayMode == ExpanderDisplayMode.Expanded;
+                }               
+            }
 
             #endregion
 
             #region 相关单词
-            if (this.setting.ExpandWordFormByDefault)
+
+            this.FormExpander.IsVisible = false;
+            this.lvWordForm.ItemsSource = null;
+
+            if (this.setting.WordFormDisplayMode != ExpanderDisplayMode.Hidden)
             {
                 var forms = await DataProcessor.GetVEnglishWordForms(wordId);
 
-                this.lvWordForm.ItemsSource = forms;
                 int formCount = forms.Count();
 
                 if (formCount > 0)
                 {
+                    this.lvWordForm.ItemsSource = forms;
+
                     this.FormExpander.IsVisible = true;
-                    this.FormExpander.IsExpanded = true;
+                    this.FormExpander.IsExpanded = this.setting.WordFormDisplayMode == ExpanderDisplayMode.Expanded;
                 }
             }
 
             #endregion
 
             #region 单词结构
-            if (this.setting.ExpandWordStructureByDefault)
+
+            this.StructureExpander.IsVisible = false;
+
+            if (this.setting.WordStructureDisplayMode != ExpanderDisplayMode.Hidden)
             {
                 var dictStructures = await DataProcessor.GetEnglishWordStructures(wordId);
 
@@ -288,7 +331,27 @@ public partial class WordDetail : ContentPage
                     this.ShowWordStructures(dictStructures);
 
                     this.StructureExpander.IsVisible = true;
-                    this.StructureExpander.IsExpanded = true;
+                    this.StructureExpander.IsExpanded = this.setting.WordStructureDisplayMode == ExpanderDisplayMode.Expanded;
+                }
+            }
+
+            #endregion
+
+            #region 异体
+
+            this.VariantExpander.IsVisible = false;
+            this.lvVariants.ItemsSource = null;
+
+            if (this.setting.WordVariantDisplayMode != ExpanderDisplayMode.Hidden)
+            {
+                var variants = await DataProcessor.GetVEnglishWordVariants(wordId);
+
+                if (variants.Count() > 0)
+                {
+                    this.lvVariants.ItemsSource = variants;
+                    this.VariantExpander.IsVisible = true;
+
+                    this.VariantExpander.IsExpanded = this.setting.WordVariantDisplayMode == ExpanderDisplayMode.Expanded;
                 }
             }
 
@@ -296,17 +359,23 @@ public partial class WordDetail : ContentPage
 
             this.btnVOCAB.IsVisible = true;
 
-            this.vocab = await DataProcessor.GetVOCAB(EnglishObjectType.Word, this.englishWord.Id);
+            this.vocab = await DataProcessor.GetEnglishWordVOCAB(this.englishWord.Id);
+
+            if (this.isLearningMode)
+            {
+                int? previousWordId = await DataProcessor.GetEnglishWordLearnedPreviousWordId(this.learningEnglishExamType?.Id, wordId, this.isForNonExamType, this.isForVOCAB);
+
+                this.SetToolbarItemStatus(this.tbiPrevious, previousWordId.HasValue);
+
+                this.SetToolbarItemStatus(this.tbiNext, wordId != this.lastWordId);
+            }
         }
         else
         {
             this.vocab = null;
             this.btnVOCAB.IsVisible = false;
             this.lblSyllable.IsVisible = false;
-        }
-
-        this.lblIntroduction.IsVisible = hasMedias;
-        this.lvMedias.IsVisible = hasMedias;
+        }      
 
         this.SetStatusForVOCAB(this.vocab != null);
     }
@@ -558,10 +627,7 @@ public partial class WordDetail : ContentPage
                 }
             }
 
-            if (setting.ExpandWordInflectionByDefault)
-            {
-                this.InflectionExpander.IsExpanded = true;
-            }
+            this.InflectionExpander.IsExpanded = setting.WordInflectionDisplayMode == ExpanderDisplayMode.Expanded;
         }
         else
         {
@@ -576,29 +642,36 @@ public partial class WordDetail : ContentPage
         this.Font_InflectionShow.Glyph = Application.Current.Resources[iconKey].ToString();
     }
 
-    private void btnInflectionShow_Clicked(object sender, EventArgs e)
+    private void Expander_ExpandedChanged(object? sender, CommunityToolkit.Maui.Core.ExpandedChangedEventArgs e)
     {
-        this.InflectionExpander.IsExpanded = !this.InflectionExpander.IsExpanded;
+        var expander = sender as Expander;
+
+        string iconKey = expander.IsExpanded ? "up" : "down";
+
+        string fontControlName = $"Font_{expander.CommandParameter}Show";
+
+        var imgSource = this.FindByName(fontControlName) as FontImageSource;
+
+        imgSource.Glyph = Application.Current.Resources[iconKey].ToString();
     }
 
-    private void FormExpander_ExpandedChanged(object? sender, CommunityToolkit.Maui.Core.ExpandedChangedEventArgs e)
+    private void ExpandButtonShow_Clicked(object sender, EventArgs e)
     {
-        string iconKey = this.FormExpander.IsExpanded ? "up" : "down";
+        ImageButton btn = sender as ImageButton;
 
-        this.Font_FormShow.Glyph = Application.Current.Resources[iconKey].ToString();
-    }
+        string expanderName = $"{btn.CommandParameter}Expander";
 
-    private void btnFormShow_Clicked(object sender, EventArgs e)
-    {
-        this.FormExpander.IsExpanded = !this.FormExpander.IsExpanded;
+        var expander = this.FindByName(expanderName) as Expander;
+
+        expander.IsExpanded = !expander.IsExpanded;
     }
 
     private void SetPronunciationDisplayText(Label label, string pronunciation)
     {
-        int mode = this.setting.PronunciationBracketMode;
+        WordPronunciationBracketDisplayMode mode = this.setting.WordPronunciationBracketMode;
 
-        string leftChar = mode == 1 ? "[" : "/";
-        string rightChar = mode == 1 ? "]" : "/";
+        string leftChar = mode == WordPronunciationBracketDisplayMode.Square ? "[" : "/";
+        string rightChar = mode == WordPronunciationBracketDisplayMode.Square ? "]" : "/";
 
         label.FormattedText = new FormattedString();
 
@@ -654,11 +727,11 @@ public partial class WordDetail : ContentPage
     {
         if (this.vocab == null)
         {
-            bool success = await DataProcessor.AddVOCAB(EnglishObjectType.Word, this.englishWord.Id);
+            bool success = await DataProcessor.AddEnglishWordVOCAB(this.englishWord.Id);
 
             if (success)
             {
-                this.vocab = await DataProcessor.GetVOCAB(EnglishObjectType.Word, this.englishWord.Id);
+                this.vocab = await DataProcessor.GetEnglishWordVOCAB(this.englishWord.Id);
 
                 this.SetStatusForVOCAB(true);
 
@@ -671,7 +744,7 @@ public partial class WordDetail : ContentPage
         }
         else
         {
-            bool success = await DataProcessor.DeleteVOCAB(this.vocab.Id);
+            bool success = await DataProcessor.DeleteEnglishWordVOCAB(this.vocab.Id);
 
             if (success)
             {
@@ -700,6 +773,7 @@ public partial class WordDetail : ContentPage
     {
         this.lblExamType.Text = "";
         this.gvWordInflection.Children.Clear();
+        this.gvStructure.Children.Clear();
 
         this.btnShowAllMeaning.IsVisible = false;
         this.btnHideSpecalMeaning.IsVisible = false;
@@ -722,7 +796,7 @@ public partial class WordDetail : ContentPage
 
     private async void ShowPrevious()
     {
-        if (this.learningEnglishExamType == null)
+        if (!this.isLearningMode)
         {
             return;
         }
@@ -743,7 +817,7 @@ public partial class WordDetail : ContentPage
         }
         else
         {
-            previousWordId = await DataProcessor.GetPreviousEnglishLearnedWordId(this.learningEnglishExamType.Id, this.englishWord.Id);
+            previousWordId = await DataProcessor.GetEnglishWordLearnedPreviousWordId(this.learningEnglishExamType?.Id, this.englishWord.Id, this.isForNonExamType, this.isForVOCAB);
         }
 
         if (previousWordId > 0)
@@ -761,7 +835,7 @@ public partial class WordDetail : ContentPage
 
     private async void ShowNext()
     {
-        if (this.learningEnglishExamType == null)
+        if (!this.isLearningMode)
         {
             return;
         }
@@ -797,21 +871,23 @@ public partial class WordDetail : ContentPage
 
     private async void FinishLearn()
     {
-        bool success = await DataProcessor.SaveWordLearnHistory(this.learningEnglishExamType, this.englishWord);
+        bool success = await DataProcessor.SaveEnglishWordLearnedHistory(this.englishWord);
 
         if (success)
         {
-            int nextWordId = await DataProcessor.GetEnglishWordNotLearnNextId(this.learningEnglishExamType);
+            int? nextWordId = await DataProcessor.GetEnglishWordNotLearnedNextId(this.learningEnglishExamType, this.isForNonExamType, this.isForVOCAB, this.setting.WordVOCABLearnSortMode);
 
             if (nextWordId > 0)
             {
                 this.Reset();
                 this.SetToolbarItemStatus(this.tbiNext, true);
 
-                this.ShowWord(nextWordId, this.setting.AutoPlayAudioWhenLearnWord);
+                this.ShowWord(nextWordId.Value, this.setting.AutoPlayAudioWhenLearnWord);
             }
             else
             {
+                this.lastWordId = this.englishWord.Id;
+                this.SetToolbarItemStatus(this.tbiNext, false);
                 await DisplayAlert("提示", "没有更多了。", "确定");
             }
         }
@@ -819,7 +895,7 @@ public partial class WordDetail : ContentPage
 
     private async void SwipeGestureRecognizer_Swiped(object sender, SwipedEventArgs e)
     {
-        if (this.learningEnglishExamType == null)
+        if (!this.isLearningMode)
         {
             return;
         }
@@ -871,7 +947,10 @@ public partial class WordDetail : ContentPage
 
         this.SetShowHideMeaningButtonVisible(show);
 
-        this.ShowInflections(wordId);
+        if (this.setting.WordInflectionDisplayMode != ExpanderDisplayMode.Hidden)
+        {
+            this.ShowInflections(wordId);
+        }
     }
 
     private void SetShowHideMeaningButtonVisible(bool isShowAll)
@@ -912,7 +991,7 @@ public partial class WordDetail : ContentPage
 
     private void TapGestureRecognizer_ScollViewTapped(object sender, TappedEventArgs e)
     {
-        if (this.learningEnglishExamType == null)
+        if (!this.isLearningMode)
         {
             return;
         }
@@ -935,20 +1014,10 @@ public partial class WordDetail : ContentPage
         }
     }
 
-    private void SturctureExpander_ExpandedChanged(object sender, CommunityToolkit.Maui.Core.ExpandedChangedEventArgs e)
+    private async void ShowWordStructures(Dictionary<int, IEnumerable<V_EnglishWordStructure>> dict)
     {
-        string iconKey = this.StructureExpander.IsExpanded ? "up" : "down";
+        this.gvStructure.Clear();
 
-        this.Font_StructureShow.Glyph = Application.Current.Resources[iconKey].ToString();
-    }
-
-    private void btnStructureShow_Clicked(object sender, EventArgs e)
-    {
-        this.StructureExpander.IsExpanded = !this.StructureExpander.IsExpanded;
-    }
-
-    private void ShowWordStructures(Dictionary<int, IEnumerable<V_EnglishWordStructure>> dict)
-    {
         RowDefinition[] rowDefinations = new RowDefinition[dict.Count];
 
         for (int i = 0; i < rowDefinations.Length; i++)
@@ -956,7 +1025,7 @@ public partial class WordDetail : ContentPage
             rowDefinations[i] = new RowDefinition(new GridLength(0, GridUnitType.Star));
         }
 
-        this.gridStructure.RowDefinitions = new RowDefinitionCollection(rowDefinations);
+        this.gvStructure.RowDefinitions = new RowDefinitionCollection(rowDefinations);
 
         int rowIndex = 0;
 
@@ -976,27 +1045,47 @@ public partial class WordDetail : ContentPage
                 count++;
 
                 Span span = new Span();
-                Span extraSpan = null;
+                Span extraBeforeSpan = null;
+                Span extraAfterSpan = null;
                 bool needAddGestrue = false;
 
                 if (structrue.Prefix != null)
                 {
                     span.Text = structrue.Prefix;
-                    span.TextColor = Colors.Green;                   
+                    span.TextColor = Colors.Green;
 
                     if (structrue.PrefixId > 0)
                     {
-                        needAddGestrue = true;                      
+                        needAddGestrue = true;
                     }
                 }
                 else if (structrue.Suffix != null)
                 {
-                    span.Text = structrue.Suffix;
-                    span.TextColor = structrue.SuffixId > 0 ? Colors.Orange : Colors.Black;
+                    string suffix = structrue.Suffix;
+                    int? suffixId = structrue.SuffixId;
+                    string text = structrue.Suffix;
 
-                    if(structrue.SuffixId>0)
+                    if (suffixId == null && suffix.StartsWith("i") && structrue.ChangeEndOldContent == "y")
+                    {
+                        var result = await DataProcessor.GetEnglishWordSuffixByName(suffix.Substring(1));
+
+                        if (result != null)
+                        {
+                            text = suffix.Substring(1);
+                            suffixId = result.Id;
+
+                            extraBeforeSpan = new Span() { Text = "i" };
+                        }
+                    }
+
+                    span.Text = text;
+                    span.TextColor = suffixId > 0 ? Colors.Orange : Colors.Black;
+
+                    if (suffixId > 0)
                     {
                         needAddGestrue = true;
+                        structrue.SuffixId = suffixId;
+                        structrue.Suffix = text;
                     }
                 }
                 else if (structrue.Root != null)
@@ -1004,7 +1093,7 @@ public partial class WordDetail : ContentPage
                     span.Text = structrue.Root;
                     span.TextColor = Colors.Purple;
 
-                    if(structrue.RootId>0)
+                    if (structrue.RootId > 0)
                     {
                         needAddGestrue = true;
                     }
@@ -1038,11 +1127,11 @@ public partial class WordDetail : ContentPage
 
                     if (nextStructure != null && nextStructure.ChangeEndOldContent != null)
                     {
-                        extraSpan = new Span() { Text = nextStructure.ChangeEndOldContent, TextColor = Colors.Gray };
+                        extraAfterSpan = new Span() { Text = nextStructure.ChangeEndOldContent, TextColor = Colors.Gray };
                     }
                 }
 
-                if(needAddGestrue)
+                if (needAddGestrue)
                 {
                     var tapGestureRecognizer = new TapGestureRecognizer() { NumberOfTapsRequired = 1, CommandParameter = structrue };
                     tapGestureRecognizer.Tapped += this.TapGestureRecognizer_WordElementTapped;
@@ -1050,11 +1139,16 @@ public partial class WordDetail : ContentPage
                     span.GestureRecognizers.Add(tapGestureRecognizer);
                 }
 
+                if (extraBeforeSpan != null)
+                {
+                    spans.Add(extraBeforeSpan);
+                }
+
                 spans.Add(span);
 
-                if (extraSpan != null)
+                if (extraAfterSpan != null)
                 {
-                    spans.Add(extraSpan);
+                    spans.Add(extraAfterSpan);
                 }
             }
 
@@ -1073,7 +1167,7 @@ public partial class WordDetail : ContentPage
                 }
             }
 
-            this.gridStructure.Add(lbl, 0, rowIndex);
+            this.gvStructure.Add(lbl, 0, rowIndex);
 
             rowIndex++;
         }
@@ -1100,23 +1194,23 @@ public partial class WordDetail : ContentPage
                 type = EnglishWordElementType.Prefix;
                 name = structure.Prefix;
             }
-            else if(structure.SuffixId>0)
+            else if (structure.SuffixId > 0)
             {
                 type = EnglishWordElementType.Suffix;
                 name = structure.Suffix;
             }
-            else if(structure.RootId>0)
+            else if (structure.RootId > 0)
             {
                 type = EnglishWordElementType.WordRoot;
                 name = structure.Root;
             }
 
-            if(type!= EnglishWordElementType.None)
+            if (type != EnglishWordElementType.None)
             {
                 WordRootAffixList page = (WordRootAffixList)Activator.CreateInstance(typeof(WordRootAffixList), type, name);
 
                 await Navigation.PushAsync(page);
-            }             
+            }
         }
     }
 }

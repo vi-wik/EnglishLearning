@@ -9,7 +9,9 @@ namespace EnglishLearning.App.Views;
 
 public partial class VOCAB : ContentPage
 {
-    private V_VOCAB current;
+    private string wordTagName = "µ•¥ ";
+    private string phraseTagName = "∂Ã”Ô";
+    private V_EnglishVOCAB current;
     private string sortFieldName = "Name";
     private DataSortType sortType = DataSortType.ASC;
     private SettingInfo setting = SettingManager.GetSetting();
@@ -18,11 +20,33 @@ public partial class VOCAB : ContentPage
     public VOCAB()
     {
         InitializeComponent();
+
+        this.Init();
+    }
+
+    private void Init()
+    {
+        this.picker.Items.AddRange(new string[] { this.wordTagName, this.phraseTagName });
+
+        this.picker.SelectedIndex = 0;
+    }
+
+    private bool IsWordVOCAB()
+    {
+        return this.picker.SelectedIndex == 0;
+    }
+
+    private bool IsPhraseVOCAB()
+    {
+        return this.picker.SelectedIndex == 1;
     }
 
     protected override async void OnNavigatedTo(NavigatedToEventArgs args)
     {
         this.setting = SettingManager.GetSetting();
+
+        bool isWordVOCAB = this.IsWordVOCAB();
+        bool isPhraseVOCAB = this.IsPhraseVOCAB();
 
         if (this.isFirstLoad)
         {
@@ -35,7 +59,8 @@ public partial class VOCAB : ContentPage
 
             if (hasCurrent)
             {
-                bool isValid = await DataProcessor.IsVOCAB(this.current.Id);
+                bool isValid = isWordVOCAB ? await DataProcessor.IsEnglishWordVOCAB(this.current.Id) :
+                    await DataProcessor.IsEnglishPhraseVOCAB(this.current.Id);
 
                 if (!isValid)
                 {
@@ -57,11 +82,17 @@ public partial class VOCAB : ContentPage
         }
     }
 
+    private void picker_SelectedIndexChanged(object sender, EventArgs e)
+    {
+        this.txtKeyword.Text = "";
+        this.LoadData();
+    }
+
     private async void RemoveItemFromCollection(int id)
     {
         if (this.lvVOCAB.ItemsSource != null)
         {
-            var collection = this.lvVOCAB.ItemsSource as ObservableCollection<V_VOCAB>;
+            var collection = this.lvVOCAB.ItemsSource as ObservableCollection<V_EnglishVOCAB>;
 
             collection.Remove(collection.FirstOrDefault(item => item.Id == id));
         }
@@ -71,7 +102,7 @@ public partial class VOCAB : ContentPage
     {
         if (this.lvVOCAB.ItemsSource != null)
         {
-            var collection = this.lvVOCAB.ItemsSource as ObservableCollection<V_VOCAB>;
+            var collection = this.lvVOCAB.ItemsSource as ObservableCollection<V_EnglishVOCAB>;
 
             return collection.Count;
         }
@@ -81,7 +112,7 @@ public partial class VOCAB : ContentPage
 
     private async Task<int> GetTableCount()
     {
-        int count = await DataProcessor.GetVOCABCount();
+        int count = this.IsWordVOCAB()?  await DataProcessor.GetEnglishWordVOCABCount(): await DataProcessor.GetEnglishPhraseVOCABCount();
 
         return count;
     }
@@ -118,13 +149,14 @@ public partial class VOCAB : ContentPage
 
         EnglishWordFilter filter = new EnglishWordFilter() { Keyword = keyword, FullMatch = fullMatch, NeedMeaning = this.setting.ShowWordMeaningWhenShowVOCABs };
 
-        var vocabs = await DataProcessor.GetVVOCABs(filter, new DataSortInfo() { FieldName = this.sortFieldName, SortType = this.sortType });
+        IEnumerable<V_EnglishVOCAB> vocabs = this.IsWordVOCAB() ? await DataProcessor.GetVEnglishWordVOCABs(filter, new DataSortInfo() { FieldName = this.sortFieldName, SortType = this.sortType }) :
+             await DataProcessor.GetVEnglishPhraseVOCABs(filter, new DataSortInfo() { FieldName = this.sortFieldName, SortType = this.sortType });
 
-        ObservableCollection<V_VOCAB> collection = new ObservableCollection<V_VOCAB>();
+        ObservableCollection<V_EnglishVOCAB> collection = new ObservableCollection<V_EnglishVOCAB>();
 
         collection.AddRange(vocabs);
 
-        this.lvVOCAB.ItemsSource = collection;
+        this.lvVOCAB.ItemsSource = collection;      
     }
 
     private void txtKeyword_Completed(object sender, EventArgs e)
@@ -138,9 +170,10 @@ public partial class VOCAB : ContentPage
 
         if (keyword.Length > 2)
         {
-            var words = await DataProcessor.GetVOCABSuggestions(keyword);
+            IEnumerable<V_EnglishVOCAB> results = this.IsWordVOCAB()? await DataProcessor.GetEnglishWordVOCABSuggestions(keyword):
+                await DataProcessor.GetEnglishPhraseVOCABSuggestions(keyword);
 
-            this.txtKeyword.ItemsSource = words.ToList();
+            this.txtKeyword.ItemsSource = results.ToList();           
         }
         else
         {
@@ -153,9 +186,9 @@ public partial class VOCAB : ContentPage
     {
         object selectedItem = e.SelectedItem;
 
-        if (selectedItem != null && selectedItem is V_VOCAB)
+        if (selectedItem != null && selectedItem is V_EnglishVOCAB vocab)
         {
-            this.Search((selectedItem as V_VOCAB).Name, true);
+            this.Search(vocab.Name, true);
         }
     }
 
@@ -163,21 +196,21 @@ public partial class VOCAB : ContentPage
     {
         Grid grid = sender as Grid;
 
-        V_VOCAB v_VOCAB = grid.BindingContext as V_VOCAB;
+        V_EnglishVOCAB v_VOCAB = grid.BindingContext as V_EnglishVOCAB;
 
         this.current = v_VOCAB;
 
         if (v_VOCAB != null)
         {
-            if (v_VOCAB.Type == 1)
+            if (v_VOCAB is V_EnglishWordVOCAB wordVOCAB)
             {
-                WordDetail wordDetail = (WordDetail)Activator.CreateInstance(typeof(WordDetail), v_VOCAB.WordId);
+                WordDetail wordDetail = (WordDetail)Activator.CreateInstance(typeof(WordDetail), wordVOCAB.WordId);
 
                 await Navigation.PushAsync(wordDetail);
             }
-            else
+            else if(v_VOCAB is V_EnglishPhraseVOCAB phraseVOCAB)
             {
-                PhraseDetail phraseDetail = (PhraseDetail)Activator.CreateInstance(typeof(PhraseDetail), v_VOCAB.PhraseId);
+                PhraseDetail phraseDetail = (PhraseDetail)Activator.CreateInstance(typeof(PhraseDetail), phraseVOCAB.PhraseId);
 
                 await Navigation.PushAsync(phraseDetail);
             }
@@ -191,7 +224,7 @@ public partial class VOCAB : ContentPage
 
     private void tbiSortByLetterAsc_Clicked(object sender, EventArgs e)
     {
-        this.sortFieldName = nameof(V_VOCAB.Name);
+        this.sortFieldName = nameof(V_EnglishVOCAB.Name);
         this.sortType = DataSortType.ASC;
 
         this.Search(null, false);
@@ -199,7 +232,7 @@ public partial class VOCAB : ContentPage
 
     private void tbiSortByLetterDesc_Clicked(object sender, EventArgs e)
     {
-        this.sortFieldName = nameof(V_VOCAB.Name);
+        this.sortFieldName = nameof(V_EnglishVOCAB.Name);
         this.sortType = DataSortType.DESC;
 
         this.Search(null, false);
@@ -207,7 +240,7 @@ public partial class VOCAB : ContentPage
 
     private void tbiSortByCreateTimeAsc_Clicked(object sender, EventArgs e)
     {
-        this.sortFieldName = nameof(V_VOCAB.CreateTime);
+        this.sortFieldName = nameof(V_EnglishVOCAB.CreateTime);
         this.sortType = DataSortType.ASC;
 
         this.Search(null, false);
@@ -215,7 +248,7 @@ public partial class VOCAB : ContentPage
 
     private void tbiSortByCreateTimeDesc_Clicked(object sender, EventArgs e)
     {
-        this.sortFieldName = nameof(V_VOCAB.CreateTime);
+        this.sortFieldName = nameof(V_EnglishVOCAB.CreateTime);
         this.sortType = DataSortType.DESC;
 
         this.Search(null, false);
@@ -232,11 +265,12 @@ public partial class VOCAB : ContentPage
     {
         SwipeItem swipeItem = sender as SwipeItem;
 
-        V_VOCAB v_VOCAB = swipeItem.BindingContext as V_VOCAB;
+        V_EnglishVOCAB v_VOCAB = swipeItem.BindingContext as V_EnglishVOCAB;
 
         if (v_VOCAB != null)
         {
-            bool success = await DataProcessor.DeleteVOCAB(v_VOCAB.Id);
+            bool success = this.IsWordVOCAB()? await DataProcessor.DeleteEnglishWordVOCAB(v_VOCAB.Id):
+                await DataProcessor.DeleteEnglishPhraseVOCAB(v_VOCAB.Id);
 
             if (success)
             {

@@ -2,11 +2,122 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="EnglishLearning.App.Views.WordLearn"
-             Title="">   
-    
-    <VerticalStackLayout>
-        <Grid x:Name="gvExamType" Padding="10" RowSpacing="10" ColumnSpacing="2" 
-                 ColumnDefinitions="150,150">
-        </Grid>
-    </VerticalStackLayout>
+             Title="">
+
+    <Grid Padding="20,20" ColumnSpacing="50" RowSpacing="50" Margin="20,10">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="100"></ColumnDefinition>
+            <ColumnDefinition Width="100"></ColumnDefinition>           
+        </Grid.ColumnDefinitions>
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="70"></RowDefinition>
+            <RowDefinition Height="70"></RowDefinition>
+            <RowDefinition Height="70"></RowDefinition>
+        </Grid.RowDefinitions>
+
+        <Border Grid.Column="0" Padding="5">
+            <Border.StrokeShape>
+                <RoundRectangle CornerRadius="4,4,4,4" />
+            </Border.StrokeShape>
+            <Border.GestureRecognizers>
+                <TapGestureRecognizer Tapped="TapGestureRecognizer_ExamTypeTapped" NumberOfTapsRequired="1" />
+            </Border.GestureRecognizers>
+
+            <VerticalStackLayout>
+
+                <Image Margin="5"  HeightRequest="30" >
+                    <Image.Source>
+                        <FontImageSource  FontFamily="FASolid" Glyph="{StaticResource pen}"  Color="DodgerBlue" Size="10" />
+                    </Image.Source>
+                </Image>
+                <Label Text="考级词汇" HorizontalOptions="Center"></Label>
+            </VerticalStackLayout>
+
+        </Border>
+
+        <Border Grid.Row="0" Grid.Column="1" Padding="5">
+            <Border.StrokeShape>
+                <RoundRectangle CornerRadius="4,4,4,4" />
+            </Border.StrokeShape>
+            <Border.GestureRecognizers>
+                <TapGestureRecognizer Tapped="TapGestureRecognizer_PhraseTapped" NumberOfTapsRequired="1" />
+            </Border.GestureRecognizers>
+
+            <VerticalStackLayout>
+                <Image Margin="5"  HeightRequest="30">
+                    <Image.Source>
+                        <FontImageSource  FontFamily="FASolid" Glyph="{StaticResource list}"  Color="DodgerBlue" Size="104"/>
+                    </Image.Source>
+                </Image>
+
+                <Label Text="短语"  HorizontalOptions="Center"></Label>
+
+            </VerticalStackLayout>
+
+        </Border>
+        
+        <Border Grid.Row="1" Padding="5">
+            <Border.StrokeShape>
+                <RoundRectangle CornerRadius="4,4,4,4" />
+            </Border.StrokeShape>
+            <Border.GestureRecognizers>
+                <TapGestureRecognizer Tapped="TapGestureRecognizer_WordVOCABTapped" NumberOfTapsRequired="1" />
+            </Border.GestureRecognizers>
+
+            <VerticalStackLayout>
+                <Image Margin="5"  HeightRequest="30">
+                    <Image.Source>
+                        <FontImageSource  FontFamily="FASolid" Glyph="{StaticResource arrowUpWithDots}"  Color="DodgerBlue" Size="104"/>
+                    </Image.Source>
+                </Image>
+
+                <Label Text="生词本-单词"  HorizontalOptions="Center"></Label>
+
+            </VerticalStackLayout>
+
+        </Border>
+
+       
+        <Border Grid.Row="1" Grid.Column="1" Padding="5">
+            <Border.StrokeShape>
+                <RoundRectangle CornerRadius="4,4,4,4" />
+            </Border.StrokeShape>
+            <Border.GestureRecognizers>
+                <TapGestureRecognizer Tapped="TapGestureRecognizer_PhraseVOCABTapped" NumberOfTapsRequired="1" />
+            </Border.GestureRecognizers>
+
+            <VerticalStackLayout>
+                <Image Margin="5"  HeightRequest="30">
+                    <Image.Source>
+                        <FontImageSource  FontFamily="FASolid" Glyph="{StaticResource listCheck}"  Color="DodgerBlue" Size="104"/>
+                    </Image.Source>
+                </Image>
+
+                <Label Text="生词本-短语"  HorizontalOptions="Center"></Label>
+
+            </VerticalStackLayout>
+
+        </Border>
+
+
+        <Border Grid.Row="2" Grid.Column="0" Padding="5">
+            <Border.StrokeShape>
+                <RoundRectangle CornerRadius="4,4,4,4" />
+            </Border.StrokeShape>
+            <Border.GestureRecognizers>
+                <TapGestureRecognizer Tapped="TapGestureRecognizer_SettingTapped" NumberOfTapsRequired="1" />
+            </Border.GestureRecognizers>
+
+            <VerticalStackLayout>
+                <Image Margin="5"  HeightRequest="30">
+                    <Image.Source>
+                        <FontImageSource   FontFamily="FASolid" Glyph="{StaticResource setting}"  Color="DodgerBlue" Size="104"/>
+                    </Image.Source>
+                </Image>
+                <Label Text="设置" HorizontalOptions="Center"></Label>
+            </VerticalStackLayout>
+
+        </Border>
+    </Grid>
 </ContentPage>

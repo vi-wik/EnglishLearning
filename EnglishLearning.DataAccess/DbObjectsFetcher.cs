@@ -599,13 +599,23 @@ namespace EnglishLearning.DataAccess
             }
         }
 
-        public static async Task<IEnumerable<VOCAB>> GetVOCABs(string dbFilePath = null)
+        public static async Task<IEnumerable<EnglishWordVOCAB>> GetEnglishWordVOCABs(string dbFilePath = null)
         {
             using (var connection = DbUtitlity.CreateDbConnection(dbFilePath))
             {
-                string sql = "SELECT * from VOCAB";
+                string sql = "SELECT * from EnglishWordVOCAB";
 
-                return await connection.QueryAsync<VOCAB>(sql);
+                return await connection.QueryAsync<EnglishWordVOCAB>(sql);
+            }
+        }
+
+        public static async Task<IEnumerable<EnglishPhraseVOCAB>> GetEnglishPhraseVOCABs(string dbFilePath = null)
+        {
+            using (var connection = DbUtitlity.CreateDbConnection(dbFilePath))
+            {
+                string sql = "SELECT * from EnglishPhraseVOCAB";
+
+                return await connection.QueryAsync<EnglishPhraseVOCAB>(sql);
             }
         }
 
@@ -619,60 +629,33 @@ namespace EnglishLearning.DataAccess
             }
         }
 
-        public static async Task<VOCAB> GetVOCAB(EnglishObjectType objectType, int objectId)
+        public static async Task<EnglishWordVOCAB> GetEnglishWordVOCAB(int wordId)
         {
             using (var connection = DbUtitlity.CreateDbConnection())
             {
-                string sql = $"SELECT * from VOCAB where {(objectType == EnglishObjectType.Word ? "WordId" : "PhraseId")}={objectId}";
+                string sql = $"SELECT * from EnglishWordVOCAB where WordId={wordId}";
 
-                return (await connection.QueryAsync<VOCAB>(sql))?.FirstOrDefault();
+                return (await connection.QueryAsync<EnglishWordVOCAB>(sql))?.FirstOrDefault();
             }
         }
 
-        public static async Task<IEnumerable<V_VOCAB>> GetVVOCABs(EnglishWordFilter filter = null, DataSortInfo sortInfo = null)
+        public static async Task<EnglishPhraseVOCAB> GetEnglishPhraseVOCAB(int phraseId)
+        {
+            using (var connection = DbUtitlity.CreateDbConnection())
+            {
+                string sql = $"SELECT * from EnglishPhraseVOCAB where PhraseId={phraseId}";
+
+                return (await connection.QueryAsync<EnglishPhraseVOCAB>(sql))?.FirstOrDefault();
+            }
+        }
+
+        public static async Task<IEnumerable<V_EnglishWordVOCAB>> GetVEnglishWordVOCABs(EnglishWordFilter filter = null, DataSortInfo sortInfo = null)
         {
             using (var connection = DbUtitlity.CreateDbConnection())
             {
                 string keyword = filter?.Keyword;
-                bool fullMatch = filter?.FullMatch ?? false;
-                bool needMeaning = filter?.NeedMeaning ?? false;
 
-                string tableName = needMeaning ? "V_VOCABWithMeaning" : "V_VOCAB";
-
-                string sql = $"select * from {tableName}";
-
-                if (!string.IsNullOrEmpty(keyword))
-                {
-                    string condition = "";
-
-                    if (fullMatch)
-                    {
-                        condition = "LOWER(Name)=LOWER(@Keyword)";
-                    }
-                    else
-                    {
-                        condition = "INSTR(LOWER(Name), LOWER(@Keyword))>0";
-                    }
-
-                    sql += $" where {condition}";
-                }
-
-                string order = "";
-
-                if (sortInfo != null)
-                {
-                    string fieldName = sortInfo.FieldName;
-
-                    DataSortType sortType = sortInfo.SortType;
-
-                    order = $"Lower({fieldName}) {sortType.ToString()}";
-                }
-                else
-                {
-                    order = "Lower(Name)";
-                }
-
-                sql += $" order by {order}";
+                string sql = GetVOCABCondition(EnglishObjectType.Word, keyword, filter, sortInfo);
 
                 Dictionary<string, object> para = new Dictionary<string, object>();
 
@@ -681,13 +664,79 @@ namespace EnglishLearning.DataAccess
                     para.Add("@Keyword", DbUtitlity.GetParameterValue(keyword));
                 }
 
-                return await connection.QueryAsync<V_VOCAB>(sql, para);
+                return await connection.QueryAsync<V_EnglishWordVOCAB>(sql, para);
             }
         }
 
-        public static async Task<IEnumerable<V_VOCAB>> GetVOCABSuggestions(string keyword)
+        public static async Task<IEnumerable<V_EnglishPhraseVOCAB>> GetVEnglishPhraseVOCABs(EnglishWordFilter filter = null, DataSortInfo sortInfo = null)
         {
-            string sql = "select * from V_VOCAB where INSTR(LOWER(Name),LOWER(@Keyword))=1 order by Name limit 50";
+            using (var connection = DbUtitlity.CreateDbConnection())
+            {
+                string keyword = filter?.Keyword;
+
+                string sql = GetVOCABCondition(EnglishObjectType.Phrase, keyword, filter, sortInfo);
+
+                Dictionary<string, object> para = new Dictionary<string, object>();
+
+                if (!string.IsNullOrEmpty(keyword))
+                {
+                    para.Add("@Keyword", DbUtitlity.GetParameterValue(keyword));
+                }
+
+                return await connection.QueryAsync<V_EnglishPhraseVOCAB>(sql, para);
+            }
+        }
+
+        private static string GetVOCABCondition(EnglishObjectType type, string keyword, EnglishWordFilter filter = null, DataSortInfo sortInfo = null)
+        {
+
+            bool fullMatch = filter?.FullMatch ?? false;
+            bool needMeaning = filter?.NeedMeaning ?? false;
+
+            string tableName = type == EnglishObjectType.Word ? (needMeaning ? "V_EnglishWordVOCABWithMeaning" : "V_EnglishWordVOCAB") :
+               (needMeaning ? "V_EnglishPhraseVOCABWithMeaning" : "V_EnglishPhraseVOCAB");
+
+            string sql = $"select * from {tableName}";
+
+            if (!string.IsNullOrEmpty(keyword))
+            {
+                string condition = "";
+
+                if (fullMatch)
+                {
+                    condition = "LOWER(Name)=LOWER(@Keyword)";
+                }
+                else
+                {
+                    condition = "INSTR(LOWER(Name), LOWER(@Keyword))>0";
+                }
+
+                sql += $" where {condition}";
+            }
+
+            string order = "";
+
+            if (sortInfo != null)
+            {
+                string fieldName = sortInfo.FieldName;
+
+                DataSortType sortType = sortInfo.SortType;
+
+                order = $"Lower({fieldName}) {sortType.ToString()}";
+            }
+            else
+            {
+                order = "Lower(Name)";
+            }
+
+            sql += $" order by {order}";
+
+            return sql;
+        }
+
+        public static async Task<IEnumerable<V_EnglishWordVOCAB>> GetEnglishWordVOCABSuggestions(string keyword)
+        {
+            string sql = "select * from V_EnglishWordVOCAB where INSTR(LOWER(Name),LOWER(@Keyword))=1 order by Name limit 50";
 
             Dictionary<string, object> para = new Dictionary<string, object>();
 
@@ -695,13 +744,27 @@ namespace EnglishLearning.DataAccess
 
             using (var connection = DbUtitlity.CreateDbConnection())
             {
-                return await connection.QueryAsync<V_VOCAB>(sql, para);
+                return await connection.QueryAsync<V_EnglishWordVOCAB>(sql, para);
             }
         }
 
-        public static async Task<int> GetVOCABCount()
+        public static async Task<IEnumerable<V_EnglishPhraseVOCAB>> GetEnglishPhraseVOCABSuggestions(string keyword)
         {
-            string sql = "select count(1) from VOCAB";
+            string sql = "select * from V_EnglishPhraseVOCAB where INSTR(LOWER(Name),LOWER(@Keyword))=1 order by Name limit 50";
+
+            Dictionary<string, object> para = new Dictionary<string, object>();
+
+            para.Add("@Keyword", DbUtitlity.GetParameterValue(keyword));
+
+            using (var connection = DbUtitlity.CreateDbConnection())
+            {
+                return await connection.QueryAsync<V_EnglishPhraseVOCAB>(sql, para);
+            }
+        }
+
+        public static async Task<int> GetEnglishWordVOCABCount()
+        {
+            string sql = "select count(1) from EnglishWordVOCAB";
 
             using (var connection = DbUtitlity.CreateDbConnection())
             {
@@ -709,9 +772,29 @@ namespace EnglishLearning.DataAccess
             }
         }
 
-        public static async Task<bool> IsVOCAB(int id)
+        public static async Task<int> GetEnglishPhraseVOCABCount()
         {
-            string sql = $"select 1 from V_VOCAB where Id={id}";
+            string sql = "select count(1) from EnglishPhraseVOCAB";
+
+            using (var connection = DbUtitlity.CreateDbConnection())
+            {
+                return (await connection.QueryAsync<int>(sql))?.FirstOrDefault() ?? 0;
+            }
+        }
+
+        public static async Task<bool> IsEnglishWordVOCAB(int id)
+        {
+            string sql = $"select 1 from EnglishWordVOCAB where Id={id}";
+
+            using (var connection = DbUtitlity.CreateDbConnection())
+            {
+                return (await connection.QueryAsync<bool>(sql))?.FirstOrDefault() == true;
+            }
+        }
+
+        public static async Task<bool> IsEnglishPhraseVOCAB(int id)
+        {
+            string sql = $"select 1 from EnglishPhraseVOCAB where Id={id}";
 
             using (var connection = DbUtitlity.CreateDbConnection())
             {
@@ -805,15 +888,25 @@ namespace EnglishLearning.DataAccess
             }
         }
 
-        public static async Task<IEnumerable<int>> GetExistingWordIdsOrPhraseIdsOfVOCAB(EnglishObjectType objectType, IEnumerable<int> ids)
+        public static async Task<IEnumerable<int>> GetExistingWordIdsOfEnglishWordVOCAB(IEnumerable<int> ids)
         {
             using (var connection = DbUtitlity.CreateDbConnection())
             {
                 string strIds = string.Join(",", ids);
 
-                string fieldName = objectType == EnglishObjectType.Word ? "WordId" : "PhraseId";
+                string sql = $"select WordId from EnglishWordVOCAB where WordId in({strIds})";
 
-                string sql = $"select {fieldName} from VOCAB where {fieldName} in({strIds})";
+                return await connection.QueryAsync<int>(sql);
+            }
+        }
+
+        public static async Task<IEnumerable<int>> GetExistingPhraseIdsOfEnglishPhraseVOCAB(IEnumerable<int> ids)
+        {
+            using (var connection = DbUtitlity.CreateDbConnection())
+            {
+                string strIds = string.Join(",", ids);
+
+                string sql = $"select PhraseId from EnglishPhraseVOCAB where PhraseId in({strIds})";
 
                 return await connection.QueryAsync<int>(sql);
             }
@@ -829,57 +922,199 @@ namespace EnglishLearning.DataAccess
             }
         }
 
-        public static async Task<int> GetEnglishWordNotLearnNextId(EnglishExamType examType)
+        public static async Task<int?> GetEnglishWordNotLearnedNextId(EnglishExamType examType, bool isForNonExamType = false, bool isForVOCAB = false,
+                                                                     EnglishVOCABLearnSortMode sortMode = EnglishVOCABLearnSortMode.AlphabetAsc)
         {
-            int weight = examType.Weight;
-            int examTypeId = examType.Id;
-
             using (var connection = DbUtitlity.CreateDbConnection())
             {
-                string sql = $@"select w.Id from EnglishWord w
-                             where ExamType & {examType.Weight} = {weight} 
-                             and Id not in(select WordId from EnglishWordLearnHistory where ExamTypeId={examTypeId})
-                             order by w.Id
-                             limit 1";
 
-                return (await connection.QueryAsync<int>(sql))?.FirstOrDefault() ?? 0;
+                string sql = null;
+                string condition = null;
+                string orderBy = "Lower(w.Word)";
+
+                if (examType != null)
+                {
+                    int weight = examType.Weight;
+                    int examTypeId = examType.Id;
+
+                    condition = $"ExamType & {examType.Weight} = {weight} ";
+                }
+                else if (isForNonExamType)
+                {
+                    condition = "ExamType is null";
+                }
+
+                if (!isForVOCAB)
+                {
+                    sql = $@"select w.Id from EnglishWord w
+                            where {condition}
+                            and w.Id not in(select WordId from EnglishWordLearnedHistory)
+                            order by {orderBy}
+                            limit 1";
+                }
+                else
+                {
+                    if (sortMode == EnglishVOCABLearnSortMode.CreateTimeAsc)
+                    {
+                        orderBy = "v.CreateTime";
+                    }
+                    else if (sortMode == EnglishVOCABLearnSortMode.CreateIimeDesc)
+                    {
+                        orderBy = "v.CreateTime desc";
+                    }
+
+                    sql = $@"select w.Id from EnglishWord w
+                             join EnglishWordVOCAB v on v.WordId=w.Id
+                             where {condition}
+                             and w.Id not in(select WordId from EnglishWordLearnedHistory)
+                             order by {orderBy}
+                             limit 1";
+                }
+
+                return (await connection.QueryAsync<int?>(sql))?.FirstOrDefault();
             }
         }
 
-        public static async Task<IEnumerable<EnglishExamStatisticInfo>> GetEnglishExamStatistics()
+        public static async Task<IEnumerable<EnglishExamTypeWordLearnedStatisticInfo>> GetEnglishExamTypeWordLearnedStatistics()
         {
             using (var connection = DbUtitlity.CreateDbConnection())
             {
-                string sql = @"select et.Id,et.Name,Count(1) as Total,Count(h.WordId) as LearnedCount
+                string sql = @"select et.Id,et.Name,Count(distinct w.Id) as Total,Count(distinct h.WordId) as LearnedCount
                                 from EnglishExamType et
                                 left join EnglishWord w on w.ExamType is not null and (et.Weight & w.ExamType=et.Weight)
-                                left join EnglishWordLearnHistory h on h.ExamTypeId=et.Id and h.WordId=w.Id
+                                left join EnglishWordLearnedHistory h on h.WordId=w.Id
                                 group by et.Id,et.Name";
 
-                return await connection.QueryAsync<EnglishExamStatisticInfo>(sql);
+                return await connection.QueryAsync<EnglishExamTypeWordLearnedStatisticInfo>(sql);
             }
         }
 
-        public static async Task<IEnumerable<EnglishWordLearnHistory>> GetEnglishWordLearnHistories(string dbFilePath = null)
+        public static async Task<IEnumerable<EnglishExamTypeWordLearnedStatisticInfo>> GetEnglishWordVOCABLearnedStatistics()
+        {
+            using (var connection = DbUtitlity.CreateDbConnection())
+            {
+                string sql = @"select t.Id,t.Name,Count(distinct v.WordId) as Total,Count(distinct h.WordId) as LearnedCount
+                                from EnglishWordVOCAB v
+                                left join EnglishWordLearnedHistory h on v.WordId=h.WordId
+                                left join EnglishWord w on w.Id=v.WordId
+                                left join EnglishExamType t on w.ExamType is not null and (t.Weight & w.ExamType=t.Weight)
+                                group by t.Id,t.Name";
+
+                return await connection.QueryAsync<EnglishExamTypeWordLearnedStatisticInfo>(sql);
+            }
+        }
+
+        public static async Task<IEnumerable<EnglishWordLearnedHistory>> GetEnglishWordLearnHistories(string dbFilePath = null)
         {
             using (var connection = DbUtitlity.CreateDbConnection(dbFilePath))
             {
-                string sql = $"select * from EnglishWordLearnHistory";
+                string sql = $"select * from EnglishWordLearnedHistory";
 
-                return await connection.QueryAsync<EnglishWordLearnHistory>(sql);
+                return await connection.QueryAsync<EnglishWordLearnedHistory>(sql);
             }
         }
 
-        public static async Task<int?> GetPreviousEnglishLearnedWordId(int examTypeId, int wordId)
+        public static async Task<int?> GetEnglishWordLearnedPreviousWordId(int? examTypeId, int wordId, bool isForNonExamType = false, bool isForVOCAB = false)
         {
             using (var connection = DbUtitlity.CreateDbConnection())
             {
-                string sql = $@"select WordId from EnglishWordLearnHistory
-                                where ExamTypeId={examTypeId} and  CreateTime<IFNULL((select CreateTime from EnglishWordLearnHistory where ExamTypeId={examTypeId} and WordId={wordId}),DATETIME('NOW','LOCALTIME'))
-                                order by CreateTime desc
+                string joinCondition = null;
+                string condition = "";
+
+                if (examTypeId > 0)
+                {
+                    joinCondition = $" join EnglishExamType et on et.Id={examTypeId} and (et.Weight & w.ExamType=et.Weight)";
+                }
+
+                if(isForNonExamType)
+                {
+                    condition = " and w.ExamType is null";
+                }
+
+                if(isForVOCAB)
+                {
+                    joinCondition += " join EnglishWordVOCAB v on v.WordId = w.Id";
+                }
+
+                string sql = $@"select h.WordId from EnglishWordLearnedHistory h
+                                join EnglishWord w on h.WordId=w.Id
+                                {joinCondition}
+                                where h.CreateTime<IFNULL((select CreateTime from EnglishWordLearnedHistory where WordId={wordId}),STRFTIME('%Y-%m-%d %H:%M:%f','NOW','LOCALTIME'))
+                                {condition}
+                                order by h.CreateTime desc
                                 limit 1";
 
                 return (await connection.QueryAsync<int?>(sql))?.FirstOrDefault();
+            }
+        }
+
+        public static async Task<int?> GetEnglishPhraseLearnedPreviousPhraseId(int phraseId, bool isForVOCAB = false)
+        {
+            using (var connection = DbUtitlity.CreateDbConnection())
+            {
+                string joinCondition = null;
+                string condition = "";               
+
+                if (isForVOCAB)
+                {
+                    joinCondition += " join EnglishPhraseVOCAB v on v.PhraseId = p.Id";
+                }
+
+                string sql = $@"select h.PhraseId from EnglishPhraseLearnedHistory h
+                                join EnglishPhrase p on h.PhraseId=p.Id
+                                {joinCondition}
+                                where h.CreateTime<IFNULL((select CreateTime from EnglishPhraseLearnedHistory where PhraseId={phraseId}),STRFTIME('%Y-%m-%d %H:%M:%f','NOW','LOCALTIME'))
+                                {condition}
+                                order by h.CreateTime desc
+                                limit 1";
+
+                return (await connection.QueryAsync<int?>(sql))?.FirstOrDefault();
+            }
+        }
+
+        public static async Task<int?> GetEnglishPhraseNotLearnedNextId(bool isForVOCAB = false, EnglishVOCABLearnSortMode sortMode = EnglishVOCABLearnSortMode.AlphabetAsc)
+        {
+            using (var connection = DbUtitlity.CreateDbConnection())
+            {
+                string sql = null;
+                string orderBy = "Lower(p.Phrase)";
+
+                if(!isForVOCAB)
+                {
+                    sql = $@"select p.Id from EnglishPhrase p                           
+                             where p.Id not in(select PhraseId from EnglishPhraseLearnedHistory)
+                             order by {orderBy}
+                             limit 1";
+                }
+                else
+                {
+                    if (sortMode == EnglishVOCABLearnSortMode.CreateTimeAsc)
+                    {
+                        orderBy = "v.CreateTime";
+                    }
+                    else if (sortMode == EnglishVOCABLearnSortMode.CreateIimeDesc)
+                    {
+                        orderBy = "v.CreateTime desc";
+                    }
+
+                    sql = $@"select p.Id from EnglishPhrase p
+                             join EnglishPhraseVOCAB v on v.PhraseId=p.Id
+                             where p.Id not in(select PhraseId from EnglishPhraseLearnedHistory)
+                             order by {orderBy}
+                             limit 1";
+                }               
+
+                return (await connection.QueryAsync<int?>(sql))?.FirstOrDefault();
+            }
+        }
+
+        public static async Task<IEnumerable<EnglishPhraseLearnedHistory>> GetEnglishPhraseLearnHistories(string dbFilePath = null)
+        {
+            using (var connection = DbUtitlity.CreateDbConnection(dbFilePath))
+            {
+                string sql = $"select * from EnglishPhraseLearnedHistory";
+
+                return await connection.QueryAsync<EnglishPhraseLearnedHistory>(sql);
             }
         }
 
@@ -1392,7 +1627,12 @@ group by v.Id,v.Word,v.CommonMeaning,v.SpecialMeaning";
         {
             using (var connection = DbUtitlity.CreateDbConnection())
             {
-                string sql = $"select TargetWordId as Id, TargetWord as Word, CommonMeaning, SpecialMeaning, case when TargetExamType is null then 100000 else TargetExamType end as Priority from V_EnglishWordForm";
+                string sql = $@"select TargetWordId as Id, TargetWord as Word, CommonMeaning, SpecialMeaning, 
+case when TargetExamType is null then 100000 else 
+(
+   case when TargetExamType &2=2 then 2 when TargetExamType &4=4 then 4 when TargetExamType &8=8 then 8 when TargetExamType &16=16 then 16 when TargetExamType &32=32 then 32 else TargetExamType end
+) end as Priority 
+from V_EnglishWordForm";
 
                 string condition = "";
 
@@ -1426,6 +1666,6 @@ group by v.Id,v.Word,v.CommonMeaning,v.SpecialMeaning";
             {
                 return (await connection.QueryAsync<V_EnglishWordFormRule>(sql)).FirstOrDefault();
             }
-        }
+        }      
     }
 }

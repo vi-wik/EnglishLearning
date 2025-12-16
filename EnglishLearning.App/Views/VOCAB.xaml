@@ -40,11 +40,17 @@
         </Grid.RowDefinitions>
 
         <Grid.ColumnDefinitions>
-            <ColumnDefinition  Width="9*" />
-            <ColumnDefinition  Width="1*"/>
+            <ColumnDefinition Width="1.5*"></ColumnDefinition>
+            <ColumnDefinition Width="7.5*"></ColumnDefinition>
+            <ColumnDefinition Width="1*"></ColumnDefinition>
         </Grid.ColumnDefinitions>
 
-        <zoft:AutoCompleteEntry x:Name="txtKeyword" Placeholder="请输入要查找的单词或短语"                          
+        <Picker Title="" x:Name="picker" Grid.Column="0"  HeightRequest="50" HorizontalTextAlignment="Center" BackgroundColor="AliceBlue" SelectedIndexChanged="picker_SelectedIndexChanged">
+            <Picker.Items>
+            </Picker.Items>
+        </Picker>
+
+        <zoft:AutoCompleteEntry x:Name="txtKeyword" Grid.Column="1" Placeholder="请输入要查找的内容"                          
                TextMemberPath="Name"
                DisplayMemberPath="Name"                         
                ClearButtonVisibility="WhileEditing"
@@ -53,7 +59,7 @@
                SuggestionChosen="txtKeyword_SuggestionChosen"                                      
                HeightRequest="50"/>
 
-        <ImageButton  x:Name="btnSearch"  Grid.Column="1"  WidthRequest="20" HeightRequest="20" Clicked="OnSearchButtonClicked">
+        <ImageButton  x:Name="btnSearch"  Grid.Column="2"  WidthRequest="20" HeightRequest="20" Clicked="OnSearchButtonClicked">
             <ImageButton.Source>
                 <FontImageSource   FontFamily="FASolid" Glyph="{StaticResource search}"  Color="DodgerBlue" Size="10"/>
             </ImageButton.Source>

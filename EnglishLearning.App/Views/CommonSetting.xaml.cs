@@ -1,6 +1,8 @@
 using CommunityToolkit.Maui.Storage;
+using EnglishLearning.App.Model;
 using EnglishLearning.Business.Manager;
 using EnglishLearning.Business.Model;
+using zoft.MauiExtensions.Core.Extensions;
 
 namespace EnglishLearning.App.Views;
 
@@ -14,96 +16,105 @@ public partial class CommonSetting : ContentPage
 
         this.setting = SettingManager.GetSetting();
 
-        this.chkShowWordsWhileInputing.IsChecked = this.setting.ShowWordsWhileInputing;
-        this.chkShowWordMeaningWhenShowWordList.IsChecked = this.setting.ShowWordMeaningWhenShowWordList;
-        this.chkShowWordMeaningWhenShowVOCABs.IsChecked = this.setting.ShowWordMeaningWhenShowVOCABs;
-        this.chkShowWordFullMeaning.IsChecked = this.setting.ShowWordFullMeaning;
-        this.chkExpandWordInflectionByDefault.IsChecked = this.setting.ExpandWordInflectionByDefault;
-        this.chkExpandWordFormByDefault.IsChecked = this.setting.ExpandWordFormByDefault;
-        this.chkExpandWordStructureByDefault.IsChecked = this.setting.ExpandWordStructureByDefault;
-        this.chkShowWordSyllable.IsChecked = this.setting.ShowWordSyllable;
-        this.chkAutoPlayAudioWhenLearnWord.IsChecked = this.setting.AutoPlayAudioWhenLearnWord;
-        this.chkEnableLog.IsChecked = this.setting.EnableLog;
-        this.txtPronunciationFileRootFolder.Text = this.setting.PronunciationFileRootFolder;
+        this.switchShowWordsWhileInputing.IsToggled = this.setting.ShowWordsWhileInputing;
+        this.switchShowWordMeaningWhenShowWordList.IsToggled = this.setting.ShowWordMeaningWhenShowWordList;
+        this.switchShowWordMeaningWhenShowVOCABs.IsToggled = this.setting.ShowWordMeaningWhenShowVOCABs;
+        this.switchShowWordFullMeaning.IsToggled = this.setting.ShowWordFullMeaning;
+    
+        this.switchShowWordSyllable.IsToggled = this.setting.ShowWordSyllable;
+        this.switchAutoPlayAudioWhenLearnWord.IsToggled = this.setting.AutoPlayAudioWhenLearnWord;
+        this.switchEnableLog.IsToggled = this.setting.EnableLog;
+        this.txtPronunciationFileRootFolder.Text = this.setting.PronunciationFileRootFolder;   
 
-        int pronunciationBracketMode = setting.PronunciationBracketMode;
+        var expanderDisplayModeNames = ControlDisplay.ExpanderDisplayModeNames.Values;
 
-        if (pronunciationBracketMode == 1)
+        this.pickerWordInflectionDisplayMode.Items.AddRange(expanderDisplayModeNames);
+        this.pickerWordFormDisplayMode.Items.AddRange(expanderDisplayModeNames);
+        this.pickerWordStructureDisplayMode.Items.AddRange(expanderDisplayModeNames);
+        this.pickerWordVariantDisplayMode.Items.AddRange(expanderDisplayModeNames);
+        this.pickerWordMediaDisplayMode.Items.AddRange(expanderDisplayModeNames);
+        this.pickerWordExampleDisplayMode.Items.AddRange(expanderDisplayModeNames);
+
+        this.SetPickerSelectedItem(this.pickerWordInflectionDisplayMode, setting.WordInflectionDisplayMode);
+        this.SetPickerSelectedItem(this.pickerWordFormDisplayMode, setting.WordFormDisplayMode);
+        this.SetPickerSelectedItem(this.pickerWordStructureDisplayMode, setting.WordStructureDisplayMode);
+        this.SetPickerSelectedItem(this.pickerWordVariantDisplayMode, setting.WordVariantDisplayMode);
+        this.SetPickerSelectedItem(this.pickerWordMediaDisplayMode, setting.WordMediaDisplayMode);
+        this.SetPickerSelectedItem(this.pickerWordExampleDisplayMode, setting.WordExampleDisplayMode);
+
+        var wordPronunciationBracketDisplayModeNames = ControlDisplay.WordPronunciationBracketDisplayModeNames.Values;
+
+        this.pickerWordPronunciationBracketMode.Items.AddRange(wordPronunciationBracketDisplayModeNames);
+
+        foreach(var kp in ControlDisplay.WordPronunciationBracketDisplayModeNames)
         {
-            this.rbPronunciationBracket1.IsChecked = true;
-        }
-        else
+            if(kp.Key == setting.WordPronunciationBracketMode)
+            {
+                this.pickerWordPronunciationBracketMode.SelectedItem = kp.Value;
+                break;
+            }
+        }       
+    }
+
+    private void SetPickerSelectedItem(Picker picker, ExpanderDisplayMode mode)
+    {
+        string name = this.GetExpanderDisplayModeName(mode);
+
+        foreach (string item in picker.Items)
         {
-            this.rbPronunciationBracket2.IsChecked = true;
+            if (item == name)
+            {
+                picker.SelectedItem = item;
+                break;
+            }
         }
     }
 
-    private void chkShowWordsWhileInputing_CheckedChanged(object sender, CheckedChangedEventArgs e)
+    private void switchShowWordsWhileInputing_Toggled(object sender, ToggledEventArgs e)
     {
-        this.setting.ShowWordsWhileInputing = this.chkShowWordsWhileInputing.IsChecked;
+        this.setting.ShowWordsWhileInputing = e.Value;
 
         this.Save();
     }
 
-    private void chkShowWordMeaningWhenShowWordList_CheckedChanged(object sender, CheckedChangedEventArgs e)
+    private void switchShowWordMeaningWhenShowWordList_Toggled(object sender, ToggledEventArgs e)
     {
-        this.setting.ShowWordMeaningWhenShowWordList = this.chkShowWordMeaningWhenShowWordList.IsChecked;
+        this.setting.ShowWordMeaningWhenShowWordList = e.Value;
 
         this.Save();
     }
 
-    private void chkShowWordMeaningWhenShowVOCABs_CheckedChanged(object sender, CheckedChangedEventArgs e)
+    private void switchShowWordMeaningWhenShowVOCABs_Toggled(object sender, ToggledEventArgs e)
     {
-        this.setting.ShowWordMeaningWhenShowVOCABs = this.chkShowWordMeaningWhenShowVOCABs.IsChecked;
+        this.setting.ShowWordMeaningWhenShowVOCABs = e.Value;
 
         this.Save();
     }
 
-    private void chkEnableLog_CheckedChanged(object sender, CheckedChangedEventArgs e)
+    private void switchEnableLog_Toggled(object sender, ToggledEventArgs e)
     {
-        this.setting.EnableLog = this.chkEnableLog.IsChecked;
+        this.setting.EnableLog = e.Value;
 
         this.Save();
     }
 
-    private void chkShowWordFullMeaning_CheckedChanged(object sender, CheckedChangedEventArgs e)
+    private void switchShowWordFullMeaning_Toggled(object sender, ToggledEventArgs e)
     {
-        this.setting.ShowWordFullMeaning = this.chkShowWordFullMeaning.IsChecked;
+        this.setting.ShowWordFullMeaning = e.Value;
+
+        this.Save();
+    }  
+
+    private void switchShowWordSyllabe_Toggled(object sender, ToggledEventArgs e)
+    {
+        this.setting.ShowWordSyllable = e.Value;
 
         this.Save();
     }
 
-    private void chkExpandWordInflectionByDefault_CheckedChanged(object sender, CheckedChangedEventArgs e)
+    private void switchAutoPlayAudioWhenLearnWord_Toggled(object sender, ToggledEventArgs e)
     {
-        this.setting.ExpandWordInflectionByDefault = this.chkExpandWordInflectionByDefault.IsChecked;
-
-        this.Save();
-    }
-
-    private void chkExpandWordFormByDefault_CheckedChanged(object sender, CheckedChangedEventArgs e)
-    {
-        this.setting.ExpandWordFormByDefault = this.chkExpandWordFormByDefault.IsChecked;
-
-        this.Save();
-    }
-
-    private void chkExpandWordStructureByDefault_CheckedChanged(object sender, CheckedChangedEventArgs e)
-    {
-        this.setting.ExpandWordStructureByDefault = this.chkExpandWordStructureByDefault.IsChecked;
-
-        this.Save();
-    }
-
-    private void chkShowWordSyllabe_CheckedChanged(object sender, CheckedChangedEventArgs e)
-    {
-        this.setting.ShowWordSyllable = this.chkShowWordSyllable.IsChecked;
-
-        this.Save();
-    }
-
-    private void chkAutoPlayAudioWhenLearnWord_CheckedChanged(object sender, CheckedChangedEventArgs e)
-    {
-        this.setting.AutoPlayAudioWhenLearnWord = this.chkAutoPlayAudioWhenLearnWord.IsChecked;
+        this.setting.AutoPlayAudioWhenLearnWord = e.Value;
 
         this.Save();
     }
@@ -111,23 +122,6 @@ public partial class CommonSetting : ContentPage
     private void Save()
     {
         SettingManager.SaveSetting(this.setting);
-    }
-
-    private void rbPronunciationBracket_CheckedChanged(object sender, CheckedChangedEventArgs e)
-    {
-        if (this.setting == null)
-        {
-            return;
-        }
-
-        RadioButton radioButton = sender as RadioButton;
-
-        if (radioButton.IsChecked)
-        {
-            this.setting.PronunciationBracketMode = Convert.ToInt32(radioButton.Value);
-
-            this.Save();
-        }
     }   
 
     private async void btnChoosePronunciationFileRootFoldern_Clicked(object sender, EventArgs e)
@@ -145,4 +139,87 @@ public partial class CommonSetting : ContentPage
             this.Save();
         }
     }
+
+    private void pickerWordInflectionDisplayMode_SelectedIndexChanged(object sender, EventArgs e)
+    {
+        this.setting.WordInflectionDisplayMode = this.GetExpanderDisplayMode(this.pickerWordInflectionDisplayMode.SelectedItem?.ToString());
+
+        this.Save();
+    }
+
+    private void pickerWordMediaDisplayMode_SelectedIndexChanged(object sender, EventArgs e)
+    {
+        this.setting.WordMediaDisplayMode = this.GetExpanderDisplayMode(this.pickerWordMediaDisplayMode.SelectedItem?.ToString());
+
+        this.Save();
+    }
+
+    private void pickerWordExampleDisplayMode_SelectedIndexChanged(object sender, EventArgs e)
+    {
+        this.setting.WordExampleDisplayMode = this.GetExpanderDisplayMode(this.pickerWordExampleDisplayMode.SelectedItem?.ToString());
+
+        this.Save();
+    }
+
+    private void pickerWordFormDisplayMode_SelectedIndexChanged(object sender, EventArgs e)
+    {
+        this.setting.WordFormDisplayMode = this.GetExpanderDisplayMode(this.pickerWordFormDisplayMode.SelectedItem?.ToString());
+
+        this.Save();
+    }
+
+    private void pickerWordStructureDisplayMode_SelectedIndexChanged(object sender, EventArgs e)
+    {
+        this.setting.WordStructureDisplayMode = this.GetExpanderDisplayMode(this.pickerWordStructureDisplayMode.SelectedItem?.ToString());
+
+        this.Save();
+    }
+
+    private void pickerWordVariantDisplayMode_SelectedIndexChanged(object sender, EventArgs e)
+    {
+        this.setting.WordVariantDisplayMode = this.GetExpanderDisplayMode(this.pickerWordVariantDisplayMode.SelectedItem?.ToString());
+
+        this.Save();
+    }
+
+    private ExpanderDisplayMode GetExpanderDisplayMode(string name)
+    {
+        foreach (var kp in ControlDisplay.ExpanderDisplayModeNames)
+        {
+            if (kp.Value == name)
+            {
+                return kp.Key;
+            }
+        }
+
+        return ExpanderDisplayMode.Expanded;
+    }
+
+    private string GetExpanderDisplayModeName(ExpanderDisplayMode mode)
+    {
+        foreach (var kp in ControlDisplay.ExpanderDisplayModeNames)
+        {
+            if (kp.Key == mode)
+            {
+                return kp.Value;
+            }
+        }
+
+        return string.Empty;
+    }
+
+    private void pickerWordPronunciationBracketMode_SelectedIndexChanged(object sender, EventArgs e)
+    {
+        foreach(var kp in ControlDisplay.WordPronunciationBracketDisplayModeNames)
+        {
+            if(kp.Value == this.pickerWordPronunciationBracketMode.SelectedItem?.ToString())
+            {
+                this.setting.WordPronunciationBracketMode = kp.Key;
+
+                this.Save();
+
+                break;
+            }
+        }       
+    }   
 }

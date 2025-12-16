@@ -36,26 +36,7 @@ public partial class Setting : ContentPage
         CommonSetting setting = (CommonSetting)Activator.CreateInstance(typeof(CommonSetting));
 
         await Navigation.PushAsync(setting);
-    }
-
-    private async void TapGestureRecognizer_ClearWordLearnHistoryTapped(object sender, TappedEventArgs e)
-    {
-        bool confirmed = await DisplayAlert("询问?", "确定要清除背单词历史记录吗？", "是", "否");
-
-        if (confirmed)
-        {
-            int affectedRows = await DataProcessor.ClearEnglishWordLearnHistories();
-
-            if (affectedRows > 0)
-            {
-                await DisplayAlert("信息", $"记录已被清除。", "确定");
-            }
-            else
-            {
-                await DisplayAlert("信息", $"未清除任何信息。", "确定");
-            }
-        }
-    }
+    }    
 
     private async void TapGestureRecognizer_ClearMediaAccessHistoryTapped(object sender, TappedEventArgs e)
     {
@@ -223,6 +204,95 @@ public partial class Setting : ContentPage
             {
                 await DisplayAlert("信息", $"清除缓存失败！", "确定");
             }           
+        }
+    }
+
+    private async void TapGestureRecognizer_ExportSettingTapped(object sender, TappedEventArgs e)
+    {
+        if (!(await PermissionHelper.CheckReadWritePermission(PermissionType.Write)))
+        {
+            return;
+        }
+
+        string targetFileName = "EnglishLearning_setting.json";
+
+        string settingFilePath = SettingManager.SettingFilePath;
+
+        if (File.Exists(settingFilePath))
+        {
+            try
+            {
+                using (FileStream fs = File.OpenRead(settingFilePath))
+                {
+                    var res = await FileSaver.SaveAsync(targetFileName, fs, new CancellationToken());
+
+                    if (res.IsSuccessful)
+                    {
+                        await DisplayAlert("提示", "导出完成。", "确定");
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                LogManager.LogException(ex);
+
+                await DisplayAlert("发生错误", ex.Message, "确定");
+            }
+        }
+        else
+        {
+            await DisplayAlert("提示", "配置文件不存在，无法导出！", "确定");
+        }
+    }
+
+    private async void TapGestureRecognizer_ImportSettingTapped(object sender, TappedEventArgs e)
+    {
+        if (!(await PermissionHelper.CheckReadWritePermission(PermissionType.Read)))
+        {
+            return;
+        }
+
+        var result = await FilePicker.Default.PickAsync();
+
+        if (result != null && result.FullPath != null)
+        {
+            string filePath = result.FullPath;
+
+            try
+            {
+                string settingFilePath = SettingManager.SettingFilePath;
+
+                if (File.Exists(settingFilePath))
+                {
+                    bool confirmed = await DisplayAlert("询问?", "配置文件已存在，确认覆盖吗？", "是", "否");
+
+                    if (confirmed)
+                    {
+                        try
+                        {
+                            File.Copy(filePath, settingFilePath, true);
+
+                            await DisplayAlert("提示", "导入完成。", "确定");
+                        }
+                        catch (Exception ex)
+                        {
+                            LogManager.LogException(ex);
+
+                            await DisplayAlert("发生错误", ex.Message, "确定");
+                        }
+                    }
+                }
+                else
+                {
+                    File.Copy(filePath, settingFilePath);
+                }
+            }
+            catch (Exception ex)
+            {
+                LogManager.LogException(ex);
+
+                await DisplayAlert("导入失败", ex.Message, "确定");
+            }
         }
     }
 }

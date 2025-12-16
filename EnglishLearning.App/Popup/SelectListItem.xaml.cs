@@ -1,5 +1,7 @@
 using CommunityToolkit.Maui.Views;
 using EnglishLearning.App.Helper;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
 
 namespace EnglishLearning.App.Views;
 
@@ -70,9 +72,33 @@ public partial class SelectListItem : Popup
     }
 }
 
-public class ListItemInfo
+public class ListItemInfo : INotifyPropertyChanged
 {
-    public int Id { get; set; }
+    public event PropertyChangedEventHandler PropertyChanged;
+
+    private bool isSelected;
+
+    public int? Id { get; set; }
     public string Name { get; set; }
-    public bool IsSelected { get; set; }
+    public bool IsSelected
+    {
+        get
+        {
+            return this.isSelected;
+        }
+
+        set
+        {
+            if (value != this.isSelected)
+            {
+                this.isSelected = value;
+                NotifyPropertyChanged();
+            }
+        }
+    }
+
+    protected void NotifyPropertyChanged([CallerMemberName] String propertyName = "")
+    {
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+    }
 }

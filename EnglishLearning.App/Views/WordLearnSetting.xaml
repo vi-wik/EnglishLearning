@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="EnglishLearning.App.Views.WordLearnSetting"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+             Title="背单词设置">
+    <VerticalStackLayout>
+        <toolkit:Expander IsExpanded="true">
+            <toolkit:Expander.Header>
+                <Border Padding="2" Margin="5,5" BackgroundColor="AliceBlue">
+
+                    <Label Text="生词本背单词设置"  HorizontalTextAlignment="Start" FontSize="18" Padding="10,5" />
+
+                </Border>
+            </toolkit:Expander.Header>
+
+            <Grid Margin="20,2" RowDefinitions="*,*">         
+                <HorizontalStackLayout Grid.Row="0" Margin="0,2">
+                    <Label Text="单词默认排序模式：" VerticalOptions="Center"></Label>
+                    <Picker Title="" x:Name="pickerWordVOCABSortMode"  HeightRequest="40" HorizontalTextAlignment="Start" WidthRequest="150" BackgroundColor="AliceBlue" SelectedIndexChanged="pickerWordVOCABSortMode_SelectedIndexChanged">
+                        <Picker.Items>
+                        </Picker.Items>
+                    </Picker>
+                </HorizontalStackLayout>
+
+                <HorizontalStackLayout Grid.Row="1" Margin="0,2">
+                    <Label Text="短语默认排序模式：" VerticalOptions="Center"></Label>
+                    <Picker Title="" x:Name="pickerPhraseVOCABSortMode"  HeightRequest="40" HorizontalTextAlignment="Start" WidthRequest="150" BackgroundColor="AliceBlue" SelectedIndexChanged="pickerPhraseVOCABSortMode_SelectedIndexChanged">
+                        <Picker.Items>
+                        </Picker.Items>
+                    </Picker>
+                </HorizontalStackLayout>
+            </Grid>
+
+        </toolkit:Expander>
+
+        <toolkit:Expander IsExpanded="True">
+            <toolkit:Expander.Header>
+                <Border Padding="2" Margin="5,5" BackgroundColor="AliceBlue">
+
+                    <Label Text="数据清除"  HorizontalTextAlignment="Start" FontSize="18" Padding="10,5" />
+
+                </Border>
+            </toolkit:Expander.Header>
+
+            <VerticalStackLayout>
+
+                <Border Padding="2" Margin="15,5" BackgroundColor="SkyBlue">
+
+                    <Border.GestureRecognizers>
+                        <TapGestureRecognizer Tapped="TapGestureRecognizer_ClearWordLearnedHistoryTapped" NumberOfTapsRequired="1" />
+                    </Border.GestureRecognizers>
+
+                    <Label Text="清除背单词历史记录"  HorizontalTextAlignment="Start" FontSize="18" Padding="10,5" />
+
+                </Border>
+
+                <Border Padding="2" Margin="15,5" BackgroundColor="SkyBlue">
+
+                    <Border.GestureRecognizers>
+                        <TapGestureRecognizer Tapped="TapGestureRecognizer_ClearPhraseLearnedHistoryTapped" NumberOfTapsRequired="1" />
+                    </Border.GestureRecognizers>
+
+                    <Label Text="清除背短语历史记录"  HorizontalTextAlignment="Start" FontSize="18" Padding="10,5" />
+
+                </Border>
+
+            </VerticalStackLayout>
+
+        </toolkit:Expander>
+
+    </VerticalStackLayout>
+</ContentPage>

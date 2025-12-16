@@ -82,7 +82,7 @@
                 </Grid>
 
                 <ImageButton Grid.Column="1" x:Name="btnVOCAB" Margin="10,3,3,3" IsVisible="False" WidthRequest="24" HeightRequest="24"
-                HorizontalOptions="EndAndExpand"  Clicked="btnVOCAB_Clicked"  VerticalOptions="Start">
+                             HorizontalOptions="EndAndExpand"  Clicked="btnVOCAB_Clicked"  VerticalOptions="Start">
                     <ImageButton.Source>
                         <FontImageSource x:Name="Font_VOCAB"  FontFamily="FARegular" Glyph="{StaticResource star}"  Color="Gray"  Size="10"/>
                     </ImageButton.Source>
@@ -118,7 +118,7 @@
 
 			<Label x:Name="lblExamType" Margin="10,10" HorizontalOptions="Start" IsVisible="False" TextColor="Gray" FontSize="13" LineBreakMode="WordWrap"></Label>
 
-            <toolkit:Expander x:Name="InflectionExpander" IsVisible="False" ExpandedChanged="InflectionExpander_ExpandedChanged">
+            <toolkit:Expander x:Name="InflectionExpander" IsVisible="False" ExpandedChanged="Expander_ExpandedChanged" CommandParameter="Inflection">
 				<toolkit:Expander.Header>
                     <Grid>
                         <Grid >
@@ -131,7 +131,7 @@
                         <Label x:Name="lblInflection" Text="词态变化"  VerticalOptions="Center" HorizontalOptions="Start" FontAttributes="Bold" Margin="10,10,10,2" />
 
                         <ImageButton Grid.Column="1" x:Name="btnInflectionShow" Margin="3,3" WidthRequest="22" HeightRequest="22"  
-                                     VerticalOptions="Center" HorizontalOptions="End" Clicked="btnInflectionShow_Clicked">
+                                     VerticalOptions="Center" HorizontalOptions="End" Clicked="ExpandButtonShow_Clicked" CommandParameter="Inflection">
                             <ImageButton.Source>
                                 <FontImageSource x:Name="Font_InflectionShow"  FontFamily="FASolid" Glyph="{StaticResource down}"  Color="Gray"  Size="10"/>
                             </ImageButton.Source>
@@ -145,51 +145,67 @@
 						<ColumnDefinition Width="*"></ColumnDefinition>
 					</Grid.ColumnDefinitions>
 				</Grid>
-			</toolkit:Expander>	
+			</toolkit:Expander>
 
-            <Label x:Name="lblIntroduction" Text="相关介绍"  VerticalOptions="Center" HorizontalOptions="Start" FontAttributes="Bold" Margin="10,10,10,2"  IsVisible="False"/>
-
-            <CollectionView x:Name="lvMedias" SelectionMode="None">
-                <CollectionView.ItemTemplate>
-                    <DataTemplate>
-                        <controls:MediaCardView></controls:MediaCardView>
-                    </DataTemplate>
-                </CollectionView.ItemTemplate>
-            </CollectionView>
-
-            <Label x:Name="lblExample" Text="例句"  VerticalOptions="Center" HorizontalOptions="Start" FontAttributes="Bold" Margin="10,10,10,2"  IsVisible="False"/>
-
-            <CollectionView x:Name="lvExamples" SelectionMode="None" Margin="10,5">
-                <CollectionView.ItemTemplate>
-                    <DataTemplate>
-                        <controls:EnglishExampleView />
-                    </DataTemplate>
-                </CollectionView.ItemTemplate>
-            </CollectionView>
-
-            <Label x:Name="lblVariant" Text="异体"  VerticalOptions="Center" HorizontalOptions="Start" FontAttributes="Bold" Margin="10,10,10,2"  IsVisible="False"/>
-
-            <CollectionView x:Name="lvVariants" SelectionMode="None" Margin="10,5">
-                <CollectionView.ItemTemplate>
-                    <DataTemplate>
-                        <Grid>
-                            <Grid.GestureRecognizers>
-                                <TapGestureRecognizer Tapped="TapGestureRecognizer_VariantTapped" NumberOfTapsRequired="1" />
-                            </Grid.GestureRecognizers>
-
-                            <Grid.RowDefinitions>
-                                <RowDefinition ></RowDefinition>                              
-                            </Grid.RowDefinitions>
-
-                            <Label  Text="{Binding TargetWord}" Margin="0,5"></Label>
-                           
+            <toolkit:Expander x:Name="MediaExpander" IsVisible="False" ExpandedChanged="Expander_ExpandedChanged" CommandParameter="Media">
+                <toolkit:Expander.Header>
+                    <Grid>
+                        <Grid >
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition  Width="9*" />
+                                <ColumnDefinition  Width="1*"/>
+                            </Grid.ColumnDefinitions>
                         </Grid>
 
-                    </DataTemplate>
-                </CollectionView.ItemTemplate>
-            </CollectionView>
+                        <Label x:Name="lblMedia" Text="相关介绍"  VerticalOptions="Center" HorizontalOptions="Start" FontAttributes="Bold" Margin="10,10,10,2" />
 
-            <toolkit:Expander x:Name="FormExpander" IsVisible="False" ExpandedChanged="FormExpander_ExpandedChanged">
+                        <ImageButton Grid.Column="1" x:Name="btnMediaShow" Margin="3,3" WidthRequest="22" HeightRequest="22" VerticalOptions="Center" HorizontalOptions="End" Clicked="ExpandButtonShow_Clicked" CommandParameter="Media">
+                            <ImageButton.Source>
+                                <FontImageSource x:Name="Font_MediaShow"  FontFamily="FASolid" Glyph="{StaticResource down}"  Color="Gray"  Size="10"/>
+                            </ImageButton.Source>
+                        </ImageButton>
+                    </Grid>
+                </toolkit:Expander.Header>
+
+                <CollectionView x:Name="lvMedias" SelectionMode="None">
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate>
+                            <controls:MediaCardView></controls:MediaCardView>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+            </toolkit:Expander>
+
+            <toolkit:Expander x:Name="ExampleExpander" IsVisible="False" ExpandedChanged="Expander_ExpandedChanged" CommandParameter="Example">
+                <toolkit:Expander.Header>
+                    <Grid>
+                        <Grid >
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition  Width="9*" />
+                                <ColumnDefinition  Width="1*"/>
+                            </Grid.ColumnDefinitions>
+                        </Grid>
+
+                        <Label x:Name="lblExample" Text="例句"  VerticalOptions="Center" HorizontalOptions="Start" FontAttributes="Bold" Margin="10,10,10,2" />
+
+                        <ImageButton Grid.Column="1" x:Name="btnExampleShow" Margin="3,3" WidthRequest="22" HeightRequest="22" VerticalOptions="Center" HorizontalOptions="End" Clicked="ExpandButtonShow_Clicked" CommandParameter="Example">
+                            <ImageButton.Source>
+                                <FontImageSource x:Name="Font_ExampleShow"  FontFamily="FASolid" Glyph="{StaticResource down}"  Color="Gray"  Size="10"/>
+                            </ImageButton.Source>
+                        </ImageButton>
+                    </Grid>
+                </toolkit:Expander.Header>
+
+                <CollectionView x:Name="lvExamples" SelectionMode="None" Margin="10,5">
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate>
+                            <controls:EnglishExampleView />
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+            </toolkit:Expander>
+
+            <toolkit:Expander x:Name="FormExpander" IsVisible="False" ExpandedChanged="Expander_ExpandedChanged" CommandParameter="Form">
                 <toolkit:Expander.Header>
                     <Grid>
                         <Grid >
@@ -202,7 +218,7 @@
                         <Label x:Name="lblForm" Text="相关单词"  VerticalOptions="Center" HorizontalOptions="Start" FontAttributes="Bold" Margin="10,10,10,2" />
 
                         <ImageButton Grid.Column="1" x:Name="btnFormShow" Margin="3,3" WidthRequest="22" HeightRequest="22"  
-                          VerticalOptions="Center" HorizontalOptions="End" Clicked="btnFormShow_Clicked">
+                          VerticalOptions="Center" HorizontalOptions="End" Clicked="ExpandButtonShow_Clicked"  CommandParameter="Form">
                             <ImageButton.Source>
                                 <FontImageSource x:Name="Font_FormShow"  FontFamily="FASolid" Glyph="{StaticResource down}"  Color="Gray"  Size="10"/>
                             </ImageButton.Source>
@@ -232,7 +248,7 @@
                 </CollectionView>
             </toolkit:Expander>
 
-            <toolkit:Expander x:Name="StructureExpander" IsVisible="False" ExpandedChanged="SturctureExpander_ExpandedChanged">
+            <toolkit:Expander x:Name="StructureExpander" IsVisible="False" ExpandedChanged="Expander_ExpandedChanged" CommandParameter="Structure">
                 <toolkit:Expander.Header>
                     <Grid>
                         <Grid >
@@ -244,7 +260,7 @@
 
                         <Label x:Name="lblStructure" Text="单词结构"  VerticalOptions="Center" HorizontalOptions="Start" FontAttributes="Bold" Margin="10,10,10,2" />
 
-                        <ImageButton Grid.Column="1" x:Name="btnStructureShow" Margin="3,3" WidthRequest="22" HeightRequest="22" VerticalOptions="Center" HorizontalOptions="End" Clicked="btnStructureShow_Clicked">
+                        <ImageButton Grid.Column="1" x:Name="btnStructureShow" Margin="3,3" WidthRequest="22" HeightRequest="22" VerticalOptions="Center" HorizontalOptions="End" Clicked="ExpandButtonShow_Clicked" CommandParameter="Structure">
                             <ImageButton.Source>
                                 <FontImageSource x:Name="Font_StructureShow"  FontFamily="FASolid" Glyph="{StaticResource down}"  Color="Gray"  Size="10"/>
                             </ImageButton.Source>
@@ -252,8 +268,50 @@
                     </Grid>
                 </toolkit:Expander.Header>
 
-                <Grid x:Name="gridStructure"  Margin="10,10,10,2">                  
+                <Grid x:Name="gvStructure"  Margin="10,10,10,2">                  
                 </Grid>
+            </toolkit:Expander>
+
+            <toolkit:Expander x:Name="VariantExpander" IsVisible="False" ExpandedChanged="Expander_ExpandedChanged" CommandParameter="Variant">
+                <toolkit:Expander.Header>
+                    <Grid>
+                        <Grid >
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition  Width="9*" />
+                                <ColumnDefinition  Width="1*"/>
+                            </Grid.ColumnDefinitions>
+                        </Grid>
+
+                        <Label x:Name="lblVariant" Text="异体"  VerticalOptions="Center" HorizontalOptions="Start" FontAttributes="Bold" Margin="10,10,10,2" />
+
+                        <ImageButton Grid.Column="1" x:Name="btnVariantShow" Margin="3,3" WidthRequest="22" HeightRequest="22"  
+                                     VerticalOptions="Center" HorizontalOptions="End" Clicked="ExpandButtonShow_Clicked" CommandParameter="Variant">
+                            <ImageButton.Source>
+                                <FontImageSource x:Name="Font_VariantShow"  FontFamily="FASolid" Glyph="{StaticResource down}"  Color="Gray"  Size="10"/>
+                            </ImageButton.Source>
+                        </ImageButton>
+                    </Grid>
+                </toolkit:Expander.Header>
+
+                <CollectionView x:Name="lvVariants" SelectionMode="None" Margin="10,5">
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate>
+                            <Grid>
+                                <Grid.GestureRecognizers>
+                                    <TapGestureRecognizer Tapped="TapGestureRecognizer_VariantTapped" NumberOfTapsRequired="1" />
+                                </Grid.GestureRecognizers>
+
+                                <Grid.RowDefinitions>
+                                    <RowDefinition ></RowDefinition>
+                                </Grid.RowDefinitions>
+
+                                <Label  Text="{Binding TargetWord}" Margin="0,5"></Label>
+
+                            </Grid>
+
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
             </toolkit:Expander>
         </VerticalStackLayout>
     </ScrollView>
