@@ -1169,6 +1169,16 @@ namespace EnglishLearning.DataAccess
             }
         }
 
+        public static async Task<int> GetEnglishWordSyllableCount(int wordId)
+        {
+            using (var connection = DbUtitlity.CreateDbConnection())
+            {
+                string sql = $"select count(1) from EnglishWordSyllable where WordId={wordId}";
+
+                return (await connection.QueryAsync<int?>(sql)).FirstOrDefault()??0;
+            }
+        }
+
         public static async Task<IEnumerable<EnglishWordInflectionType>> GetEnglishWordInflectionTypes()
         {
             using (var connection = DbUtitlity.CreateDbConnection())

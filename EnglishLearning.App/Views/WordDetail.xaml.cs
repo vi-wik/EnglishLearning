@@ -190,41 +190,34 @@ public partial class WordDetail : ContentPage
 
             this.ShowMeanings(wordId, this.setting.ShowWordFullMeaning);
 
-            #endregion           
+            #endregion
 
             #region 音节
-            bool showSyllable = false;
 
-            if (this.setting.ShowWordSyllable)
+            this.lblSyllable.Text = "";
+
+            bool needShowSyllable = this.setting.ShowWordSyllable;
+            bool canShowSyllable = false;
+
+            //无论配置是否显示音节，都要获取音节数量，因为它是判断形容词和副词比较级和最高级的依据
+            int syllableCount = await DataProcessor.GetEnglishWordSyllableCount(wordId);
+
+            if (syllableCount > 1)
             {
                 var syllables = await DataProcessor.GetEnglishWordSyllables(wordId);
-                int syllableCount = syllables.Count();
 
-                this.syllableCount = syllableCount;
+                canShowSyllable = true;
 
-                if (syllableCount == 0)
-                {
-                    syllableCount = 1;
-                }
-
-                if (syllableCount > 1)
-                {
-                    showSyllable = true;
-
-                    UIHelper.SetEnglishWordSyllableDisplayText(this.lblSyllable, this.englishWord.Word, syllables);
-                }
-                else
-                {
-                    showSyllable = false;
-                }
+                UIHelper.SetEnglishWordSyllableDisplayText(this.lblSyllable, this.englishWord.Word, syllables);
             }
-
-            this.lblSyllable.IsVisible = showSyllable;
-
-            if (!showSyllable)
+            else if (syllableCount == 0)
             {
-                this.lblSyllable.Text = "";
+                syllableCount = 1;
             }
+
+            this.syllableCount = syllableCount;         
+
+            this.lblSyllable.IsVisible = needShowSyllable && canShowSyllable;
 
             #endregion
 
@@ -287,11 +280,11 @@ public partial class WordDetail : ContentPage
 
                         order++;
                     }
-                   
+
                     this.lvExamples.ItemsSource = exampleDisplays;
                     this.ExampleExpander.IsVisible = true;
                     this.ExampleExpander.IsExpanded = this.setting.WordExampleDisplayMode == ExpanderDisplayMode.Expanded;
-                }               
+                }
             }
 
             #endregion
@@ -375,7 +368,7 @@ public partial class WordDetail : ContentPage
             this.vocab = null;
             this.btnVOCAB.IsVisible = false;
             this.lblSyllable.IsVisible = false;
-        }      
+        }
 
         this.SetStatusForVOCAB(this.vocab != null);
     }

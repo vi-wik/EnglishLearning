@@ -457,6 +457,11 @@ namespace EnglishLearning.Business
             return await DbObjectsFetcher.GetEnglishWordSyllables(wordId);
         }
 
+        public static async Task<int> GetEnglishWordSyllableCount(int wordId)
+        {
+            return await DbObjectsFetcher.GetEnglishWordSyllableCount(wordId);
+        }
+
         public static async Task<IEnumerable<EnglishWordInflectionType>> GetEnglishWordInflectionTypes()
         {
             return await DbObjectsFetcher.GetEnglishWordInflectionTypes();
