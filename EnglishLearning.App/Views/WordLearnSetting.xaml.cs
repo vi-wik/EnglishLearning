@@ -1,8 +1,8 @@
 using CommunityToolkit.Maui;
 using CommunityToolkit.Maui.Extensions;
-using EnglishLearning.Business;
-using EnglishLearning.Business.Manager;
-using EnglishLearning.Business.Model;
+using EnglishLearning.BLL.Core;
+using EnglishLearning.BLL.Core.Model;
+using EnglishLearning.BLL.MAUI.Manager;
 using EnglishLearning.Model;
 using Microsoft.Maui.Controls.Shapes;
 using zoft.MauiExtensions.Core.Extensions;

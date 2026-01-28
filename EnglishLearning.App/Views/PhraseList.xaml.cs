@@ -1,12 +1,8 @@
-using EnglishLearning.App.Model;
-using EnglishLearning.Business;
-using EnglishLearning.Business.Manager;
-using EnglishLearning.Business.Model;
+using EnglishLearning.BLL.Core;
+using EnglishLearning.BLL.Core.Model;
+using EnglishLearning.BLL.MAUI.Manager;
 using EnglishLearning.Model;
 using EnglishLearning.Utility;
-using Microsoft.Maui.Controls;
-using Microsoft.Maui.Controls.Compatibility;
-using System.Text.RegularExpressions;
 using Grid = Microsoft.Maui.Controls.Grid;
 
 namespace EnglishLearning.App.Views;

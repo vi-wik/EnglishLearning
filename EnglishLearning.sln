@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.14.36518.9 d17.14
+VisualStudioVersion = 17.14.36518.9
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EnglishLearning.Model", "EnglishLearning.Model\EnglishLearning.Model.csproj", "{E5095E97-87EE-4B5F-B0B2-6F3C7CE88A2B}"
 EndProject
@@ -9,11 +9,13 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EnglishLearning.Utility", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EnglishLearning.Data", "EnglishLearning.Data\EnglishLearning.Data.csproj", "{86B32B5E-62D7-40EB-85BF-261AD2C5C549}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EnglishLearning.Business", "EnglishLearning.Business\EnglishLearning.Business.csproj", "{C0062FE5-04AD-418B-BA2E-2FCE46DC3A28}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EnglishLearning.DataAccess", "EnglishLearning.DataAccess\EnglishLearning.DataAccess.csproj", "{E510E635-0343-4394-961A-7FC0B3D7B600}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EnglishLearning.App", "EnglishLearning.App\EnglishLearning.App.csproj", "{26B15CAE-03B9-4E0F-A9AB-911B4B76924B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EnglishLearning.BLL.Core", "EnglishLearning.BLL.Core\EnglishLearning.BLL.Core.csproj", "{087283EF-6E17-49F0-AE48-FF0ECE1D6B13}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EnglishLearning.BLL.MAUI", "EnglishLearning.BLL.MAUI\EnglishLearning.BLL.MAUI.csproj", "{5B467537-B803-65D8-CEB4-D0C1DABF4D3F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -47,14 +49,6 @@ Global
 		{86B32B5E-62D7-40EB-85BF-261AD2C5C549}.Release|Any CPU.Build.0 = Release|Any CPU
 		{86B32B5E-62D7-40EB-85BF-261AD2C5C549}.Release|ARM64.ActiveCfg = Release|Any CPU
 		{86B32B5E-62D7-40EB-85BF-261AD2C5C549}.Release|ARM64.Build.0 = Release|Any CPU
-		{C0062FE5-04AD-418B-BA2E-2FCE46DC3A28}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{C0062FE5-04AD-418B-BA2E-2FCE46DC3A28}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{C0062FE5-04AD-418B-BA2E-2FCE46DC3A28}.Debug|ARM64.ActiveCfg = Debug|Any CPU
-		{C0062FE5-04AD-418B-BA2E-2FCE46DC3A28}.Debug|ARM64.Build.0 = Debug|Any CPU
-		{C0062FE5-04AD-418B-BA2E-2FCE46DC3A28}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{C0062FE5-04AD-418B-BA2E-2FCE46DC3A28}.Release|Any CPU.Build.0 = Release|Any CPU
-		{C0062FE5-04AD-418B-BA2E-2FCE46DC3A28}.Release|ARM64.ActiveCfg = Release|Any CPU
-		{C0062FE5-04AD-418B-BA2E-2FCE46DC3A28}.Release|ARM64.Build.0 = Release|Any CPU
 		{E510E635-0343-4394-961A-7FC0B3D7B600}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{E510E635-0343-4394-961A-7FC0B3D7B600}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E510E635-0343-4394-961A-7FC0B3D7B600}.Debug|ARM64.ActiveCfg = Debug|Any CPU
@@ -75,6 +69,22 @@ Global
 		{26B15CAE-03B9-4E0F-A9AB-911B4B76924B}.Release|ARM64.ActiveCfg = Release|Any CPU
 		{26B15CAE-03B9-4E0F-A9AB-911B4B76924B}.Release|ARM64.Build.0 = Release|Any CPU
 		{26B15CAE-03B9-4E0F-A9AB-911B4B76924B}.Release|ARM64.Deploy.0 = Release|Any CPU
+		{087283EF-6E17-49F0-AE48-FF0ECE1D6B13}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{087283EF-6E17-49F0-AE48-FF0ECE1D6B13}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{087283EF-6E17-49F0-AE48-FF0ECE1D6B13}.Debug|ARM64.ActiveCfg = Debug|Any CPU
+		{087283EF-6E17-49F0-AE48-FF0ECE1D6B13}.Debug|ARM64.Build.0 = Debug|Any CPU
+		{087283EF-6E17-49F0-AE48-FF0ECE1D6B13}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{087283EF-6E17-49F0-AE48-FF0ECE1D6B13}.Release|Any CPU.Build.0 = Release|Any CPU
+		{087283EF-6E17-49F0-AE48-FF0ECE1D6B13}.Release|ARM64.ActiveCfg = Release|Any CPU
+		{087283EF-6E17-49F0-AE48-FF0ECE1D6B13}.Release|ARM64.Build.0 = Release|Any CPU
+		{5B467537-B803-65D8-CEB4-D0C1DABF4D3F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5B467537-B803-65D8-CEB4-D0C1DABF4D3F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5B467537-B803-65D8-CEB4-D0C1DABF4D3F}.Debug|ARM64.ActiveCfg = Debug|Any CPU
+		{5B467537-B803-65D8-CEB4-D0C1DABF4D3F}.Debug|ARM64.Build.0 = Debug|Any CPU
+		{5B467537-B803-65D8-CEB4-D0C1DABF4D3F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5B467537-B803-65D8-CEB4-D0C1DABF4D3F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5B467537-B803-65D8-CEB4-D0C1DABF4D3F}.Release|ARM64.ActiveCfg = Release|Any CPU
+		{5B467537-B803-65D8-CEB4-D0C1DABF4D3F}.Release|ARM64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

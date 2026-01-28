@@ -1,0 +1,21 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2012/06/nuspec.xsd">
+  <metadata>
+    <id>viwik.EnglishLearning.BLL.Core</id>
+    <version>1.0.0</version>
+    <authors>vi-wik</authors>
+    <description>英语学习业务层</description>
+    <releaseNotes>初始发行</releaseNotes>
+    <repository type="git" url="https://github.com/vi-wik/EnglishLearning" commit="468efa13731e5c95fdf77ec83d94ce966e276c37" />
+    <dependencies>
+      <group targetFramework="net9.0">
+        <dependency id="viwik.EnglishLearning.DataAccess" version="1.0.0" exclude="Build,Analyzers" />
+        <dependency id="viwik.EnglishLearning.Model" version="1.0.0" exclude="Build,Analyzers" />
+        <dependency id="Newtonsoft.Json" version="13.0.4" exclude="Build,Analyzers" />
+      </group>
+    </dependencies>
+  </metadata>
+  <files>
+    <file src="E:\projects\git\EnglishLearning\EnglishLearning.BLL.Core\bin\Release\net9.0\EnglishLearning.BLL.Core.dll" target="lib\net9.0\EnglishLearning.BLL.Core.dll" />
+  </files>
+</package>

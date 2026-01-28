@@ -1,13 +1,10 @@
 using CommunityToolkit.Maui;
 using CommunityToolkit.Maui.Extensions;
-using CommunityToolkit.Maui.Views;
 using EnglishLearning.App.Helper;
 using EnglishLearning.App.Model;
-using EnglishLearning.Business;
-using EnglishLearning.Business.Model;
+using EnglishLearning.BLL.Core;
 using EnglishLearning.Model;
 using Microsoft.Maui.Controls.Shapes;
-using System.Xml.Linq;
 
 namespace EnglishLearning.App.Views;
 

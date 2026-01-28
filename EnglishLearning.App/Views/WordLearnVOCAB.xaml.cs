@@ -1,6 +1,5 @@
-using EnglishLearning.Business;
-using EnglishLearning.Business.Manager;
-using EnglishLearning.Business.Model;
+using EnglishLearning.BLL.Core;
+using EnglishLearning.BLL.MAUI.Manager;
 using EnglishLearning.Model;
 using Microsoft.Maui.Controls.Shapes;
 

@@ -1,10 +1,11 @@
 using CommunityToolkit.Maui.Views;
 using EnglishLearning.App.Helper;
 using EnglishLearning.App.Model;
-using EnglishLearning.Business;
-using EnglishLearning.Business.Helper;
-using EnglishLearning.Business.Manager;
-using EnglishLearning.Business.Model;
+using EnglishLearning.BLL.Core;
+using EnglishLearning.BLL.Core.Helper;
+using EnglishLearning.BLL.Core.Model;
+using EnglishLearning.BLL.MAUI.Helper;
+using EnglishLearning.BLL.MAUI.Manager;
 using EnglishLearning.Model;
 using System.Text;
 using zoft.MauiExtensions.Core.Extensions;
@@ -237,7 +238,7 @@ public partial class WordDetail : ContentPage
 
             if (this.setting.WordMediaDisplayMode != ExpanderDisplayMode.Hidden)
             {
-                var medias = await MediaHelper.DecorateMedias(await DataProcessor.GetVEnglishWordMedias(this.englishWord.Id));
+                var medias = await ImageHelper.DecorateMedias(await DataProcessor.GetVEnglishWordMedias(this.englishWord.Id));
 
                 hasMedia = medias.Count() > 0;
 

@@ -1,7 +1,7 @@
-using EnglishLearning.Business.Model;
-using EnglishLearning.Business;
+using EnglishLearning.BLL.Core;
+using EnglishLearning.BLL.Core.Model;
+using EnglishLearning.BLL.MAUI.Helper;
 using System.Windows.Input;
-using EnglishLearning.Business.Helper;
 
 namespace EnglishLearning.App.Views;
 
@@ -32,7 +32,7 @@ public partial class Favorite : ContentPage
 
     private async void LoadData()
     {
-        var favorites =await MediaHelper.DecorateMedias((await DataProcessor.GetVMediaFavorites()).OrderBy(item=>item.CategoryId).ThenByDescending(item => item.CreateTime).ToList()); 
+        var favorites =await ImageHelper.DecorateMedias((await DataProcessor.GetVMediaFavorites()).OrderBy(item=>item.CategoryId).ThenByDescending(item => item.CreateTime).ToList()); 
 
         List<MediaFavoriteGroup> groups = new List<MediaFavoriteGroup>();
 

@@ -1,5 +1,5 @@
-﻿using EnglishLearning.Business.Helper;
-using EnglishLearning.Business.Manager;
+﻿using EnglishLearning.BLL.MAUI.Helper;
+using EnglishLearning.BLL.MAUI.Manager;
 using Plugin.Maui.Audio;
 using System.Net;
 using System.Text;

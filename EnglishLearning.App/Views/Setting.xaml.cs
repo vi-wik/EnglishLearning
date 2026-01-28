@@ -1,8 +1,8 @@
 using CommunityToolkit.Maui.Core.Primitives;
 using CommunityToolkit.Maui.Storage;
-using EnglishLearning.Business;
-using EnglishLearning.Business.Helper;
-using EnglishLearning.Business.Manager;
+using EnglishLearning.BLL.Core;
+using EnglishLearning.BLL.MAUI.Helper;
+using EnglishLearning.BLL.MAUI.Manager;
 using System;
 
 namespace EnglishLearning.App.Views;
@@ -112,7 +112,7 @@ public partial class Setting : ContentPage
 
             try
             {
-                int affectedRows = await DataProcessor.ImportUserData(filePath);
+                int affectedRows = await DataProcessor.ImportUserData(filePath, DataFileManager.DataFilePath);
 
                 if (affectedRows > 0)
                 {

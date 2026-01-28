@@ -1,7 +1,5 @@
-using EnglishLearning.Business;
-using EnglishLearning.Business.Manager;
-using EnglishLearning.Model;
-using Microsoft.Maui.Controls.Shapes;
+using EnglishLearning.BLL.Core;
+using EnglishLearning.BLL.MAUI.Manager;
 
 namespace EnglishLearning.App.Views;
 

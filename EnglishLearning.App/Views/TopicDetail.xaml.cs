@@ -1,6 +1,6 @@
-using EnglishLearning.Business;
-using EnglishLearning.Business.Helper;
-using EnglishLearning.Business.Model;
+using EnglishLearning.BLL.Core;
+using EnglishLearning.BLL.Core.Model;
+using EnglishLearning.BLL.MAUI.Helper;
 using EnglishLearning.Model;
 
 namespace EnglishLearning.App.Views;
@@ -74,7 +74,7 @@ public partial class TopicDetail : ContentPage
 
         var topicDetails = await DataProcessor.GetEnglishTopicDetails(this.topic.Id, isFilterByTopic?  keyword: null);
 
-        var topicDetailMedias = await MediaHelper.DecorateMedias(await DataProcessor.GetVEnglishTopicDetailMedias(this.topic.Id, isFilterByTitle? keyword: null));
+        var topicDetailMedias = await ImageHelper.DecorateMedias(await DataProcessor.GetVEnglishTopicDetailMedias(this.topic.Id, isFilterByTitle? keyword: null));
 
         List<EnglishTopicDetailMediaGroup> groups = new List<EnglishTopicDetailMediaGroup>();
 

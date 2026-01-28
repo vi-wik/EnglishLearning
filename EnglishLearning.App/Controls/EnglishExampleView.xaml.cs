@@ -1,6 +1,6 @@
 using EnglishLearning.App.Views;
-using EnglishLearning.Business;
-using EnglishLearning.Business.Model;
+using EnglishLearning.BLL.Core;
+using EnglishLearning.BLL.Core.Model;
 using System.Text;
 
 namespace EnglishLearning.App.Controls;

@@ -1,10 +1,9 @@
 using EnglishLearning.App.Controls;
-using EnglishLearning.Business;
-using EnglishLearning.Business.Helper;
-using EnglishLearning.Business.Manager;
-using EnglishLearning.Business.Model;
+using EnglishLearning.BLL.Core;
+using EnglishLearning.BLL.Core.Model;
+using EnglishLearning.BLL.MAUI.Helper;
+using EnglishLearning.BLL.MAUI.Manager;
 using EnglishLearning.Model;
-using EnglishLearning.Utility;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Windows.Input;
@@ -50,7 +49,7 @@ public partial class History : ContentPage, INotifyPropertyChanged
         {
             string name = "今天";
 
-            var items = await MediaHelper.DecorateMedias(todayHistories.Select(item => this.CreateVEnglishMedia(item, name)).ToList());
+            var items = await ImageHelper.DecorateMedias(todayHistories.Select(item => this.CreateVEnglishMedia(item, name)).ToList());
 
             ObservableCollection<EnglishMediaForEditing> collection = new ObservableCollection<EnglishMediaForEditing>();
             collection.AddRange(items);
@@ -64,7 +63,7 @@ public partial class History : ContentPage, INotifyPropertyChanged
         {
             string name = "昨天";
 
-            var items = await MediaHelper.DecorateMedias(yesterdayHistories.Select(item => this.CreateVEnglishMedia(item, name)).ToList());
+            var items = await ImageHelper.DecorateMedias(yesterdayHistories.Select(item => this.CreateVEnglishMedia(item, name)).ToList());
 
             ObservableCollection<EnglishMediaForEditing> collection = new ObservableCollection<EnglishMediaForEditing>();
             collection.AddRange(items);
@@ -78,7 +77,7 @@ public partial class History : ContentPage, INotifyPropertyChanged
         {
             string name = "更早";
 
-            var items = await MediaHelper.DecorateMedias(earlierHistories.Select(item => this.CreateVEnglishMedia(item, null)).ToList());
+            var items = await ImageHelper.DecorateMedias(earlierHistories.Select(item => this.CreateVEnglishMedia(item, null)).ToList());
 
             ObservableCollection<EnglishMediaForEditing> collection = new ObservableCollection<EnglishMediaForEditing>();
             collection.AddRange(items);

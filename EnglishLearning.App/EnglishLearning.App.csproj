@@ -72,7 +72,8 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <ProjectReference Include="..\EnglishLearning.Business\EnglishLearning.Business.csproj" />
+	  <ProjectReference Include="..\EnglishLearning.BLL.Core\EnglishLearning.BLL.Core.csproj" />
+	  <ProjectReference Include="..\EnglishLearning.BLL.MAUI\EnglishLearning.BLL.MAUI.csproj" />
 	  <ProjectReference Include="..\EnglishLearning.Model\EnglishLearning.Model.csproj" />
 	</ItemGroup>
 

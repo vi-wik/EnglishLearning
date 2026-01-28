@@ -1,7 +1,6 @@
 using CommunityToolkit.Maui.Storage;
-using EnglishLearning.App.Model;
-using EnglishLearning.Business.Manager;
-using EnglishLearning.Business.Model;
+using EnglishLearning.BLL.Core.Model;
+using EnglishLearning.BLL.MAUI.Manager;
 using zoft.MauiExtensions.Core.Extensions;
 
 namespace EnglishLearning.App.Views;

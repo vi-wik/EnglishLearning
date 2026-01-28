@@ -1,7 +1,6 @@
-using EnglishLearning.Business;
-using EnglishLearning.Business.Helper;
+using EnglishLearning.BLL.Core;
+using EnglishLearning.BLL.MAUI.Helper;
 using EnglishLearning.Model;
-using System.Xml.Linq;
 
 namespace EnglishLearning.App.Views;
 
@@ -44,7 +43,7 @@ public partial class Subject : ContentPage
         this.lblDescription.Text = subject.Description;
         this.lblDescription.IsVisible = !string.IsNullOrEmpty(subject.Description);
 
-        var medias =await MediaHelper.DecorateMedias(await DataProcessor.GetVEnglishSubjectMedias(this.subjectId));
+        var medias =await ImageHelper.DecorateMedias(await DataProcessor.GetVEnglishSubjectMedias(this.subjectId));
 
         this.lvMedias.ItemsSource = medias;
 

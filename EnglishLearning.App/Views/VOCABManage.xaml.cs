@@ -1,8 +1,8 @@
 using CommunityToolkit.Maui.Storage;
 using EnglishLearning.App.Helper;
-using EnglishLearning.Business;
-using EnglishLearning.Business.Helper;
-using EnglishLearning.Business.Manager;
+using EnglishLearning.BLL.Core;
+using EnglishLearning.BLL.MAUI.Helper;
+using EnglishLearning.BLL.MAUI.Manager;
 using EnglishLearning.Model;
 using System.Collections.ObjectModel;
 

@@ -1,4 +1,6 @@
-﻿using EnglishLearning.Business.Manager;
+﻿
+using EnglishLearning.BLL.MAUI.Manager;
+using EnglishLearning.DataAccess;
 
 namespace EnglishLearning.App
 {
@@ -7,6 +9,8 @@ namespace EnglishLearning.App
         public App()
         {
             InitializeComponent();
+
+            DbUtitlity.DataFilePath = DataFileManager.DataFilePath;
 
             DataFileManager.Init();
 

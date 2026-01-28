@@ -1,12 +1,12 @@
 using CommunityToolkit.Maui;
 using CommunityToolkit.Maui.Extensions;
-using EnglishLearning.Business;
-using EnglishLearning.Business.Helper;
+using EnglishLearning.BLL.Core;
+using EnglishLearning.BLL.Core.Helper;
+using EnglishLearning.BLL.MAUI.Helper;
 using EnglishLearning.Model;
 using EnglishLearning.Utility;
 using Microsoft.Maui.Controls.Shapes;
 using System.Reflection;
-using System.Threading.Tasks;
 
 
 
@@ -127,7 +127,7 @@ public partial class MediaPlayer : ContentPage
         }
 
         string url = await MediaHelper.GetMediaSource(this.media);
-        string poster = await MediaHelper.GetImageUrl(this.media);
+        string poster = await ImageHelper.GetImageUrl(this.media);
 
         if (string.IsNullOrEmpty(url))
         {

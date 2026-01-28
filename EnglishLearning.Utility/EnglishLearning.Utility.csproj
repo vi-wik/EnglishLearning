@@ -3,6 +3,14 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.1</TargetFramework>
     <Nullable>enable</Nullable>
+    <PackageId>viwik.$(AssemblyName)</PackageId>
+    <Version>1.0.0</Version>
+    <Authors>vi-wik</Authors>
+    <Description>英语学习工具辅助类</Description>
+    <PackageReleaseNotes>初始发行</PackageReleaseNotes>
+    <AssemblyVersion>1.0.0</AssemblyVersion>
+    <FileVersion>1.0.0</FileVersion>
+    <RepositoryUrl>https://github.com/vi-wik/EnglishLearning</RepositoryUrl>
   </PropertyGroup>
 
   <ItemGroup>

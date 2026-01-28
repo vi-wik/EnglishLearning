@@ -1,5 +1,5 @@
-﻿using EnglishLearning.Business;
-using EnglishLearning.Business.Helper;
+﻿using EnglishLearning.BLL.Core;
+using EnglishLearning.BLL.Core.Helper;
 using EnglishLearning.Model;
 
 namespace EnglishLearning.App.Views;

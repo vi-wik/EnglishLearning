@@ -1,6 +1,6 @@
-using EnglishLearning.Business;
-using EnglishLearning.Business.Helper;
-using EnglishLearning.Business.Model;
+using EnglishLearning.BLL.Core;
+using EnglishLearning.BLL.Core.Model;
+using EnglishLearning.BLL.MAUI.Helper;
 using EnglishLearning.Model;
 
 namespace EnglishLearning.App.Views;
@@ -39,7 +39,7 @@ public partial class PhoneticAlphabetDetail : ContentPage
             this.lblDescription.Text = consonant.Description;
             this.lblDescription.IsVisible = !string.IsNullOrEmpty(consonant.Description);
 
-            var medias =await MediaHelper.DecorateMedias(await DataProcessor.GetVEnglishConsonantMedias(consonant.Id));
+            var medias =await ImageHelper.DecorateMedias(await DataProcessor.GetVEnglishConsonantMedias(consonant.Id));
 
             var groupedMedias = (from item in medias 
                                 group item by new { SubcategoryName = item.SubcategoryName?? "Overview", Description = item.SubcategoryDescription, Priority= item.SubcategoryPriority } into gp 
@@ -65,7 +65,7 @@ public partial class PhoneticAlphabetDetail : ContentPage
             this.lblDescription.Text = vowel.Description;
             this.lblDescription.IsVisible = !string.IsNullOrEmpty(vowel.Description);
 
-            var medias = await MediaHelper.DecorateMedias(await DataProcessor.GetVEnglishVowelMedias(vowel.Id));
+            var medias = await ImageHelper.DecorateMedias(await DataProcessor.GetVEnglishVowelMedias(vowel.Id));
 
             var groupedMedias = (from item in medias
                                  group item by new { SubcategoryName = item.SubcategoryName ?? "Overview", Description = item.SubcategoryDescription, Priority = item.SubcategoryPriority } into gp
