@@ -151,7 +151,7 @@ namespace EnglishLearning.DataAccess
 
         public static async Task<V_EnglishWord> GetVEnglishWord(string word)
         {
-            string sql = $"select * from V_EnglishWord where Word=@Word";
+            string sql = $"select * from V_EnglishWord where Lower(Word)=Lower(@Word)";
 
             Dictionary<string, object> para = new Dictionary<string, object> { { "@Word", word } };
 
