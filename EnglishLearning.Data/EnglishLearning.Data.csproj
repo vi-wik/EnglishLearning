@@ -3,17 +3,15 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.1</TargetFramework>
     <Nullable>enable</Nullable>
-    <AssemblyVersion>1.0.16</AssemblyVersion>
-    <FileVersion>1.0.16</FileVersion>
+    <AssemblyVersion>1.0.17</AssemblyVersion>
+    <FileVersion>1.0.17</FileVersion>
     <PackageId>viwik.$(AssemblyName)</PackageId>
-    <Version>1.0.16</Version>
+    <Version>1.0.17</Version>
     <Authors>vi-wik</Authors>
     <AssemblyName>viwik.$(MSBuildProjectName)</AssemblyName>
     <RootNamespace>viwik.$(MSBuildProjectName.Replace(" ", "_"))</RootNamespace>
     <Description>英语学习数据文件</Description>
-    <PackageReleaseNotes>1. 将生词表拆分为单词和短语
-2. 添加背短语历史表
-3. 对单词的考级进行调整（针对初中、高中、四级、六级和考研，低级别不归为高级别）</PackageReleaseNotes>
+    <PackageReleaseNotes>添加数据</PackageReleaseNotes>
     <PackageProjectUrl>https://github.com/vi-wik/EnglishLearning</PackageProjectUrl>
     <RepositoryUrl>https://github.com/vi-wik/EnglishLearning</RepositoryUrl>
   </PropertyGroup>
