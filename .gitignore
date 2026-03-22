@@ -33,3 +33,6 @@
 /EnglishLearning.Business/bin/ARM64
 /EnglishLearning.Business/bin
 /EnglishLearning.DataAccess/bin
+/EnglishLearning.BLL.Core/obj
+/EnglishLearning.BLL.MAUI/obj
+/EnglishLearning.BLL.MAUI/bin
