@@ -5,13 +5,13 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <PackageId>viwik.$(AssemblyName)</PackageId>
-    <Version>1.0.0</Version>
+    <Version>1.0.1</Version>
     <Authors>vi-wik</Authors>
     <RepositoryUrl>https://github.com/vi-wik/EnglishLearning</RepositoryUrl>
     <Description>英语学习业务层</Description>
-    <PackageReleaseNotes>初始发行</PackageReleaseNotes>
-    <AssemblyVersion>1.0.0</AssemblyVersion>
-    <FileVersion>1.0.0</FileVersion>
+    <PackageReleaseNotes>bug修复：获取单词结构时某些情况字典重复添加键</PackageReleaseNotes>
+    <AssemblyVersion>1.0.1</AssemblyVersion>
+    <FileVersion>1.0.1</FileVersion>
   </PropertyGroup>
 
   <ItemGroup>

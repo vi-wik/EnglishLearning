@@ -647,7 +647,7 @@ namespace EnglishLearning.BLL.Core
                             appendStructure(list, null, form.TargetWord.Substring(sb.Length));
                             list[1].ChangeEndOldContent = form.Word.Substring(sb.Length);
 
-                            dict.Add(1, list);
+                            dict.Add(count, list);
                         }
                     }
                 }
