@@ -1123,6 +1123,11 @@ public partial class WordDetail : ContentPage
                         extraAfterSpan = new Span() { Text = nextStructure.ChangeEndOldContent, TextColor = Colors.Gray };
                     }
                 }
+                else if(structrue.Connector!=null)
+                {
+                    span.Text = structrue.Connector;
+                    span.TextColor = Colors.Black;
+                }
 
                 if (needAddGestrue)
                 {
